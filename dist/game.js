@@ -2,6 +2,7 @@
 import { ERAS, getEraById, getNextEra } from './eras.js';
 import { TECHNOLOGIES, getTechById, canResearch } from './research.js';
 import { TROOP_TYPES, getTroopTypeById, canTrainTroop, calculateArmyPower } from './barracks.js';
+import { generateMissions, getMissionById, getMissionsByEra, simulateCombat, canStartMission, isMissionAvailable, } from './combat.js';
 export class Game {
     constructor() {
         this.updateInterval = null;
@@ -33,6 +34,11 @@ export class Game {
             trainingQueue: [],
             lastUpdate: Date.now(),
             totalPlayTime: 0,
+            // Combat system
+            missions: generateMissions(),
+            completedMissions: new Set(),
+            activeBattle: null,
+            battleAnimationSpeed: 800, // 800ms per round
         };
     }
     setOnStateChange(callback) {
@@ -189,6 +195,98 @@ export class Game {
     getArmyPower() {
         return calculateArmyPower(this.state.army);
     }
+    // Combat system methods
+    getAvailableMissions() {
+        return this.state.missions.filter(m => isMissionAvailable(m, this.state.currentEra));
+    }
+    getMissionsByCurrentEra() {
+        return getMissionsByEra(this.state.missions, this.state.currentEra);
+    }
+    canStartMission() {
+        return canStartMission(this.state.army) && !this.state.activeBattle;
+    }
+    startMission(missionId) {
+        const mission = getMissionById(this.state.missions, missionId);
+        if (!mission)
+            return false;
+        if (!isMissionAvailable(mission, this.state.currentEra))
+            return false;
+        if (!canStartMission(this.state.army))
+            return false;
+        if (this.state.activeBattle)
+            return false;
+        // Simulate the full battle and store all logs
+        const result = simulateCombat(this.state.army, mission);
+        const playerPower = calculateArmyPower(this.state.army);
+        // Create active battle with pre-computed logs
+        this.state.activeBattle = {
+            missionId,
+            logs: result.logs,
+            currentRound: 0,
+            isComplete: false,
+            result: result,
+            playerStartHealth: playerPower.health,
+            enemyStartHealth: mission.enemyArmy.health,
+        };
+        this.notifyStateChange();
+        return true;
+    }
+    // Advance battle animation by one round
+    advanceBattleRound() {
+        if (!this.state.activeBattle)
+            return false;
+        if (this.state.activeBattle.isComplete)
+            return false;
+        this.state.activeBattle.currentRound++;
+        // Check if battle is complete
+        if (this.state.activeBattle.currentRound >= this.state.activeBattle.logs.length) {
+            this.completeBattle();
+        }
+        this.notifyStateChange();
+        return true;
+    }
+    completeBattle() {
+        if (!this.state.activeBattle || !this.state.activeBattle.result)
+            return;
+        this.state.activeBattle.isComplete = true;
+        const result = this.state.activeBattle.result;
+        if (result.victory && result.rewards) {
+            // Add rewards
+            this.state.resources.food += result.rewards.food;
+            this.state.resources.wood += result.rewards.wood;
+            this.state.resources.stone += result.rewards.stone;
+            this.state.resources.gold += result.rewards.gold;
+            this.state.resources.science += result.rewards.science;
+            // Mark mission as completed
+            this.state.completedMissions.add(this.state.activeBattle.missionId);
+        }
+        // Apply casualties to army (reduce troops based on damage taken)
+        if (result.casualtyPercent > 0) {
+            this.applyCasualties(result.casualtyPercent);
+        }
+    }
+    applyCasualties(casualtyPercent) {
+        // Remove some troops based on casualty percent
+        // Higher casualty = more troops lost
+        for (const troop of this.state.army) {
+            const casualtyFactor = casualtyPercent / 100;
+            const troopsLost = Math.floor(troop.count * casualtyFactor * 0.5); // 50% of casualty rate as actual losses
+            troop.count = Math.max(0, troop.count - troopsLost);
+        }
+        // Remove troops with 0 count
+        this.state.army = this.state.army.filter(t => t.count > 0);
+    }
+    dismissBattle() {
+        this.state.activeBattle = null;
+        this.notifyStateChange();
+    }
+    setBattleSpeed(speed) {
+        this.state.battleAnimationSpeed = Math.max(100, Math.min(2000, speed));
+        this.notifyStateChange();
+    }
+    isMissionCompleted(missionId) {
+        return this.state.completedMissions.has(missionId);
+    }
     // Get available technologies
     getAvailableTechs() {
         return TECHNOLOGIES.filter(tech => {
@@ -212,6 +310,8 @@ export class Game {
             ...this.state,
             researchedTechs: Array.from(this.state.researchedTechs),
             unlockedTroops: Array.from(this.state.unlockedTroops),
+            completedMissions: Array.from(this.state.completedMissions),
+            activeBattle: null, // Don't save active battles
         };
         return JSON.stringify(saveData);
     }
@@ -222,6 +322,10 @@ export class Game {
                 ...saveData,
                 researchedTechs: new Set(saveData.researchedTechs),
                 unlockedTroops: new Set(saveData.unlockedTroops),
+                completedMissions: new Set(saveData.completedMissions || []),
+                missions: generateMissions(), // Always regenerate missions
+                activeBattle: null,
+                battleAnimationSpeed: saveData.battleAnimationSpeed || 800,
             };
             return true;
         }

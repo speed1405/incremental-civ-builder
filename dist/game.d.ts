@@ -1,6 +1,7 @@
 import { ERAS } from './eras.js';
 import { Technology, TECHNOLOGIES } from './research.js';
 import { TroopType, TROOP_TYPES, TrainingTroop, Troop } from './barracks.js';
+import { Mission, ActiveBattle } from './combat.js';
 export interface GameState {
     currentEra: string;
     resources: {
@@ -25,6 +26,10 @@ export interface GameState {
     trainingQueue: TrainingTroop[];
     lastUpdate: number;
     totalPlayTime: number;
+    missions: Mission[];
+    completedMissions: Set<string>;
+    activeBattle: ActiveBattle | null;
+    battleAnimationSpeed: number;
 }
 export declare class Game {
     state: GameState;
@@ -50,6 +55,16 @@ export declare class Game {
         defense: number;
         health: number;
     };
+    getAvailableMissions(): Mission[];
+    getMissionsByCurrentEra(): Mission[];
+    canStartMission(): boolean;
+    startMission(missionId: string): boolean;
+    advanceBattleRound(): boolean;
+    private completeBattle;
+    private applyCasualties;
+    dismissBattle(): void;
+    setBattleSpeed(speed: number): void;
+    isMissionCompleted(missionId: string): boolean;
     getAvailableTechs(): Technology[];
     getAvailableTroops(): TroopType[];
     saveGame(): string;
@@ -57,3 +72,4 @@ export declare class Game {
     resetGame(): void;
 }
 export { ERAS, TECHNOLOGIES, TROOP_TYPES };
+export type { Mission, ActiveBattle, BattleResult, BattleLog } from './combat.js';
