@@ -1,0 +1,420 @@
+// UI management for the game
+import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES } from './game.js';
+import { getEraById } from './eras.js';
+import { getTechById } from './research.js';
+import { getTroopTypeById } from './barracks.js';
+
+export class GameUI {
+  private game: Game;
+  private currentTab: string = 'resources';
+
+  constructor(game: Game) {
+    this.game = game;
+    this.game.setOnStateChange(() => this.render());
+    this.setupEventListeners();
+  }
+
+  private setupEventListeners(): void {
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const tab = target.dataset.tab;
+        if (tab) {
+          this.switchTab(tab);
+        }
+      });
+    });
+
+    // Resource gathering
+    document.getElementById('gather-food')?.addEventListener('click', () => this.game.gatherFood());
+    document.getElementById('gather-wood')?.addEventListener('click', () => this.game.gatherWood());
+    document.getElementById('gather-stone')?.addEventListener('click', () => this.game.gatherStone());
+
+    // Save/Load/Reset
+    document.getElementById('save-game')?.addEventListener('click', () => this.saveGame());
+    document.getElementById('load-game')?.addEventListener('click', () => this.loadGame());
+    document.getElementById('reset-game')?.addEventListener('click', () => this.resetGame());
+  }
+
+  private switchTab(tab: string): void {
+    this.currentTab = tab;
+    
+    // Update tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if ((btn as HTMLElement).dataset.tab === tab) {
+        btn.classList.add('active');
+      }
+    });
+
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    document.getElementById(`${tab}-tab`)?.classList.add('active');
+
+    this.render();
+  }
+
+  render(): void {
+    this.renderHeader();
+    this.renderResources();
+    
+    switch (this.currentTab) {
+      case 'resources':
+        this.renderResourcesTab();
+        break;
+      case 'research':
+        this.renderResearchTab();
+        break;
+      case 'barracks':
+        this.renderBarracksTab();
+        break;
+      case 'army':
+        this.renderArmyTab();
+        break;
+    }
+  }
+
+  private renderHeader(): void {
+    const era = getEraById(this.game.state.currentEra);
+    const headerEl = document.getElementById('current-era');
+    if (headerEl && era) {
+      headerEl.textContent = era.name;
+    }
+
+    const descEl = document.getElementById('era-description');
+    if (descEl && era) {
+      descEl.textContent = era.description;
+    }
+
+    // Update era progress
+    const eraIndex = ERAS.findIndex(e => e.id === this.game.state.currentEra);
+    const progressEl = document.getElementById('era-progress');
+    if (progressEl) {
+      progressEl.textContent = `Era ${eraIndex + 1} of ${ERAS.length}`;
+    }
+  }
+
+  private renderResources(): void {
+    const { resources } = this.game.state;
+    
+    document.getElementById('food-amount')!.textContent = Math.floor(resources.food).toString();
+    document.getElementById('wood-amount')!.textContent = Math.floor(resources.wood).toString();
+    document.getElementById('stone-amount')!.textContent = Math.floor(resources.stone).toString();
+    document.getElementById('gold-amount')!.textContent = Math.floor(resources.gold).toString();
+    document.getElementById('science-amount')!.textContent = Math.floor(resources.science).toString();
+
+    // Update rates
+    const era = getEraById(this.game.state.currentEra);
+    if (era) {
+      const { resourceMultipliers } = this.game.state;
+      document.getElementById('food-rate')!.textContent = 
+        `+${(era.resources.food.baseRate * resourceMultipliers.food).toFixed(1)}/s`;
+      document.getElementById('wood-rate')!.textContent = 
+        `+${(era.resources.wood.baseRate * resourceMultipliers.wood).toFixed(1)}/s`;
+      document.getElementById('stone-rate')!.textContent = 
+        `+${(era.resources.stone.baseRate * resourceMultipliers.stone).toFixed(1)}/s`;
+      document.getElementById('gold-rate')!.textContent = 
+        `+${(era.resources.gold.baseRate * resourceMultipliers.gold).toFixed(1)}/s`;
+      document.getElementById('science-rate')!.textContent = 
+        `+${(era.resources.science.baseRate * resourceMultipliers.science).toFixed(1)}/s`;
+    }
+  }
+
+  private renderResourcesTab(): void {
+    const container = document.getElementById('gather-buttons');
+    if (!container) return;
+    
+    // Gather buttons are already in HTML, just show current multipliers
+    const { resourceMultipliers } = this.game.state;
+    container.innerHTML = `
+      <button id="gather-food" class="gather-btn">
+        🍖 Gather Food (+${resourceMultipliers.food.toFixed(1)})
+      </button>
+      <button id="gather-wood" class="gather-btn">
+        🪵 Gather Wood (+${resourceMultipliers.wood.toFixed(1)})
+      </button>
+      <button id="gather-stone" class="gather-btn">
+        🪨 Gather Stone (+${resourceMultipliers.stone.toFixed(1)})
+      </button>
+    `;
+
+    // Re-attach event listeners
+    document.getElementById('gather-food')?.addEventListener('click', () => this.game.gatherFood());
+    document.getElementById('gather-wood')?.addEventListener('click', () => this.game.gatherWood());
+    document.getElementById('gather-stone')?.addEventListener('click', () => this.game.gatherStone());
+  }
+
+  private renderResearchTab(): void {
+    const container = document.getElementById('research-tree');
+    if (!container) return;
+
+    // Show current research
+    let html = '';
+    
+    if (this.game.state.currentResearch) {
+      const tech = getTechById(this.game.state.currentResearch);
+      if (tech) {
+        const progress = (this.game.state.researchProgress / tech.cost.science) * 100;
+        html += `
+          <div class="current-research">
+            <h3>Currently Researching: ${tech.name}</h3>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${Math.min(progress, 100)}%"></div>
+            </div>
+            <p>${Math.floor(this.game.state.researchProgress)} / ${tech.cost.science} science</p>
+          </div>
+        `;
+      }
+    }
+
+    // Group technologies by era
+    const techsByEra = new Map<string, typeof TECHNOLOGIES>();
+    for (const era of ERAS) {
+      techsByEra.set(era.id, []);
+    }
+    for (const tech of TECHNOLOGIES) {
+      techsByEra.get(tech.era)?.push(tech);
+    }
+
+    // Render each era's technologies
+    for (const era of ERAS) {
+      const techs = techsByEra.get(era.id) || [];
+      if (techs.length === 0) continue;
+
+      html += `<div class="era-section">
+        <h3>${era.name} Technologies</h3>
+        <div class="tech-grid">`;
+      
+      for (const tech of techs) {
+        const isResearched = this.game.state.researchedTechs.has(tech.id);
+        const isAvailable = this.canResearchTech(tech);
+        const isCurrent = this.game.state.currentResearch === tech.id;
+        
+        let statusClass = 'locked';
+        if (isResearched) statusClass = 'researched';
+        else if (isCurrent) statusClass = 'current';
+        else if (isAvailable) statusClass = 'available';
+
+        html += `
+          <div class="tech-card ${statusClass}" data-tech-id="${tech.id}">
+            <h4>${tech.name}</h4>
+            <p class="tech-desc">${tech.description}</p>
+            <p class="tech-cost">Cost: ${tech.cost.science} science</p>
+            ${isResearched ? '<span class="badge">✓ Researched</span>' : ''}
+            ${isAvailable && !isResearched && !isCurrent ? 
+              `<button class="research-btn" data-tech="${tech.id}">Research</button>` : ''}
+          </div>
+        `;
+      }
+      
+      html += '</div></div>';
+    }
+
+    container.innerHTML = html;
+
+    // Attach research button listeners
+    container.querySelectorAll('.research-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const techId = (e.target as HTMLElement).dataset.tech;
+        if (techId) {
+          this.game.startResearch(techId);
+        }
+      });
+    });
+  }
+
+  private canResearchTech(tech: typeof TECHNOLOGIES[0]): boolean {
+    if (this.game.state.researchedTechs.has(tech.id)) return false;
+    if (this.game.state.currentResearch) return false;
+    
+    for (const prereq of tech.prerequisites) {
+      if (!this.game.state.researchedTechs.has(prereq)) return false;
+    }
+    
+    return this.game.state.resources.science >= tech.cost.science;
+  }
+
+  private renderBarracksTab(): void {
+    const container = document.getElementById('barracks-content');
+    if (!container) return;
+
+    let html = '<h3>Training Queue</h3>';
+    
+    // Training queue
+    if (this.game.state.trainingQueue.length > 0) {
+      html += '<div class="training-queue">';
+      const now = Date.now();
+      for (const training of this.game.state.trainingQueue) {
+        const troopType = getTroopTypeById(training.troopId);
+        if (troopType) {
+          const remaining = Math.max(0, (training.endTime - now) / 1000);
+          const progress = ((troopType.trainTime - remaining) / troopType.trainTime) * 100;
+          html += `
+            <div class="training-item">
+              <span>${troopType.name}</span>
+              <div class="progress-bar small">
+                <div class="progress-fill" style="width: ${progress}%"></div>
+              </div>
+              <span>${remaining.toFixed(1)}s</span>
+            </div>
+          `;
+        }
+      }
+      html += '</div>';
+    } else {
+      html += '<p class="empty-message">No troops in training</p>';
+    }
+
+    // Available troops to train
+    html += '<h3>Available Units</h3>';
+    
+    const availableTroops = this.game.getAvailableTroops();
+    if (availableTroops.length === 0) {
+      html += '<p class="empty-message">Research technologies to unlock troops!</p>';
+    } else {
+      html += '<div class="troop-grid">';
+      for (const troop of availableTroops) {
+        const canTrain = this.canTrainTroop(troop);
+        html += `
+          <div class="troop-card ${canTrain ? 'available' : 'unavailable'}">
+            <h4>${troop.name}</h4>
+            <p class="troop-desc">${troop.description}</p>
+            <div class="troop-stats">
+              <span>⚔️ ${troop.stats.attack}</span>
+              <span>🛡️ ${troop.stats.defense}</span>
+              <span>❤️ ${troop.stats.health}</span>
+            </div>
+            <div class="troop-cost">
+              <span>🍖 ${troop.cost.food}</span>
+              <span>💰 ${troop.cost.gold}</span>
+              ${troop.cost.wood ? `<span>🪵 ${troop.cost.wood}</span>` : ''}
+              ${troop.cost.stone ? `<span>🪨 ${troop.cost.stone}</span>` : ''}
+            </div>
+            <p class="train-time">⏱️ ${troop.trainTime}s</p>
+            <button class="train-btn" data-troop="${troop.id}" ${!canTrain ? 'disabled' : ''}>
+              Train
+            </button>
+          </div>
+        `;
+      }
+      html += '</div>';
+    }
+
+    container.innerHTML = html;
+
+    // Attach train button listeners
+    container.querySelectorAll('.train-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const troopId = (e.target as HTMLElement).dataset.troop;
+        if (troopId) {
+          this.game.trainTroop(troopId);
+        }
+      });
+    });
+  }
+
+  private canTrainTroop(troop: typeof TROOP_TYPES[0]): boolean {
+    const { resources } = this.game.state;
+    if (resources.food < troop.cost.food) return false;
+    if (resources.gold < troop.cost.gold) return false;
+    if (troop.cost.wood && resources.wood < troop.cost.wood) return false;
+    if (troop.cost.stone && resources.stone < troop.cost.stone) return false;
+    return true;
+  }
+
+  private renderArmyTab(): void {
+    const container = document.getElementById('army-content');
+    if (!container) return;
+
+    const { army } = this.game.state;
+    const power = this.game.getArmyPower();
+
+    let html = `
+      <div class="army-overview">
+        <h3>Army Power</h3>
+        <div class="power-stats">
+          <div class="power-stat">
+            <span class="power-icon">⚔️</span>
+            <span class="power-value">${power.attack}</span>
+            <span class="power-label">Attack</span>
+          </div>
+          <div class="power-stat">
+            <span class="power-icon">🛡️</span>
+            <span class="power-value">${power.defense}</span>
+            <span class="power-label">Defense</span>
+          </div>
+          <div class="power-stat">
+            <span class="power-icon">❤️</span>
+            <span class="power-value">${power.health}</span>
+            <span class="power-label">Health</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    html += '<h3>Your Troops</h3>';
+    
+    if (army.length === 0) {
+      html += '<p class="empty-message">No troops recruited yet. Visit the Barracks to train troops!</p>';
+    } else {
+      html += '<div class="army-grid">';
+      for (const troop of army) {
+        const troopType = getTroopTypeById(troop.typeId);
+        if (troopType) {
+          html += `
+            <div class="army-unit">
+              <h4>${troopType.name}</h4>
+              <span class="unit-count">x${troop.count}</span>
+              <div class="unit-stats">
+                <span>⚔️ ${troopType.stats.attack * troop.count}</span>
+                <span>🛡️ ${troopType.stats.defense * troop.count}</span>
+                <span>❤️ ${troopType.stats.health * troop.count}</span>
+              </div>
+            </div>
+          `;
+        }
+      }
+      html += '</div>';
+    }
+
+    container.innerHTML = html;
+  }
+
+  private saveGame(): void {
+    const saveString = this.game.saveGame();
+    localStorage.setItem('civGameSave', saveString);
+    this.showNotification('Game saved!');
+  }
+
+  private loadGame(): void {
+    const saveString = localStorage.getItem('civGameSave');
+    if (saveString && this.game.loadGame(saveString)) {
+      this.showNotification('Game loaded!');
+    } else {
+      this.showNotification('No save found!');
+    }
+  }
+
+  private resetGame(): void {
+    if (confirm('Are you sure you want to reset? All progress will be lost!')) {
+      this.game.resetGame();
+      localStorage.removeItem('civGameSave');
+      this.showNotification('Game reset!');
+    }
+  }
+
+  private showNotification(message: string): void {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.classList.add('fade-out');
+      setTimeout(() => notification.remove(), 500);
+    }, 2000);
+  }
+}

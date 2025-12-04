@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incremental Civ Builder - From Stone Age to Future</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="game-container">
+    <!-- Header with Era Info -->
+    <header class="game-header">
+      <h1>🏛️ Civilization Builder</h1>
+      <div class="era-info">
+        <h2 id="current-era">Stone Age</h2>
+        <p id="era-description">The dawn of civilization. Gather basic resources to survive.</p>
+        <p id="era-progress">Era 1 of 11</p>
+      </div>
+    </header>
+
+    <!-- Resources Bar -->
+    <div class="resources-bar">
+      <div class="resource">
+        <span class="resource-icon">🍖</span>
+        <span class="resource-name">Food</span>
+        <span class="resource-amount" id="food-amount">100</span>
+        <span class="resource-rate" id="food-rate">+1/s</span>
+      </div>
+      <div class="resource">
+        <span class="resource-icon">🪵</span>
+        <span class="resource-name">Wood</span>
+        <span class="resource-amount" id="wood-amount">50</span>
+        <span class="resource-rate" id="wood-rate">+1/s</span>
+      </div>
+      <div class="resource">
+        <span class="resource-icon">🪨</span>
+        <span class="resource-name">Stone</span>
+        <span class="resource-amount" id="stone-amount">25</span>
+        <span class="resource-rate" id="stone-rate">+0.5/s</span>
+      </div>
+      <div class="resource">
+        <span class="resource-icon">💰</span>
+        <span class="resource-name">Gold</span>
+        <span class="resource-amount" id="gold-amount">0</span>
+        <span class="resource-rate" id="gold-rate">+0/s</span>
+      </div>
+      <div class="resource">
+        <span class="resource-icon">🔬</span>
+        <span class="resource-name">Science</span>
+        <span class="resource-amount" id="science-amount">0</span>
+        <span class="resource-rate" id="science-rate">+0.1/s</span>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="resources">📦 Resources</button>
+      <button class="tab-btn" data-tab="research">🔬 Research</button>
+      <button class="tab-btn" data-tab="barracks">⚔️ Barracks</button>
+      <button class="tab-btn" data-tab="army">🛡️ Army</button>
+    </nav>
+
+    <!-- Tab Content -->
+    <main class="tab-container">
+      <!-- Resources Tab -->
+      <div id="resources-tab" class="tab-content active">
+        <h2>Gather Resources</h2>
+        <p>Click to manually gather resources. Research technologies to increase your rates!</p>
+        <div id="gather-buttons" class="gather-buttons">
+          <button id="gather-food" class="gather-btn">🍖 Gather Food (+1)</button>
+          <button id="gather-wood" class="gather-btn">🪵 Gather Wood (+1)</button>
+          <button id="gather-stone" class="gather-btn">🪨 Gather Stone (+1)</button>
+        </div>
+      </div>
+
+      <!-- Research Tab -->
+      <div id="research-tab" class="tab-content">
+        <h2>Research Tree</h2>
+        <p>Research new technologies to advance your civilization through the ages!</p>
+        <div id="research-tree" class="research-tree">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <!-- Barracks Tab -->
+      <div id="barracks-tab" class="tab-content">
+        <h2>Barracks</h2>
+        <p>Train troops to build your army. Unlock new units through research!</p>
+        <div id="barracks-content" class="barracks-content">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <!-- Army Tab -->
+      <div id="army-tab" class="tab-content">
+        <h2>Your Army</h2>
+        <p>View your current military forces and their combined power.</p>
+        <div id="army-content" class="army-content">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer with Save/Load -->
+    <footer class="game-footer">
+      <button id="save-game" class="footer-btn">💾 Save</button>
+      <button id="load-game" class="footer-btn">📂 Load</button>
+      <button id="reset-game" class="footer-btn danger">🔄 Reset</button>
+    </footer>
+  </div>
+
+  <script type="module" src="dist/main.js"></script>
+</body>
+</html>
