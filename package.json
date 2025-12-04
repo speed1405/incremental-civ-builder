@@ -1,0 +1,19 @@
+{
+  "name": "incremental-civ-builder",
+  "version": "1.0.0",
+  "description": "An incremental civilization building game from Stone Age to Future",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "npx http-server . -p 8080 -o",
+    "test": "echo \"No tests configured\" && exit 0"
+  },
+  "keywords": ["game", "incremental", "civilization"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
