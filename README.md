@@ -93,40 +93,90 @@ Technologies are organized by era and require prerequisites to unlock. Key miles
 Here are some ideas to enhance the game:
 
 ### 🎮 Gameplay Features
-- **Combat System**: Add battles against AI civilizations or barbarians
+- **Combat System**: Add battles against AI civilizations or barbarians ✅ (Implemented!)
 - **Wonder Building**: Construct famous wonders (Pyramids, Colosseum, etc.) for unique bonuses
-- **Achievements System**: Unlock achievements for milestones like "First Technology" or "Space Age"
+- **Achievements System**: Unlock achievements for milestones like "First Technology" or "Space Age" ✅ (Implemented!)
 - **Events System**: Random events (plague, gold discovery, etc.) that affect resources
 - **Prestige/Rebirth**: Reset with bonuses for replayability
+- **Daily Challenges**: Special missions that refresh daily with bonus rewards
+- **Seasonal Events**: Limited-time content for holidays and special occasions
+- **Difficulty Modes**: Easy, Normal, Hard modes with different resource rates
+- **Victory Conditions**: Multiple win conditions (Science, Military, Cultural, Economic)
+- **Diplomacy System**: Form alliances, declare war, or negotiate peace with AI civilizations
 
 ### 🏗️ Buildings & Infrastructure
 - **Building System**: Farms, mines, libraries that boost resource production
 - **City Management**: Multiple cities with different specializations
 - **Population System**: Citizens that can be assigned to different tasks
+- **Housing/Capacity**: Build homes to support larger populations
+- **Great People**: Special units that provide unique bonuses when born
+- **Districts**: Specialized city zones (Industrial, Commercial, Science)
+- **Infrastructure Decay**: Buildings require maintenance over time
+- **Terraforming**: Modify terrain for different building opportunities
 
 ### ⚔️ Military Enhancements
 - **Unit Upgrades**: Upgrade existing units to more powerful versions
 - **Formations/Tactics**: Different combat strategies
 - **Defense System**: Walls and defensive structures
 - **Conquests**: Capture territories for resource bonuses
+- **Heroes/Generals**: Unique commander units with special abilities
+- **Unit Experience**: Troops gain experience and become veterans
+- **Naval Combat**: Ships and sea battles
+- **Siege Weapons**: Special units for attacking fortifications
+- **Military Traditions**: Permanent bonuses from combat experience
+- **Espionage**: Spy units for sabotage and intelligence gathering
 
 ### 📊 Economy & Trade
 - **Trading System**: Trade resources with AI merchants
 - **Market Fluctuations**: Dynamic resource prices
 - **Happiness/Morale**: Affects productivity and military effectiveness
+- **Luxury Resources**: Rare resources that boost happiness
+- **Trade Routes**: Establish routes between cities for automatic income
+- **Banking Interest**: Earn interest on stored gold
+- **Taxes**: Collect taxes from population
+- **Economic Policies**: Choose between different economic strategies
+- **Resource Conversion**: Transform one resource into another
 
 ### 🎨 UI/UX Improvements
-- **Statistics Page**: Track historical data and graphs
-- **Offline Progress**: Earn resources while away
+- **Statistics Page**: Track historical data and graphs ✅ (Implemented!)
+- **Offline Progress**: Earn resources while away ✅ (Implemented!)
 - **Sound Effects & Music**: Audio feedback for actions
 - **Dark/Light Theme Toggle**: User preference for visual theme
 - **Tutorial System**: Guided introduction for new players
+- **Mini-Map**: Visual representation of your civilization
+- **Notification Center**: Centralized alerts and messages
+- **Resource Forecast**: Predict future resource levels
+- **Comparison Tools**: Compare units, technologies side-by-side
+- **Customizable UI**: Drag and drop UI elements to preferred positions
+- **Tooltips Enhancement**: Detailed hover information for all elements
+- **Animation Effects**: Visual feedback for resource gains and combat
 
 ### 🔧 Technical Enhancements
 - **Cloud Saves**: Sync progress across devices
 - **Mobile Responsive**: Improve touch controls for mobile
 - **Keyboard Shortcuts**: Quick actions for power users
 - **Modding Support**: Allow custom technologies and units
+- **Export/Import Saves**: Share save files with others
+- **Performance Mode**: Reduce animations for slower devices
+- **Accessibility Features**: Screen reader support, colorblind modes
+- **Multi-language Support**: Localization for different languages
+- **Game Speed Settings**: Adjust overall game speed
+- **Auto-Save Frequency**: Customize how often the game saves
+
+### 🌍 World & Lore
+- **Civilization Choices**: Different starting civilizations with unique bonuses
+- **Historical Leaders**: Choose leaders with special abilities
+- **World Map**: Geographic territories to explore and conquer
+- **Natural Wonders**: Discoverable landmarks with unique effects
+- **Religion System**: Found and spread religions for cultural bonuses
+- **Cultural Influence**: Spread your culture to neighboring territories
+
+### 📈 Progression Systems
+- **Skill Trees**: Unlock permanent bonuses through gameplay
+- **Legacy System**: Carry over benefits between game sessions
+- **Leaderboards**: Compare progress with other players
+- **Challenges Mode**: Special restrictions for bonus rewards
+- **Time Attack**: Speed-run mode with timers
 
 ## License
 
