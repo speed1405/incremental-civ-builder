@@ -4,6 +4,7 @@ import { TECHNOLOGIES, getTechById, canResearch } from './research.js';
 import { TROOP_TYPES, getTroopTypeById, canTrainTroop, calculateArmyPower } from './barracks.js';
 import { generateMissions, getMissionById, getMissionsByEra, simulateCombat, canStartMission, isMissionAvailable, } from './combat.js';
 import { ACHIEVEMENTS, getAchievementById, createInitialStatistics, createInitialAchievementProgress, } from './achievements.js';
+import { BUILDING_TYPES, getBuildingTypeById, canBuildBuilding, calculateBuildingProduction, getTotalBuildingCount, } from './buildings.js';
 export class Game {
     constructor() {
         this.updateInterval = null;
@@ -46,6 +47,10 @@ export class Game {
             statistics: createInitialStatistics(),
             achievements: createInitialAchievementProgress(),
             pendingAchievementNotifications: [],
+            // Buildings system
+            buildings: [],
+            constructionQueue: [],
+            unlockedBuildings: new Set(['hut']), // Hut is available from start
         };
     }
     setOnAchievementUnlocked(callback) {
@@ -78,12 +83,14 @@ export class Game {
         const era = getEraById(this.state.currentEra);
         if (!era)
             return;
-        // Calculate resource gains
-        const foodGain = era.resources.food.baseRate * this.state.resourceMultipliers.food * delta;
-        const woodGain = era.resources.wood.baseRate * this.state.resourceMultipliers.wood * delta;
-        const stoneGain = era.resources.stone.baseRate * this.state.resourceMultipliers.stone * delta;
-        const goldGain = era.resources.gold.baseRate * this.state.resourceMultipliers.gold * delta;
-        const scienceGain = era.resources.science.baseRate * this.state.resourceMultipliers.science * delta;
+        // Calculate building production
+        const buildingProduction = calculateBuildingProduction(this.state.buildings);
+        // Calculate resource gains (era base rate + building production) * multipliers
+        const foodGain = (era.resources.food.baseRate + buildingProduction.food) * this.state.resourceMultipliers.food * delta;
+        const woodGain = (era.resources.wood.baseRate + buildingProduction.wood) * this.state.resourceMultipliers.wood * delta;
+        const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone) * this.state.resourceMultipliers.stone * delta;
+        const goldGain = (era.resources.gold.baseRate + buildingProduction.gold) * this.state.resourceMultipliers.gold * delta;
+        const scienceGain = (era.resources.science.baseRate + buildingProduction.science) * this.state.resourceMultipliers.science * delta;
         // Update resources based on era rates and multipliers
         this.state.resources.food += foodGain;
         this.state.resources.wood += woodGain;
@@ -101,7 +108,7 @@ export class Game {
             const tech = getTechById(this.state.currentResearch);
             if (tech) {
                 // Research progresses based on science generation
-                this.state.researchProgress += era.resources.science.baseRate * this.state.resourceMultipliers.science * delta;
+                this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science) * this.state.resourceMultipliers.science * delta;
                 if (this.state.researchProgress >= tech.cost.science) {
                     this.completeResearch();
                 }
@@ -109,6 +116,8 @@ export class Game {
         }
         // Update training queue
         this.updateTrainingQueue(now);
+        // Update construction queue
+        this.updateConstructionQueue(now);
         // Check for achievement unlocks
         this.checkAchievements();
         this.notifyStateChange();
@@ -136,6 +145,31 @@ export class Game {
         }
         else {
             this.state.army.push({ typeId: troopId, count: 1 });
+        }
+    }
+    updateConstructionQueue(now) {
+        const completed = [];
+        for (let i = 0; i < this.state.constructionQueue.length; i++) {
+            const construction = this.state.constructionQueue[i];
+            if (now >= construction.endTime) {
+                // Add building
+                this.addBuilding(construction.buildingId);
+                this.state.statistics.totalBuildingsConstructed = (this.state.statistics.totalBuildingsConstructed || 0) + 1;
+                completed.push(i);
+            }
+        }
+        // Remove completed construction
+        for (let i = completed.length - 1; i >= 0; i--) {
+            this.state.constructionQueue.splice(completed[i], 1);
+        }
+    }
+    addBuilding(buildingId) {
+        const existing = this.state.buildings.find(b => b.typeId === buildingId);
+        if (existing) {
+            existing.count++;
+        }
+        else {
+            this.state.buildings.push({ typeId: buildingId, count: 1 });
         }
     }
     // Resource gathering actions (manual clicking)
@@ -200,9 +234,60 @@ export class Game {
                 this.state.currentEra = nextEra.id;
             }
         }
+        // Check for building unlocks
+        this.checkBuildingUnlocks(this.state.currentResearch);
         this.state.currentResearch = null;
         this.state.researchProgress = 0;
         this.notifyStateChange();
+    }
+    checkBuildingUnlocks(techId) {
+        // Check all buildings that require this tech
+        for (const building of BUILDING_TYPES) {
+            if (building.unlockTech === techId) {
+                this.state.unlockedBuildings.add(building.id);
+            }
+        }
+    }
+    // Building system
+    constructBuilding(buildingId) {
+        const buildingType = getBuildingTypeById(buildingId);
+        if (!buildingType)
+            return false;
+        if (!canBuildBuilding(buildingId, this.state.unlockedBuildings, this.state.buildings, this.state.resources)) {
+            return false;
+        }
+        // Deduct costs
+        this.state.resources.food -= buildingType.cost.food;
+        this.state.resources.wood -= buildingType.cost.wood;
+        this.state.resources.stone -= buildingType.cost.stone;
+        this.state.resources.gold -= buildingType.cost.gold;
+        // Add to construction queue
+        const now = Date.now();
+        this.state.constructionQueue.push({
+            buildingId,
+            startTime: now,
+            endTime: now + buildingType.buildTime * 1000,
+        });
+        this.notifyStateChange();
+        return true;
+    }
+    getBuildingCount(buildingId) {
+        const building = this.state.buildings.find(b => b.typeId === buildingId);
+        return building ? building.count : 0;
+    }
+    getBuildingProduction() {
+        return calculateBuildingProduction(this.state.buildings);
+    }
+    getAvailableBuildings() {
+        return BUILDING_TYPES.filter(building => {
+            // Check if unlocked
+            if (building.unlockTech === null)
+                return true;
+            return this.state.unlockedBuildings.has(building.id);
+        });
+    }
+    getTotalBuildingCount() {
+        return getTotalBuildingCount(this.state.buildings);
     }
     // Barracks system
     trainTroop(troopId) {
@@ -382,6 +467,8 @@ export class Game {
                 return this.state.statistics.battlesWon >= condition.amount;
             case 'missions_completed':
                 return this.state.completedMissions.size >= condition.amount;
+            case 'building_count':
+                return this.getTotalBuildingCount() >= condition.amount;
             default:
                 return false;
         }
@@ -465,11 +552,12 @@ export class Game {
         }
         // Calculate resources earned (50% efficiency for offline)
         const offlineEfficiency = 0.5;
-        const food = era.resources.food.baseRate * this.state.resourceMultipliers.food * cappedDuration * offlineEfficiency;
-        const wood = era.resources.wood.baseRate * this.state.resourceMultipliers.wood * cappedDuration * offlineEfficiency;
-        const stone = era.resources.stone.baseRate * this.state.resourceMultipliers.stone * cappedDuration * offlineEfficiency;
-        const gold = era.resources.gold.baseRate * this.state.resourceMultipliers.gold * cappedDuration * offlineEfficiency;
-        const science = era.resources.science.baseRate * this.state.resourceMultipliers.science * cappedDuration * offlineEfficiency;
+        const buildingProduction = calculateBuildingProduction(this.state.buildings);
+        const food = (era.resources.food.baseRate + buildingProduction.food) * this.state.resourceMultipliers.food * cappedDuration * offlineEfficiency;
+        const wood = (era.resources.wood.baseRate + buildingProduction.wood) * this.state.resourceMultipliers.wood * cappedDuration * offlineEfficiency;
+        const stone = (era.resources.stone.baseRate + buildingProduction.stone) * this.state.resourceMultipliers.stone * cappedDuration * offlineEfficiency;
+        const gold = (era.resources.gold.baseRate + buildingProduction.gold) * this.state.resourceMultipliers.gold * cappedDuration * offlineEfficiency;
+        const science = (era.resources.science.baseRate + buildingProduction.science) * this.state.resourceMultipliers.science * cappedDuration * offlineEfficiency;
         // Apply offline earnings
         this.state.resources.food += food;
         this.state.resources.wood += wood;
@@ -502,6 +590,7 @@ export class Game {
             researchedTechs: Array.from(this.state.researchedTechs),
             unlockedTroops: Array.from(this.state.unlockedTroops),
             completedMissions: Array.from(this.state.completedMissions),
+            unlockedBuildings: Array.from(this.state.unlockedBuildings),
             achievements: achievementsArray,
             activeBattle: null, // Don't save active battles
             saveTime: Date.now(), // Save timestamp for offline progress
@@ -529,6 +618,22 @@ export class Game {
                     });
                 }
             }
+            // Handle buildings (may not exist in old saves)
+            let unlockedBuildingsSet;
+            if (saveData.unlockedBuildings && Array.isArray(saveData.unlockedBuildings)) {
+                unlockedBuildingsSet = new Set(saveData.unlockedBuildings);
+            }
+            else {
+                // Initialize with default unlocked buildings
+                unlockedBuildingsSet = new Set(['hut']);
+                // Also unlock buildings based on researched techs
+                const researchedTechs = new Set(saveData.researchedTechs || []);
+                for (const building of BUILDING_TYPES) {
+                    if (building.unlockTech && researchedTechs.has(building.unlockTech)) {
+                        unlockedBuildingsSet.add(building.id);
+                    }
+                }
+            }
             this.state = {
                 ...saveData,
                 researchedTechs: new Set(saveData.researchedTechs),
@@ -540,6 +645,10 @@ export class Game {
                 statistics: saveData.statistics || createInitialStatistics(),
                 achievements: achievementsMap,
                 pendingAchievementNotifications: [],
+                // Buildings system
+                buildings: saveData.buildings || [],
+                constructionQueue: saveData.constructionQueue || [],
+                unlockedBuildings: unlockedBuildingsSet,
             };
             // Calculate offline progress if save time is available
             if (saveData.saveTime) {
@@ -558,5 +667,5 @@ export class Game {
     }
 }
 // Export for global use
-export { ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS };
+export { ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES };
 //# sourceMappingURL=game.js.map

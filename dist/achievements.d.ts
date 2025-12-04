@@ -3,7 +3,7 @@ export interface Achievement {
     name: string;
     description: string;
     icon: string;
-    category: 'resources' | 'research' | 'military' | 'progress' | 'combat';
+    category: 'resources' | 'research' | 'military' | 'progress' | 'combat' | 'buildings';
     condition: AchievementCondition;
     reward?: {
         type: 'multiplier' | 'resource';
@@ -12,7 +12,7 @@ export interface Achievement {
     };
 }
 export interface AchievementCondition {
-    type: 'resource_total' | 'resource_current' | 'tech_count' | 'troop_count' | 'era_reached' | 'battles_won' | 'missions_completed';
+    type: 'resource_total' | 'resource_current' | 'tech_count' | 'troop_count' | 'era_reached' | 'battles_won' | 'missions_completed' | 'building_count';
     target: string | number;
     amount: number;
 }
@@ -36,6 +36,7 @@ export interface Statistics {
     battlesLost: number;
     clickCount: number;
     offlineEarnings: number;
+    totalBuildingsConstructed: number;
 }
 export declare function createInitialStatistics(): Statistics;
 export declare function createInitialAchievementProgress(): Map<string, AchievementProgress>;

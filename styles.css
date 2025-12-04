@@ -1493,3 +1493,204 @@ body {
     padding: 20px;
   }
 }
+
+/* ===== Buildings System Styles ===== */
+
+/* Construction Queue */
+.construction-queue {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.construction-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.construction-item span:first-child {
+  min-width: 150px;
+  color: var(--accent-gold);
+}
+
+.construction-item .progress-bar {
+  flex: 1;
+}
+
+/* Building Overview */
+.building-overview {
+  background: var(--bg-tertiary);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.building-overview h3 {
+  color: var(--accent-gold);
+  margin-bottom: 15px;
+}
+
+.production-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.production-stat {
+  padding: 8px 15px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  color: var(--success);
+  font-weight: bold;
+}
+
+/* Building Grid */
+.building-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.building-card {
+  padding: 15px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.building-card.available {
+  border-color: var(--success);
+  box-shadow: 0 0 10px rgba(107, 203, 119, 0.3);
+}
+
+.building-card.maxed {
+  border-color: var(--accent-gold);
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(255, 217, 61, 0.1) 100%);
+}
+
+.building-card.locked {
+  opacity: 0.7;
+  border-color: var(--danger);
+}
+
+.building-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.building-header h5 {
+  color: var(--accent-gold);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.building-count {
+  background: var(--bg-secondary);
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+}
+
+.building-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.building-production {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+.building-production .label {
+  color: var(--text-secondary);
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.building-production span:not(.label) {
+  color: var(--success);
+}
+
+.building-cost {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+.building-cost .label {
+  color: var(--text-secondary);
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.building-cost span:not(.label) {
+  color: var(--accent-gold);
+}
+
+.build-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.build-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 8px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.build-btn:hover:not(:disabled) {
+  background: #3dbdb5;
+  transform: scale(1.02);
+}
+
+.build-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Buildings Tab Era Section */
+.buildings-content .era-section {
+  margin-bottom: 25px;
+}
+
+.buildings-content .era-section h4 {
+  color: var(--accent-secondary);
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--bg-tertiary);
+  margin-bottom: 15px;
+}
+
+/* Responsive adjustments for buildings */
+@media (max-width: 768px) {
+  .building-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .production-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

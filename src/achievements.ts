@@ -4,7 +4,7 @@ export interface Achievement {
   name: string;
   description: string;
   icon: string;
-  category: 'resources' | 'research' | 'military' | 'progress' | 'combat';
+  category: 'resources' | 'research' | 'military' | 'progress' | 'combat' | 'buildings';
   condition: AchievementCondition;
   reward?: {
     type: 'multiplier' | 'resource';
@@ -14,7 +14,7 @@ export interface Achievement {
 }
 
 export interface AchievementCondition {
-  type: 'resource_total' | 'resource_current' | 'tech_count' | 'troop_count' | 'era_reached' | 'battles_won' | 'missions_completed';
+  type: 'resource_total' | 'resource_current' | 'tech_count' | 'troop_count' | 'era_reached' | 'battles_won' | 'missions_completed' | 'building_count';
   target: string | number;
   amount: number;
 }
@@ -380,6 +380,50 @@ export const ACHIEVEMENTS: Achievement[] = [
     category: 'combat',
     condition: { type: 'missions_completed', target: 'any', amount: 22 },
   },
+
+  // Building Achievements
+  {
+    id: 'first_building',
+    name: 'First Construction',
+    description: 'Construct your first building',
+    icon: '🏠',
+    category: 'buildings',
+    condition: { type: 'building_count', target: 'any', amount: 1 },
+  },
+  {
+    id: 'small_village',
+    name: 'Small Village',
+    description: 'Have 5 buildings in your civilization',
+    icon: '🏘️',
+    category: 'buildings',
+    condition: { type: 'building_count', target: 'any', amount: 5 },
+  },
+  {
+    id: 'town',
+    name: 'Growing Town',
+    description: 'Have 15 buildings in your civilization',
+    icon: '🏙️',
+    category: 'buildings',
+    condition: { type: 'building_count', target: 'any', amount: 15 },
+  },
+  {
+    id: 'city',
+    name: 'City Builder',
+    description: 'Have 30 buildings in your civilization',
+    icon: '🌆',
+    category: 'buildings',
+    condition: { type: 'building_count', target: 'any', amount: 30 },
+    reward: { type: 'multiplier', resource: 'gold', amount: 1.15 },
+  },
+  {
+    id: 'metropolis',
+    name: 'Metropolis',
+    description: 'Have 50 buildings in your civilization',
+    icon: '🌃',
+    category: 'buildings',
+    condition: { type: 'building_count', target: 'any', amount: 50 },
+    reward: { type: 'multiplier', resource: 'gold', amount: 1.25 },
+  },
 ];
 
 export function getAchievementById(id: string): Achievement | undefined {
@@ -401,6 +445,7 @@ export interface Statistics {
   battlesLost: number;
   clickCount: number;
   offlineEarnings: number;
+  totalBuildingsConstructed: number;
 }
 
 export function createInitialStatistics(): Statistics {
@@ -415,6 +460,7 @@ export function createInitialStatistics(): Statistics {
     battlesLost: 0,
     clickCount: 0,
     offlineEarnings: 0,
+    totalBuildingsConstructed: 0,
   };
 }
 

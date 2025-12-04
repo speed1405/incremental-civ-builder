@@ -12,6 +12,8 @@ export declare class GameUI {
     private renderHeader;
     private renderResources;
     private renderResourcesTab;
+    private renderBuildingsTab;
+    private canBuildBuilding;
     private renderResearchTab;
     private canResearchTech;
     private renderBarracksTab;
