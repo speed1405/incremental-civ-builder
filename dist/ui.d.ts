@@ -3,6 +3,8 @@ export declare class GameUI {
     private game;
     private currentTab;
     private battleAnimationInterval;
+    private achievementNotificationQueue;
+    private isShowingAchievement;
     constructor(game: Game);
     private setupEventListeners;
     private switchTab;
@@ -24,4 +26,11 @@ export declare class GameUI {
     private loadGame;
     private resetGame;
     private showNotification;
+    private renderAchievementsTab;
+    private renderStatisticsSection;
+    private queueAchievementNotification;
+    private processAchievementNotifications;
+    private showAchievementPopup;
+    private checkOfflineProgress;
+    private showOfflineProgressPopup;
 }

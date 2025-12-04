@@ -22,6 +22,15 @@ import {
   canStartMission,
   isMissionAvailable,
 } from './combat.js';
+import {
+  Achievement,
+  AchievementProgress,
+  Statistics,
+  ACHIEVEMENTS,
+  getAchievementById,
+  createInitialStatistics,
+  createInitialAchievementProgress,
+} from './achievements.js';
 
 export interface GameState {
   currentEra: string;
@@ -52,12 +61,18 @@ export interface GameState {
   completedMissions: Set<string>;
   activeBattle: ActiveBattle | null;
   battleAnimationSpeed: number; // ms per round
+  // Achievements and statistics
+  statistics: Statistics;
+  achievements: Map<string, AchievementProgress>;
+  pendingAchievementNotifications: string[];
 }
 
 export class Game {
   state: GameState;
   private updateInterval: number | null = null;
   private onStateChange: (() => void) | null = null;
+  private onAchievementUnlocked: ((achievement: Achievement) => void) | null = null;
+  offlineProgress: { earned: boolean; resources: { food: number; wood: number; stone: number; gold: number; science: number }; duration: number } | null = null;
 
   constructor() {
     this.state = this.createInitialState();
@@ -93,7 +108,15 @@ export class Game {
       completedMissions: new Set<string>(),
       activeBattle: null,
       battleAnimationSpeed: 800, // 800ms per round
+      // Achievements and statistics
+      statistics: createInitialStatistics(),
+      achievements: createInitialAchievementProgress(),
+      pendingAchievementNotifications: [],
     };
+  }
+
+  setOnAchievementUnlocked(callback: (achievement: Achievement) => void): void {
+    this.onAchievementUnlocked = callback;
   }
 
   setOnStateChange(callback: () => void): void {
@@ -128,12 +151,26 @@ export class Game {
     const era = getEraById(this.state.currentEra);
     if (!era) return;
 
+    // Calculate resource gains
+    const foodGain = era.resources.food.baseRate * this.state.resourceMultipliers.food * delta;
+    const woodGain = era.resources.wood.baseRate * this.state.resourceMultipliers.wood * delta;
+    const stoneGain = era.resources.stone.baseRate * this.state.resourceMultipliers.stone * delta;
+    const goldGain = era.resources.gold.baseRate * this.state.resourceMultipliers.gold * delta;
+    const scienceGain = era.resources.science.baseRate * this.state.resourceMultipliers.science * delta;
+
     // Update resources based on era rates and multipliers
-    this.state.resources.food += era.resources.food.baseRate * this.state.resourceMultipliers.food * delta;
-    this.state.resources.wood += era.resources.wood.baseRate * this.state.resourceMultipliers.wood * delta;
-    this.state.resources.stone += era.resources.stone.baseRate * this.state.resourceMultipliers.stone * delta;
-    this.state.resources.gold += era.resources.gold.baseRate * this.state.resourceMultipliers.gold * delta;
-    this.state.resources.science += era.resources.science.baseRate * this.state.resourceMultipliers.science * delta;
+    this.state.resources.food += foodGain;
+    this.state.resources.wood += woodGain;
+    this.state.resources.stone += stoneGain;
+    this.state.resources.gold += goldGain;
+    this.state.resources.science += scienceGain;
+
+    // Update statistics
+    this.state.statistics.totalFoodGathered += foodGain;
+    this.state.statistics.totalWoodGathered += woodGain;
+    this.state.statistics.totalStoneGathered += stoneGain;
+    this.state.statistics.totalGoldEarned += goldGain;
+    this.state.statistics.totalScienceGenerated += scienceGain;
 
     // Update research progress
     if (this.state.currentResearch) {
@@ -151,6 +188,9 @@ export class Game {
     // Update training queue
     this.updateTrainingQueue(now);
 
+    // Check for achievement unlocks
+    this.checkAchievements();
+
     this.notifyStateChange();
   }
 
@@ -162,6 +202,7 @@ export class Game {
       if (now >= training.endTime) {
         // Add troop to army
         this.addTroopToArmy(training.troopId);
+        this.state.statistics.totalTroopsTrained++;
         completed.push(i);
       }
     }
@@ -183,17 +224,29 @@ export class Game {
 
   // Resource gathering actions (manual clicking)
   gatherFood(): void {
-    this.state.resources.food += 1 * this.state.resourceMultipliers.food;
+    const amount = 1 * this.state.resourceMultipliers.food;
+    this.state.resources.food += amount;
+    this.state.statistics.totalFoodGathered += amount;
+    this.state.statistics.clickCount++;
+    this.checkAchievements();
     this.notifyStateChange();
   }
 
   gatherWood(): void {
-    this.state.resources.wood += 1 * this.state.resourceMultipliers.wood;
+    const amount = 1 * this.state.resourceMultipliers.wood;
+    this.state.resources.wood += amount;
+    this.state.statistics.totalWoodGathered += amount;
+    this.state.statistics.clickCount++;
+    this.checkAchievements();
     this.notifyStateChange();
   }
 
   gatherStone(): void {
-    this.state.resources.stone += 1 * this.state.resourceMultipliers.stone;
+    const amount = 1 * this.state.resourceMultipliers.stone;
+    this.state.resources.stone += amount;
+    this.state.statistics.totalStoneGathered += amount;
+    this.state.statistics.clickCount++;
+    this.checkAchievements();
     this.notifyStateChange();
   }
 
@@ -346,14 +399,29 @@ export class Game {
       this.state.resources.gold += result.rewards.gold;
       this.state.resources.science += result.rewards.science;
       
+      // Update statistics for rewards
+      this.state.statistics.totalFoodGathered += result.rewards.food;
+      this.state.statistics.totalWoodGathered += result.rewards.wood;
+      this.state.statistics.totalStoneGathered += result.rewards.stone;
+      this.state.statistics.totalGoldEarned += result.rewards.gold;
+      this.state.statistics.totalScienceGenerated += result.rewards.science;
+      
       // Mark mission as completed
       this.state.completedMissions.add(this.state.activeBattle.missionId);
+      
+      // Update battle statistics
+      this.state.statistics.battlesWon++;
+    } else {
+      this.state.statistics.battlesLost++;
     }
     
     // Apply casualties to army (reduce troops based on damage taken)
     if (result.casualtyPercent > 0) {
       this.applyCasualties(result.casualtyPercent);
     }
+    
+    // Check achievements after battle
+    this.checkAchievements();
   }
 
   private applyCasualties(casualtyPercent: number): void {
@@ -402,14 +470,181 @@ export class Game {
     return TROOP_TYPES.filter(troop => this.state.unlockedTroops.has(troop.id));
   }
 
+  // Achievement system
+  private checkAchievements(): void {
+    for (const achievement of ACHIEVEMENTS) {
+      const progress = this.state.achievements.get(achievement.id);
+      if (!progress || progress.unlocked) continue;
+
+      if (this.isAchievementConditionMet(achievement)) {
+        this.unlockAchievement(achievement.id);
+      }
+    }
+  }
+
+  private isAchievementConditionMet(achievement: Achievement): boolean {
+    const condition = achievement.condition;
+    
+    switch (condition.type) {
+      case 'resource_total':
+        return this.getStatisticForResource(condition.target as string) >= condition.amount;
+      case 'resource_current':
+        return this.state.resources[condition.target as keyof typeof this.state.resources] >= condition.amount;
+      case 'tech_count':
+        return this.state.researchedTechs.size >= condition.amount;
+      case 'troop_count':
+        return this.getTotalTroopCount() >= condition.amount;
+      case 'era_reached':
+        return this.hasReachedEra(condition.target as string);
+      case 'battles_won':
+        return this.state.statistics.battlesWon >= condition.amount;
+      case 'missions_completed':
+        return this.state.completedMissions.size >= condition.amount;
+      default:
+        return false;
+    }
+  }
+
+  private getStatisticForResource(resource: string): number {
+    switch (resource) {
+      case 'food': return this.state.statistics.totalFoodGathered;
+      case 'wood': return this.state.statistics.totalWoodGathered;
+      case 'stone': return this.state.statistics.totalStoneGathered;
+      case 'gold': return this.state.statistics.totalGoldEarned;
+      case 'science': return this.state.statistics.totalScienceGenerated;
+      default: return 0;
+    }
+  }
+
+  private getTotalTroopCount(): number {
+    return this.state.army.reduce((sum, troop) => sum + troop.count, 0);
+  }
+
+  private hasReachedEra(eraId: string): boolean {
+    const currentIndex = ERAS.findIndex(e => e.id === this.state.currentEra);
+    const targetIndex = ERAS.findIndex(e => e.id === eraId);
+    return currentIndex >= targetIndex;
+  }
+
+  private unlockAchievement(achievementId: string): void {
+    const progress = this.state.achievements.get(achievementId);
+    if (!progress || progress.unlocked) return;
+
+    const achievement = getAchievementById(achievementId);
+    if (!achievement) return;
+
+    progress.unlocked = true;
+    progress.unlockedAt = Date.now();
+    progress.notified = false;
+
+    // Add to pending notifications
+    this.state.pendingAchievementNotifications.push(achievementId);
+
+    // Apply achievement reward if any
+    if (achievement.reward) {
+      if (achievement.reward.type === 'multiplier' && achievement.reward.resource) {
+        const resource = achievement.reward.resource as keyof typeof this.state.resourceMultipliers;
+        this.state.resourceMultipliers[resource] *= achievement.reward.amount;
+      }
+    }
+
+    // Notify callback
+    if (this.onAchievementUnlocked) {
+      this.onAchievementUnlocked(achievement);
+    }
+  }
+
+  getUnlockedAchievements(): Achievement[] {
+    return ACHIEVEMENTS.filter(a => {
+      const progress = this.state.achievements.get(a.id);
+      return progress && progress.unlocked;
+    });
+  }
+
+  getLockedAchievements(): Achievement[] {
+    return ACHIEVEMENTS.filter(a => {
+      const progress = this.state.achievements.get(a.id);
+      return !progress || !progress.unlocked;
+    });
+  }
+
+  getAchievementProgress(achievementId: string): AchievementProgress | undefined {
+    return this.state.achievements.get(achievementId);
+  }
+
+  popPendingAchievementNotification(): string | undefined {
+    return this.state.pendingAchievementNotifications.shift();
+  }
+
+  // Offline progress
+  calculateOfflineProgress(lastSaveTime: number): void {
+    const now = Date.now();
+    const offlineDuration = (now - lastSaveTime) / 1000; // seconds
+    
+    // Cap offline time at 8 hours
+    const maxOfflineTime = 8 * 60 * 60;
+    const cappedDuration = Math.min(offlineDuration, maxOfflineTime);
+    
+    // Minimum 60 seconds to count as offline
+    if (cappedDuration < 60) {
+      this.offlineProgress = null;
+      return;
+    }
+
+    const era = getEraById(this.state.currentEra);
+    if (!era) {
+      this.offlineProgress = null;
+      return;
+    }
+
+    // Calculate resources earned (50% efficiency for offline)
+    const offlineEfficiency = 0.5;
+    const food = era.resources.food.baseRate * this.state.resourceMultipliers.food * cappedDuration * offlineEfficiency;
+    const wood = era.resources.wood.baseRate * this.state.resourceMultipliers.wood * cappedDuration * offlineEfficiency;
+    const stone = era.resources.stone.baseRate * this.state.resourceMultipliers.stone * cappedDuration * offlineEfficiency;
+    const gold = era.resources.gold.baseRate * this.state.resourceMultipliers.gold * cappedDuration * offlineEfficiency;
+    const science = era.resources.science.baseRate * this.state.resourceMultipliers.science * cappedDuration * offlineEfficiency;
+
+    // Apply offline earnings
+    this.state.resources.food += food;
+    this.state.resources.wood += wood;
+    this.state.resources.stone += stone;
+    this.state.resources.gold += gold;
+    this.state.resources.science += science;
+
+    // Update statistics
+    this.state.statistics.totalFoodGathered += food;
+    this.state.statistics.totalWoodGathered += wood;
+    this.state.statistics.totalStoneGathered += stone;
+    this.state.statistics.totalGoldEarned += gold;
+    this.state.statistics.totalScienceGenerated += science;
+    this.state.statistics.offlineEarnings += food + wood + stone + gold + science;
+
+    // Store offline progress for display
+    this.offlineProgress = {
+      earned: true,
+      resources: { food, wood, stone, gold, science },
+      duration: cappedDuration,
+    };
+  }
+
+  dismissOfflineProgress(): void {
+    this.offlineProgress = null;
+  }
+
   // Save/Load
   saveGame(): string {
+    // Convert achievements Map to array for JSON serialization
+    const achievementsArray = Array.from(this.state.achievements.entries());
+    
     const saveData = {
       ...this.state,
       researchedTechs: Array.from(this.state.researchedTechs),
       unlockedTroops: Array.from(this.state.unlockedTroops),
       completedMissions: Array.from(this.state.completedMissions),
+      achievements: achievementsArray,
       activeBattle: null, // Don't save active battles
+      saveTime: Date.now(), // Save timestamp for offline progress
     };
     return JSON.stringify(saveData);
   }
@@ -417,6 +652,26 @@ export class Game {
   loadGame(saveString: string): boolean {
     try {
       const saveData = JSON.parse(saveString);
+      
+      // Convert achievements array back to Map, or create new if not present
+      let achievementsMap: Map<string, AchievementProgress>;
+      if (saveData.achievements && Array.isArray(saveData.achievements)) {
+        achievementsMap = new Map(saveData.achievements);
+      } else {
+        achievementsMap = createInitialAchievementProgress();
+      }
+      
+      // Ensure all achievements exist (in case new ones were added)
+      for (const achievement of ACHIEVEMENTS) {
+        if (!achievementsMap.has(achievement.id)) {
+          achievementsMap.set(achievement.id, {
+            id: achievement.id,
+            unlocked: false,
+            notified: false,
+          });
+        }
+      }
+      
       this.state = {
         ...saveData,
         researchedTechs: new Set(saveData.researchedTechs),
@@ -425,7 +680,16 @@ export class Game {
         missions: generateMissions(), // Always regenerate missions
         activeBattle: null,
         battleAnimationSpeed: saveData.battleAnimationSpeed || 800,
+        statistics: saveData.statistics || createInitialStatistics(),
+        achievements: achievementsMap,
+        pendingAchievementNotifications: [],
       };
+      
+      // Calculate offline progress if save time is available
+      if (saveData.saveTime) {
+        this.calculateOfflineProgress(saveData.saveTime);
+      }
+      
       return true;
     } catch {
       return false;
@@ -434,10 +698,12 @@ export class Game {
 
   resetGame(): void {
     this.state = this.createInitialState();
+    this.offlineProgress = null;
     this.notifyStateChange();
   }
 }
 
 // Export for global use
-export { ERAS, TECHNOLOGIES, TROOP_TYPES };
+export { ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS };
 export type { Mission, ActiveBattle, BattleResult, BattleLog } from './combat.js';
+export type { Achievement, AchievementProgress, Statistics } from './achievements.js';
