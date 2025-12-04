@@ -55,6 +55,7 @@
     <!-- Tab Navigation -->
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="resources">📦 Resources</button>
+      <button class="tab-btn" data-tab="buildings">🏗️ Buildings</button>
       <button class="tab-btn" data-tab="research">🔬 Research</button>
       <button class="tab-btn" data-tab="barracks">⚔️ Barracks</button>
       <button class="tab-btn" data-tab="army">🛡️ Army</button>
@@ -72,6 +73,15 @@
           <button id="gather-food" class="gather-btn">🍖 Gather Food (+1)</button>
           <button id="gather-wood" class="gather-btn">🪵 Gather Wood (+1)</button>
           <button id="gather-stone" class="gather-btn">🪨 Gather Stone (+1)</button>
+        </div>
+      </div>
+
+      <!-- Buildings Tab -->
+      <div id="buildings-tab" class="tab-content">
+        <h2>🏗️ Buildings & Infrastructure</h2>
+        <p>Construct buildings to boost your resource production. Research technologies to unlock more buildings!</p>
+        <div id="buildings-content" class="buildings-content">
+          <!-- Filled dynamically -->
         </div>
       </div>
 

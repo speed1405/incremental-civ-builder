@@ -1,10 +1,11 @@
 // UI management for the game
-import { ERAS, TECHNOLOGIES, ACHIEVEMENTS } from './game.js';
+import { ERAS, TECHNOLOGIES, ACHIEVEMENTS, BUILDING_TYPES } from './game.js';
 import { getEraById } from './eras.js';
 import { getTechById } from './research.js';
 import { getTroopTypeById } from './barracks.js';
 import { getMissionById, getMissionsByEra, isMissionAvailable } from './combat.js';
 import { getAchievementsByCategory } from './achievements.js';
+import { getBuildingTypeById } from './buildings.js';
 export class GameUI {
     constructor(game) {
         this.currentTab = 'resources';
@@ -63,6 +64,9 @@ export class GameUI {
         switch (this.currentTab) {
             case 'resources':
                 this.renderResourcesTab();
+                break;
+            case 'buildings':
+                this.renderBuildingsTab();
                 break;
             case 'research':
                 this.renderResearchTab();
@@ -146,6 +150,143 @@ export class GameUI {
         document.getElementById('gather-food')?.addEventListener('click', () => this.game.gatherFood());
         document.getElementById('gather-wood')?.addEventListener('click', () => this.game.gatherWood());
         document.getElementById('gather-stone')?.addEventListener('click', () => this.game.gatherStone());
+    }
+    renderBuildingsTab() {
+        const container = document.getElementById('buildings-content');
+        if (!container)
+            return;
+        let html = '';
+        // Construction queue
+        html += '<h3>🔨 Construction Queue</h3>';
+        if (this.game.state.constructionQueue.length > 0) {
+            html += '<div class="construction-queue">';
+            const now = Date.now();
+            for (const construction of this.game.state.constructionQueue) {
+                const buildingType = getBuildingTypeById(construction.buildingId);
+                if (buildingType) {
+                    const remaining = Math.max(0, (construction.endTime - now) / 1000);
+                    const progress = ((buildingType.buildTime - remaining) / buildingType.buildTime) * 100;
+                    html += `
+            <div class="construction-item">
+              <span>${buildingType.name}</span>
+              <div class="progress-bar small">
+                <div class="progress-fill" style="width: ${progress}%"></div>
+              </div>
+              <span>${remaining.toFixed(1)}s</span>
+            </div>
+          `;
+                }
+            }
+            html += '</div>';
+        }
+        else {
+            html += '<p class="empty-message">No buildings under construction</p>';
+        }
+        // Building production overview
+        const buildingProduction = this.game.getBuildingProduction();
+        const totalBuildings = this.game.getTotalBuildingCount();
+        html += `
+      <div class="building-overview">
+        <h3>📊 Building Production (${totalBuildings} buildings)</h3>
+        <div class="production-stats">
+          ${buildingProduction.food > 0 ? `<span class="production-stat">🍖 +${buildingProduction.food.toFixed(1)}/s</span>` : ''}
+          ${buildingProduction.wood > 0 ? `<span class="production-stat">🪵 +${buildingProduction.wood.toFixed(1)}/s</span>` : ''}
+          ${buildingProduction.stone > 0 ? `<span class="production-stat">🪨 +${buildingProduction.stone.toFixed(1)}/s</span>` : ''}
+          ${buildingProduction.gold > 0 ? `<span class="production-stat">💰 +${buildingProduction.gold.toFixed(1)}/s</span>` : ''}
+          ${buildingProduction.science > 0 ? `<span class="production-stat">🔬 +${buildingProduction.science.toFixed(1)}/s</span>` : ''}
+          ${totalBuildings === 0 ? '<span class="empty-message">Build your first building to start producing resources!</span>' : ''}
+        </div>
+      </div>
+    `;
+        // Group buildings by era
+        const buildingsByEra = new Map();
+        for (const era of ERAS) {
+            buildingsByEra.set(era.id, []);
+        }
+        for (const building of BUILDING_TYPES) {
+            buildingsByEra.get(building.era)?.push(building);
+        }
+        // Render each era's buildings
+        html += '<h3>🏗️ Available Buildings</h3>';
+        for (const era of ERAS) {
+            const buildings = buildingsByEra.get(era.id) || [];
+            if (buildings.length === 0)
+                continue;
+            // Check if any building in this era is unlocked
+            const hasUnlockedBuildings = buildings.some(b => b.unlockTech === null || this.game.state.unlockedBuildings.has(b.id));
+            if (!hasUnlockedBuildings)
+                continue;
+            html += `<div class="era-section">
+        <h4>${era.name} Buildings</h4>
+        <div class="building-grid">`;
+            for (const building of buildings) {
+                const isUnlocked = building.unlockTech === null || this.game.state.unlockedBuildings.has(building.id);
+                if (!isUnlocked)
+                    continue;
+                const currentCount = this.game.getBuildingCount(building.id);
+                const canBuild = this.canBuildBuilding(building);
+                const atMax = currentCount >= building.maxCount;
+                let statusClass = 'locked';
+                if (atMax)
+                    statusClass = 'maxed';
+                else if (canBuild)
+                    statusClass = 'available';
+                html += `
+          <div class="building-card ${statusClass}">
+            <div class="building-header">
+              <h5>${building.name}</h5>
+              <span class="building-count">${currentCount}/${building.maxCount}</span>
+            </div>
+            <p class="building-desc">${building.description}</p>
+            <div class="building-production">
+              <span class="label">Production:</span>
+              ${building.production.food ? `<span>🍖 +${building.production.food}/s</span>` : ''}
+              ${building.production.wood ? `<span>🪵 +${building.production.wood}/s</span>` : ''}
+              ${building.production.stone ? `<span>🪨 +${building.production.stone}/s</span>` : ''}
+              ${building.production.gold ? `<span>💰 +${building.production.gold}/s</span>` : ''}
+              ${building.production.science ? `<span>🔬 +${building.production.science}/s</span>` : ''}
+            </div>
+            <div class="building-cost">
+              <span class="label">Cost:</span>
+              ${building.cost.food > 0 ? `<span>🍖 ${building.cost.food}</span>` : ''}
+              ${building.cost.wood > 0 ? `<span>🪵 ${building.cost.wood}</span>` : ''}
+              ${building.cost.stone > 0 ? `<span>🪨 ${building.cost.stone}</span>` : ''}
+              ${building.cost.gold > 0 ? `<span>💰 ${building.cost.gold}</span>` : ''}
+            </div>
+            <p class="build-time">⏱️ ${building.buildTime}s</p>
+            <button class="build-btn" data-building="${building.id}" ${!canBuild || atMax ? 'disabled' : ''}>
+              ${atMax ? 'Max Built' : 'Build'}
+            </button>
+          </div>
+        `;
+            }
+            html += '</div></div>';
+        }
+        container.innerHTML = html;
+        // Attach build button listeners
+        container.querySelectorAll('.build-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const buildingId = e.target.dataset.building;
+                if (buildingId) {
+                    this.game.constructBuilding(buildingId);
+                }
+            });
+        });
+    }
+    canBuildBuilding(building) {
+        const { resources } = this.game.state;
+        const currentCount = this.game.getBuildingCount(building.id);
+        if (currentCount >= building.maxCount)
+            return false;
+        if (resources.food < building.cost.food)
+            return false;
+        if (resources.wood < building.cost.wood)
+            return false;
+        if (resources.stone < building.cost.stone)
+            return false;
+        if (resources.gold < building.cost.gold)
+            return false;
+        return true;
     }
     renderResearchTab() {
         const container = document.getElementById('research-tree');
@@ -676,6 +817,7 @@ export class GameUI {
         const categories = [
             { id: 'progress', name: 'Era Progress', icon: '🏛️' },
             { id: 'resources', name: 'Resource Gathering', icon: '📦' },
+            { id: 'buildings', name: 'Buildings', icon: '🏗️' },
             { id: 'research', name: 'Research', icon: '🔬' },
             { id: 'military', name: 'Military', icon: '⚔️' },
             { id: 'combat', name: 'Combat', icon: '🎯' },
@@ -763,6 +905,11 @@ export class GameUI {
             <span class="stat-icon">👆</span>
             <span class="stat-value">${formatNumber(stats.clickCount)}</span>
             <span class="stat-label">Clicks</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🏗️</span>
+            <span class="stat-value">${this.game.getTotalBuildingCount()}</span>
+            <span class="stat-label">Buildings</span>
           </div>
           <div class="stat-card">
             <span class="stat-icon">⚔️</span>

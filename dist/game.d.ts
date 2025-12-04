@@ -3,6 +3,7 @@ import { Technology, TECHNOLOGIES } from './research.js';
 import { TroopType, TROOP_TYPES, TrainingTroop, Troop } from './barracks.js';
 import { Mission, ActiveBattle } from './combat.js';
 import { Achievement, AchievementProgress, Statistics, ACHIEVEMENTS } from './achievements.js';
+import { BuildingType, BUILDING_TYPES, Building, ConstructingBuilding } from './buildings.js';
 export interface GameState {
     currentEra: string;
     resources: {
@@ -34,6 +35,9 @@ export interface GameState {
     statistics: Statistics;
     achievements: Map<string, AchievementProgress>;
     pendingAchievementNotifications: string[];
+    buildings: Building[];
+    constructionQueue: ConstructingBuilding[];
+    unlockedBuildings: Set<string>;
 }
 export declare class Game {
     state: GameState;
@@ -61,11 +65,25 @@ export declare class Game {
     private update;
     private updateTrainingQueue;
     private addTroopToArmy;
+    private updateConstructionQueue;
+    private addBuilding;
     gatherFood(): void;
     gatherWood(): void;
     gatherStone(): void;
     startResearch(techId: string): boolean;
     private completeResearch;
+    private checkBuildingUnlocks;
+    constructBuilding(buildingId: string): boolean;
+    getBuildingCount(buildingId: string): number;
+    getBuildingProduction(): {
+        food: number;
+        wood: number;
+        stone: number;
+        gold: number;
+        science: number;
+    };
+    getAvailableBuildings(): BuildingType[];
+    getTotalBuildingCount(): number;
     trainTroop(troopId: string): boolean;
     getArmyPower(): {
         attack: number;
@@ -100,6 +118,7 @@ export declare class Game {
     loadGame(saveString: string): boolean;
     resetGame(): void;
 }
-export { ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS };
+export { ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES };
 export type { Mission, ActiveBattle, BattleResult, BattleLog } from './combat.js';
 export type { Achievement, AchievementProgress, Statistics } from './achievements.js';
+export type { BuildingType, Building, ConstructingBuilding } from './buildings.js';
