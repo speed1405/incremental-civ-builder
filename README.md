@@ -52,11 +52,17 @@ npm run build
 
 ### Run
 
-Open `index.html` in a browser, or use a local server:
+**Option 1: Just open the file** (simplest)
+
+After running `npm run build`, simply open `index.html` directly in your browser by double-clicking it. The game is bundled to work without a server.
+
+**Option 2: Use a local server** (for development)
 
 ```bash
 npm start
 ```
+
+This starts a local server at http://localhost:8080
 
 ## How to Play
 
