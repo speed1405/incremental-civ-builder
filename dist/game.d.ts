@@ -2,6 +2,7 @@ import { ERAS } from './eras.js';
 import { Technology, TECHNOLOGIES } from './research.js';
 import { TroopType, TROOP_TYPES, TrainingTroop, Troop } from './barracks.js';
 import { Mission, ActiveBattle } from './combat.js';
+import { Achievement, AchievementProgress, Statistics, ACHIEVEMENTS } from './achievements.js';
 export interface GameState {
     currentEra: string;
     resources: {
@@ -30,13 +31,29 @@ export interface GameState {
     completedMissions: Set<string>;
     activeBattle: ActiveBattle | null;
     battleAnimationSpeed: number;
+    statistics: Statistics;
+    achievements: Map<string, AchievementProgress>;
+    pendingAchievementNotifications: string[];
 }
 export declare class Game {
     state: GameState;
     private updateInterval;
     private onStateChange;
+    private onAchievementUnlocked;
+    offlineProgress: {
+        earned: boolean;
+        resources: {
+            food: number;
+            wood: number;
+            stone: number;
+            gold: number;
+            science: number;
+        };
+        duration: number;
+    } | null;
     constructor();
     private createInitialState;
+    setOnAchievementUnlocked(callback: (achievement: Achievement) => void): void;
     setOnStateChange(callback: () => void): void;
     private notifyStateChange;
     start(): void;
@@ -67,9 +84,22 @@ export declare class Game {
     isMissionCompleted(missionId: string): boolean;
     getAvailableTechs(): Technology[];
     getAvailableTroops(): TroopType[];
+    private checkAchievements;
+    private isAchievementConditionMet;
+    private getStatisticForResource;
+    private getTotalTroopCount;
+    private hasReachedEra;
+    private unlockAchievement;
+    getUnlockedAchievements(): Achievement[];
+    getLockedAchievements(): Achievement[];
+    getAchievementProgress(achievementId: string): AchievementProgress | undefined;
+    popPendingAchievementNotification(): string | undefined;
+    calculateOfflineProgress(lastSaveTime: number): void;
+    dismissOfflineProgress(): void;
     saveGame(): string;
     loadGame(saveString: string): boolean;
     resetGame(): void;
 }
-export { ERAS, TECHNOLOGIES, TROOP_TYPES };
+export { ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS };
 export type { Mission, ActiveBattle, BattleResult, BattleLog } from './combat.js';
+export type { Achievement, AchievementProgress, Statistics } from './achievements.js';

@@ -1,18 +1,22 @@
 // UI management for the game
-import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES, Mission, ActiveBattle } from './game.js';
+import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, Mission, ActiveBattle, Achievement } from './game.js';
 import { getEraById } from './eras.js';
 import { getTechById } from './research.js';
 import { getTroopTypeById, calculateArmyPower } from './barracks.js';
 import { getMissionById, getMissionsByEra, isMissionAvailable } from './combat.js';
+import { getAchievementsByCategory } from './achievements.js';
 
 export class GameUI {
   private game: Game;
   private currentTab: string = 'resources';
   private battleAnimationInterval: number | null = null;
+  private achievementNotificationQueue: Achievement[] = [];
+  private isShowingAchievement: boolean = false;
 
   constructor(game: Game) {
     this.game = game;
     this.game.setOnStateChange(() => this.render());
+    this.game.setOnAchievementUnlocked((achievement) => this.queueAchievementNotification(achievement));
     this.setupEventListeners();
   }
 
@@ -85,7 +89,16 @@ export class GameUI {
       case 'combat':
         this.renderCombatTab();
         break;
+      case 'achievements':
+        this.renderAchievementsTab();
+        break;
     }
+    
+    // Check for offline progress popup
+    this.checkOfflineProgress();
+    
+    // Process achievement notifications
+    this.processAchievementNotifications();
   }
 
   private renderHeader(): void {
@@ -714,5 +727,249 @@ export class GameUI {
       notification.classList.add('fade-out');
       setTimeout(() => notification.remove(), 500);
     }, 2000);
+  }
+
+  // Achievements tab
+  private renderAchievementsTab(): void {
+    const container = document.getElementById('achievements-content');
+    if (!container) return;
+
+    let html = '';
+
+    // Statistics section
+    html += this.renderStatisticsSection();
+
+    // Achievement categories
+    const categories = [
+      { id: 'progress', name: 'Era Progress', icon: '🏛️' },
+      { id: 'resources', name: 'Resource Gathering', icon: '📦' },
+      { id: 'research', name: 'Research', icon: '🔬' },
+      { id: 'military', name: 'Military', icon: '⚔️' },
+      { id: 'combat', name: 'Combat', icon: '🎯' },
+    ];
+
+    html += '<h3>🏆 Achievements</h3>';
+    
+    const unlockedCount = this.game.getUnlockedAchievements().length;
+    const totalCount = ACHIEVEMENTS.length;
+    html += `<div class="achievement-progress-bar">
+      <div class="achievement-progress-fill" style="width: ${(unlockedCount / totalCount) * 100}%"></div>
+      <span class="achievement-progress-text">${unlockedCount} / ${totalCount} Unlocked</span>
+    </div>`;
+
+    for (const category of categories) {
+      const categoryAchievements = getAchievementsByCategory(category.id);
+      const unlockedInCategory = categoryAchievements.filter(a => {
+        const progress = this.game.getAchievementProgress(a.id);
+        return progress && progress.unlocked;
+      }).length;
+
+      html += `
+        <div class="achievement-category">
+          <h4>${category.icon} ${category.name} (${unlockedInCategory}/${categoryAchievements.length})</h4>
+          <div class="achievement-grid">
+      `;
+
+      for (const achievement of categoryAchievements) {
+        const progress = this.game.getAchievementProgress(achievement.id);
+        const isUnlocked = progress && progress.unlocked;
+
+        html += `
+          <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
+            <div class="achievement-icon">${achievement.icon}</div>
+            <div class="achievement-info">
+              <h5>${achievement.name}</h5>
+              <p>${achievement.description}</p>
+              ${achievement.reward ? `<span class="achievement-reward">Reward: ${achievement.reward.resource ? achievement.reward.resource + ' ' : ''}×${achievement.reward.amount}</span>` : ''}
+            </div>
+            ${isUnlocked ? '<span class="achievement-badge">✓</span>' : ''}
+          </div>
+        `;
+      }
+
+      html += '</div></div>';
+    }
+
+    container.innerHTML = html;
+  }
+
+  private renderStatisticsSection(): string {
+    const stats = this.game.state.statistics;
+    const formatNumber = (n: number) => Math.floor(n).toLocaleString();
+    const formatTime = (seconds: number) => {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = Math.floor(seconds % 60);
+      if (hours > 0) return `${hours}h ${minutes}m ${secs}s`;
+      if (minutes > 0) return `${minutes}m ${secs}s`;
+      return `${secs}s`;
+    };
+
+    return `
+      <div class="statistics-section">
+        <h3>📊 Statistics</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">🍖</span>
+            <span class="stat-value">${formatNumber(stats.totalFoodGathered)}</span>
+            <span class="stat-label">Total Food</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🪵</span>
+            <span class="stat-value">${formatNumber(stats.totalWoodGathered)}</span>
+            <span class="stat-label">Total Wood</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🪨</span>
+            <span class="stat-value">${formatNumber(stats.totalStoneGathered)}</span>
+            <span class="stat-label">Total Stone</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">💰</span>
+            <span class="stat-value">${formatNumber(stats.totalGoldEarned)}</span>
+            <span class="stat-label">Total Gold</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🔬</span>
+            <span class="stat-value">${formatNumber(stats.totalScienceGenerated)}</span>
+            <span class="stat-label">Total Science</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">👆</span>
+            <span class="stat-value">${formatNumber(stats.clickCount)}</span>
+            <span class="stat-label">Clicks</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⚔️</span>
+            <span class="stat-value">${formatNumber(stats.totalTroopsTrained)}</span>
+            <span class="stat-label">Troops Trained</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🏆</span>
+            <span class="stat-value">${stats.battlesWon}</span>
+            <span class="stat-label">Battles Won</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">💀</span>
+            <span class="stat-value">${stats.battlesLost}</span>
+            <span class="stat-label">Battles Lost</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⏱️</span>
+            <span class="stat-value">${formatTime(this.game.state.totalPlayTime)}</span>
+            <span class="stat-label">Play Time</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">💤</span>
+            <span class="stat-value">${formatNumber(stats.offlineEarnings)}</span>
+            <span class="stat-label">Offline Earnings</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">📚</span>
+            <span class="stat-value">${this.game.state.researchedTechs.size}</span>
+            <span class="stat-label">Technologies</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Achievement notifications
+  private queueAchievementNotification(achievement: Achievement): void {
+    this.achievementNotificationQueue.push(achievement);
+  }
+
+  private processAchievementNotifications(): void {
+    if (this.isShowingAchievement || this.achievementNotificationQueue.length === 0) return;
+
+    const achievement = this.achievementNotificationQueue.shift();
+    if (!achievement) return;
+
+    this.isShowingAchievement = true;
+    this.showAchievementPopup(achievement);
+  }
+
+  private showAchievementPopup(achievement: Achievement): void {
+    const popup = document.createElement('div');
+    popup.className = 'achievement-popup';
+    popup.innerHTML = `
+      <div class="achievement-popup-content">
+        <div class="achievement-popup-icon">${achievement.icon}</div>
+        <div class="achievement-popup-info">
+          <h4>Achievement Unlocked!</h4>
+          <h5>${achievement.name}</h5>
+          <p>${achievement.description}</p>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Animate in
+    setTimeout(() => popup.classList.add('show'), 10);
+
+    // Remove after delay
+    setTimeout(() => {
+      popup.classList.remove('show');
+      setTimeout(() => {
+        popup.remove();
+        this.isShowingAchievement = false;
+        // Process next notification
+        this.processAchievementNotifications();
+      }, 500);
+    }, 3000);
+  }
+
+  // Offline progress popup
+  private checkOfflineProgress(): void {
+    const offlineProgress = this.game.offlineProgress;
+    if (!offlineProgress || !offlineProgress.earned) return;
+
+    // Only show once
+    this.game.dismissOfflineProgress();
+    this.showOfflineProgressPopup(offlineProgress);
+  }
+
+  private showOfflineProgressPopup(progress: { resources: { food: number; wood: number; stone: number; gold: number; science: number }; duration: number }): void {
+    const formatNumber = (n: number) => Math.floor(n).toLocaleString();
+    const formatTime = (seconds: number) => {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
+    };
+
+    const popup = document.createElement('div');
+    popup.className = 'offline-popup-overlay';
+    popup.innerHTML = `
+      <div class="offline-popup">
+        <h3>💤 Welcome Back!</h3>
+        <p>You were away for ${formatTime(progress.duration)}</p>
+        <p class="offline-subtitle">Your civilization earned while you were gone:</p>
+        <div class="offline-rewards">
+          ${progress.resources.food > 0 ? `<span>🍖 +${formatNumber(progress.resources.food)}</span>` : ''}
+          ${progress.resources.wood > 0 ? `<span>🪵 +${formatNumber(progress.resources.wood)}</span>` : ''}
+          ${progress.resources.stone > 0 ? `<span>🪨 +${formatNumber(progress.resources.stone)}</span>` : ''}
+          ${progress.resources.gold > 0 ? `<span>💰 +${formatNumber(progress.resources.gold)}</span>` : ''}
+          ${progress.resources.science > 0 ? `<span>🔬 +${formatNumber(progress.resources.science)}</span>` : ''}
+        </div>
+        <p class="offline-note">Offline earnings are 50% of normal rate (max 8 hours)</p>
+        <button class="offline-dismiss-btn">Continue Playing</button>
+      </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Add click handler
+    popup.querySelector('.offline-dismiss-btn')?.addEventListener('click', () => {
+      popup.classList.add('fade-out');
+      setTimeout(() => popup.remove(), 300);
+    });
+
+    // Also dismiss on overlay click
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.classList.add('fade-out');
+        setTimeout(() => popup.remove(), 300);
+      }
+    });
   }
 }
