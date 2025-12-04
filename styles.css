@@ -610,6 +610,502 @@ body {
   background: var(--accent-secondary);
 }
 
+/* Combat System Styles */
+.combat-content {
+  padding: 10px 0;
+}
+
+.combat-intro {
+  margin-bottom: 15px;
+  color: var(--text-secondary);
+}
+
+.army-power-summary {
+  background: var(--bg-tertiary);
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: var(--accent-gold);
+}
+
+.warning-message {
+  background: rgba(255, 68, 68, 0.2);
+  border: 2px solid var(--danger);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: var(--danger);
+  text-align: center;
+}
+
+.mission-era-section {
+  margin-bottom: 30px;
+}
+
+.mission-era-section.locked {
+  opacity: 0.6;
+}
+
+.mission-era-title {
+  color: var(--accent-secondary);
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--bg-tertiary);
+  margin-bottom: 15px;
+}
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.mission-card {
+  padding: 18px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.mission-card:hover {
+  border-color: var(--accent-secondary);
+}
+
+.mission-card.completed {
+  border-color: var(--success);
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(107, 203, 119, 0.1) 100%);
+}
+
+.mission-card.locked {
+  opacity: 0.5;
+  border-color: #444;
+}
+
+.mission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mission-header h5 {
+  color: var(--accent-gold);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.completed-badge {
+  background: var(--success);
+  color: var(--bg-primary);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.mission-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.enemy-stats {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.enemy-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--danger);
+  margin-bottom: 5px;
+}
+
+.enemy-power {
+  display: flex;
+  gap: 15px;
+  font-size: 0.9rem;
+}
+
+.difficulty-indicator {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.difficulty-very-easy {
+  background: rgba(107, 203, 119, 0.3);
+  color: var(--success);
+}
+
+.difficulty-easy {
+  background: rgba(78, 205, 196, 0.3);
+  color: var(--accent-secondary);
+}
+
+.difficulty-medium {
+  background: rgba(255, 217, 61, 0.3);
+  color: var(--accent-gold);
+}
+
+.difficulty-hard {
+  background: rgba(255, 140, 0, 0.3);
+  color: var(--warning);
+}
+
+.difficulty-very-hard {
+  background: rgba(255, 68, 68, 0.3);
+  color: var(--danger);
+}
+
+.difficulty-extreme, .difficulty-impossible {
+  background: rgba(139, 0, 0, 0.3);
+  color: #ff6666;
+}
+
+.mission-rewards {
+  margin-bottom: 12px;
+}
+
+.rewards-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 5px;
+}
+
+.rewards-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--accent-gold);
+}
+
+.mission-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mission-btn:hover:not(:disabled) {
+  background: #d63850;
+  transform: scale(1.02);
+}
+
+.mission-btn:disabled, .mission-btn.disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Battle Arena Styles */
+.battle-arena {
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+  border-radius: 15px;
+  padding: 25px;
+  border: 2px solid var(--accent-primary);
+}
+
+.battle-title {
+  text-align: center;
+  color: var(--accent-gold);
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.battle-vs {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 25px;
+}
+
+.battle-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 20px;
+}
+
+.battle-side {
+  flex: 1;
+  text-align: center;
+  padding: 20px;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+}
+
+.player-side {
+  border: 2px solid var(--accent-secondary);
+}
+
+.enemy-side {
+  border: 2px solid var(--danger);
+}
+
+.army-icon {
+  font-size: 4rem;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.army-icon.victorious {
+  animation: victoryBounce 0.5s ease infinite;
+}
+
+.army-icon.defeated {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+@keyframes victoryBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.battle-side h4 {
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.health-bar-container {
+  margin-top: 10px;
+}
+
+.health-bar {
+  height: 20px;
+  background: var(--bg-primary);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.health-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.player-health {
+  background: linear-gradient(90deg, var(--accent-secondary) 0%, var(--success) 100%);
+}
+
+.enemy-health {
+  background: linear-gradient(90deg, var(--danger) 0%, #ff8c00 100%);
+}
+
+.health-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.battle-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.battle-clash {
+  font-size: 3rem;
+  animation: none;
+}
+
+.battle-clash.animating {
+  animation: clashAnimation 0.8s ease infinite;
+}
+
+@keyframes clashAnimation {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.2) rotate(-10deg); }
+  50% { transform: scale(1) rotate(0deg); }
+  75% { transform: scale(1.2) rotate(10deg); }
+}
+
+.round-counter {
+  font-weight: bold;
+  color: var(--accent-gold);
+}
+
+/* Battle Log */
+.battle-log-container {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.battle-log-container h4 {
+  color: var(--accent-secondary);
+  margin-bottom: 10px;
+}
+
+.battle-log {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 10px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+}
+
+.log-entry {
+  padding: 8px;
+  margin-bottom: 5px;
+  background: var(--bg-tertiary);
+  border-radius: 5px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.log-entry.latest {
+  opacity: 1;
+  border-left: 3px solid var(--accent-primary);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.log-round {
+  color: var(--accent-gold);
+  font-weight: bold;
+  min-width: 70px;
+}
+
+.log-damage {
+  flex: 1;
+}
+
+.player-damage {
+  color: var(--success);
+}
+
+.enemy-damage {
+  color: var(--danger);
+}
+
+.log-separator {
+  color: var(--text-secondary);
+}
+
+/* Battle Result */
+.battle-result {
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+  animation: resultPopup 0.5s ease;
+}
+
+@keyframes resultPopup {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.battle-result.victory {
+  background: linear-gradient(135deg, rgba(107, 203, 119, 0.2) 0%, rgba(78, 205, 196, 0.2) 100%);
+  border: 2px solid var(--success);
+}
+
+.battle-result.defeat {
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.2) 0%, rgba(139, 0, 0, 0.2) 100%);
+  border: 2px solid var(--danger);
+}
+
+.battle-result h3 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.battle-result.victory h3 {
+  color: var(--success);
+}
+
+.battle-result.defeat h3 {
+  color: var(--danger);
+}
+
+.casualty-report {
+  color: var(--warning);
+  margin-bottom: 15px;
+}
+
+.battle-rewards {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.battle-rewards h4 {
+  color: var(--accent-gold);
+  margin-bottom: 10px;
+}
+
+.battle-rewards .rewards-list {
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.dismiss-battle-btn {
+  padding: 12px 30px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 8px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dismiss-battle-btn:hover {
+  background: #3dbdb5;
+  transform: scale(1.02);
+}
+
+/* Battle Controls */
+.battle-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.battle-controls label {
+  color: var(--text-secondary);
+}
+
+.battle-controls input[type="range"] {
+  width: 150px;
+  accent-color: var(--accent-primary);
+}
+
+#speed-display {
+  color: var(--accent-gold);
+  min-width: 60px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .game-header h1 {
@@ -632,11 +1128,24 @@ body {
   
   .tech-grid,
   .troop-grid,
-  .army-grid {
+  .army-grid,
+  .mission-grid {
     grid-template-columns: 1fr;
   }
   
   .power-stats {
     gap: 20px;
+  }
+  
+  .battle-field {
+    flex-direction: column;
+  }
+  
+  .battle-side {
+    width: 100%;
+  }
+  
+  .army-icon {
+    font-size: 3rem;
   }
 }

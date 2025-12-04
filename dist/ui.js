@@ -3,9 +3,11 @@ import { ERAS, TECHNOLOGIES } from './game.js';
 import { getEraById } from './eras.js';
 import { getTechById } from './research.js';
 import { getTroopTypeById } from './barracks.js';
+import { getMissionById, getMissionsByEra, isMissionAvailable } from './combat.js';
 export class GameUI {
     constructor(game) {
         this.currentTab = 'resources';
+        this.battleAnimationInterval = null;
         this.game = game;
         this.game.setOnStateChange(() => this.render());
         this.setupEventListeners();
@@ -61,6 +63,9 @@ export class GameUI {
                 break;
             case 'army':
                 this.renderArmyTab();
+                break;
+            case 'combat':
+                this.renderCombatTab();
                 break;
         }
     }
@@ -349,6 +354,268 @@ export class GameUI {
             html += '</div>';
         }
         container.innerHTML = html;
+    }
+    renderCombatTab() {
+        const container = document.getElementById('combat-content');
+        if (!container)
+            return;
+        // Check if there's an active battle
+        if (this.game.state.activeBattle) {
+            this.renderActiveBattle(container);
+            return;
+        }
+        // Show missions
+        let html = '<h3>⚔️ Combat Missions</h3>';
+        html += '<p class="combat-intro">Choose a mission to test your army against enemy forces. Missions are organized by era - higher eras have tougher enemies but better rewards!</p>';
+        const playerPower = this.game.getArmyPower();
+        html += `
+      <div class="army-power-summary">
+        <span>Your Army: ⚔️ ${playerPower.attack} | 🛡️ ${playerPower.defense} | ❤️ ${playerPower.health}</span>
+      </div>
+    `;
+        if (playerPower.health === 0) {
+            html += '<div class="warning-message">⚠️ You need troops to start missions! Train some in the Barracks first.</div>';
+        }
+        // Group missions by era
+        for (const era of ERAS) {
+            const eraMissions = getMissionsByEra(this.game.state.missions, era.id);
+            if (eraMissions.length === 0)
+                continue;
+            const isEraAvailable = isMissionAvailable(eraMissions[0], this.game.state.currentEra);
+            html += `
+        <div class="mission-era-section ${!isEraAvailable ? 'locked' : ''}">
+          <h4 class="mission-era-title">${era.name} Missions ${!isEraAvailable ? '🔒' : ''}</h4>
+          <div class="mission-grid">
+      `;
+            for (const mission of eraMissions) {
+                const isAvailable = isMissionAvailable(mission, this.game.state.currentEra);
+                const isCompleted = this.game.isMissionCompleted(mission.id);
+                const canStart = isAvailable && playerPower.health > 0;
+                // Calculate difficulty rating
+                const difficultyRating = this.getDifficultyRating(playerPower, mission);
+                html += `
+          <div class="mission-card ${isCompleted ? 'completed' : ''} ${!isAvailable ? 'locked' : ''}">
+            <div class="mission-header">
+              <h5>${mission.name}</h5>
+              ${isCompleted ? '<span class="completed-badge">✓ Completed</span>' : ''}
+            </div>
+            <p class="mission-desc">${mission.description}</p>
+            <div class="enemy-stats">
+              <span class="enemy-label">Enemy: ${mission.enemyArmy.name}</span>
+              <div class="enemy-power">
+                <span>⚔️ ${mission.enemyArmy.attack}</span>
+                <span>🛡️ ${mission.enemyArmy.defense}</span>
+                <span>❤️ ${mission.enemyArmy.health}</span>
+              </div>
+            </div>
+            <div class="difficulty-indicator ${difficultyRating.class}">
+              Difficulty: ${difficultyRating.label}
+            </div>
+            <div class="mission-rewards">
+              <span class="rewards-label">Rewards:</span>
+              <div class="rewards-list">
+                ${mission.rewards.food > 0 ? `<span>🍖 ${mission.rewards.food}</span>` : ''}
+                ${mission.rewards.wood > 0 ? `<span>🪵 ${mission.rewards.wood}</span>` : ''}
+                ${mission.rewards.stone > 0 ? `<span>🪨 ${mission.rewards.stone}</span>` : ''}
+                ${mission.rewards.gold > 0 ? `<span>💰 ${mission.rewards.gold}</span>` : ''}
+                ${mission.rewards.science > 0 ? `<span>🔬 ${mission.rewards.science}</span>` : ''}
+              </div>
+            </div>
+            <button class="mission-btn ${!canStart ? 'disabled' : ''}" 
+                    data-mission="${mission.id}" 
+                    ${!canStart ? 'disabled' : ''}>
+              ${!isAvailable ? '🔒 Locked' : isCompleted ? '⚔️ Replay' : '⚔️ Start Mission'}
+            </button>
+          </div>
+        `;
+            }
+            html += '</div></div>';
+        }
+        container.innerHTML = html;
+        // Attach mission button listeners
+        container.querySelectorAll('.mission-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const missionId = e.target.dataset.mission;
+                if (missionId) {
+                    this.startMission(missionId);
+                }
+            });
+        });
+    }
+    getDifficultyRating(playerPower, mission) {
+        const playerTotal = playerPower.attack + playerPower.defense + playerPower.health;
+        const enemyTotal = mission.enemyArmy.attack + mission.enemyArmy.defense + mission.enemyArmy.health;
+        if (playerTotal === 0)
+            return { label: 'Impossible', class: 'difficulty-impossible' };
+        const ratio = playerTotal / enemyTotal;
+        if (ratio >= 2.0)
+            return { label: 'Very Easy', class: 'difficulty-very-easy' };
+        if (ratio >= 1.5)
+            return { label: 'Easy', class: 'difficulty-easy' };
+        if (ratio >= 1.0)
+            return { label: 'Medium', class: 'difficulty-medium' };
+        if (ratio >= 0.7)
+            return { label: 'Hard', class: 'difficulty-hard' };
+        if (ratio >= 0.4)
+            return { label: 'Very Hard', class: 'difficulty-very-hard' };
+        return { label: 'Extreme', class: 'difficulty-extreme' };
+    }
+    startMission(missionId) {
+        if (this.game.startMission(missionId)) {
+            // Start battle animation
+            this.startBattleAnimation();
+        }
+    }
+    startBattleAnimation() {
+        // Clear any existing animation
+        if (this.battleAnimationInterval) {
+            clearInterval(this.battleAnimationInterval);
+        }
+        // Start animating battle rounds
+        this.battleAnimationInterval = window.setInterval(() => {
+            if (!this.game.state.activeBattle || this.game.state.activeBattle.isComplete) {
+                if (this.battleAnimationInterval) {
+                    clearInterval(this.battleAnimationInterval);
+                    this.battleAnimationInterval = null;
+                }
+                return;
+            }
+            this.game.advanceBattleRound();
+        }, this.game.state.battleAnimationSpeed);
+    }
+    renderActiveBattle(container) {
+        const battle = this.game.state.activeBattle;
+        if (!battle)
+            return;
+        const mission = getMissionById(this.game.state.missions, battle.missionId);
+        if (!mission)
+            return;
+        const currentLog = battle.logs[battle.currentRound - 1];
+        const playerHealth = currentLog ? currentLog.playerHealth : battle.playerStartHealth;
+        const enemyHealth = currentLog ? currentLog.enemyHealth : battle.enemyStartHealth;
+        const playerHealthPercent = (playerHealth / battle.playerStartHealth) * 100;
+        const enemyHealthPercent = (enemyHealth / battle.enemyStartHealth) * 100;
+        let html = `
+      <div class="battle-arena">
+        <h3 class="battle-title">⚔️ Battle: ${mission.name}</h3>
+        <p class="battle-vs">Your Army vs ${mission.enemyArmy.name}</p>
+        
+        <div class="battle-field">
+          <!-- Player Side -->
+          <div class="battle-side player-side">
+            <div class="army-icon ${battle.isComplete && battle.result?.victory ? 'victorious' : ''} ${battle.isComplete && !battle.result?.victory ? 'defeated' : ''}">
+              🏰
+            </div>
+            <h4>Your Army</h4>
+            <div class="health-bar-container">
+              <div class="health-bar">
+                <div class="health-fill player-health" style="width: ${playerHealthPercent}%"></div>
+              </div>
+              <span class="health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
+            </div>
+          </div>
+          
+          <!-- Battle Animation -->
+          <div class="battle-center">
+            <div class="battle-clash ${!battle.isComplete ? 'animating' : ''}">
+              ⚔️
+            </div>
+            <div class="round-counter">
+              Round ${battle.currentRound} / ${battle.logs.length}
+            </div>
+          </div>
+          
+          <!-- Enemy Side -->
+          <div class="battle-side enemy-side">
+            <div class="army-icon ${battle.isComplete && !battle.result?.victory ? 'victorious' : ''} ${battle.isComplete && battle.result?.victory ? 'defeated' : ''}">
+              👹
+            </div>
+            <h4>${mission.enemyArmy.name}</h4>
+            <div class="health-bar-container">
+              <div class="health-bar">
+                <div class="health-fill enemy-health" style="width: ${enemyHealthPercent}%"></div>
+              </div>
+              <span class="health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Battle Log -->
+        <div class="battle-log-container">
+          <h4>Battle Log</h4>
+          <div class="battle-log" id="battle-log">
+    `;
+        // Show logs up to current round
+        for (let i = 0; i < battle.currentRound; i++) {
+            const log = battle.logs[i];
+            html += `
+        <div class="log-entry ${i === battle.currentRound - 1 ? 'latest' : ''}">
+          <span class="log-round">Round ${log.round}:</span>
+          <span class="log-damage player-damage">You deal ${log.playerDamage} dmg</span>
+          <span class="log-separator">|</span>
+          <span class="log-damage enemy-damage">Enemy deals ${log.enemyDamage} dmg</span>
+        </div>
+      `;
+        }
+        html += `
+          </div>
+        </div>
+    `;
+        // Show result if battle is complete
+        if (battle.isComplete && battle.result) {
+            const result = battle.result;
+            html += `
+        <div class="battle-result ${result.victory ? 'victory' : 'defeat'}">
+          <h3>${result.victory ? '🎉 Victory!' : '💀 Defeat!'}</h3>
+          <p class="casualty-report">Casualties: ${result.casualtyPercent}% of your army</p>
+          ${result.victory && result.rewards ? `
+            <div class="battle-rewards">
+              <h4>Rewards Earned:</h4>
+              <div class="rewards-list">
+                ${result.rewards.food > 0 ? `<span>🍖 +${result.rewards.food}</span>` : ''}
+                ${result.rewards.wood > 0 ? `<span>🪵 +${result.rewards.wood}</span>` : ''}
+                ${result.rewards.stone > 0 ? `<span>🪨 +${result.rewards.stone}</span>` : ''}
+                ${result.rewards.gold > 0 ? `<span>💰 +${result.rewards.gold}</span>` : ''}
+                ${result.rewards.science > 0 ? `<span>🔬 +${result.rewards.science}</span>` : ''}
+              </div>
+            </div>
+          ` : ''}
+          <button class="dismiss-battle-btn" id="dismiss-battle">Return to Missions</button>
+        </div>
+      `;
+        }
+        // Speed control
+        html += `
+      <div class="battle-controls">
+        <label>Battle Speed:</label>
+        <input type="range" id="battle-speed" min="100" max="2000" step="100" 
+               value="${this.game.state.battleAnimationSpeed}">
+        <span id="speed-display">${this.game.state.battleAnimationSpeed}ms</span>
+      </div>
+    `;
+        html += '</div>';
+        container.innerHTML = html;
+        // Auto-scroll battle log to bottom
+        const battleLog = document.getElementById('battle-log');
+        if (battleLog) {
+            battleLog.scrollTop = battleLog.scrollHeight;
+        }
+        // Attach dismiss button listener
+        document.getElementById('dismiss-battle')?.addEventListener('click', () => {
+            this.game.dismissBattle();
+        });
+        // Attach speed control listener
+        document.getElementById('battle-speed')?.addEventListener('input', (e) => {
+            const speed = parseInt(e.target.value);
+            this.game.setBattleSpeed(speed);
+            const speedDisplay = document.getElementById('speed-display');
+            if (speedDisplay)
+                speedDisplay.textContent = `${speed}ms`;
+            // Restart animation with new speed
+            if (!this.game.state.activeBattle?.isComplete) {
+                this.startBattleAnimation();
+            }
+        });
     }
     saveGame() {
         const saveString = this.game.saveGame();
