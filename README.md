@@ -88,6 +88,46 @@ Technologies are organized by era and require prerequisites to unlock. Key miles
 - Computing → Information Age
 - Artificial Intelligence → Future Age
 
+## Suggestions for Future Development
+
+Here are some ideas to enhance the game:
+
+### 🎮 Gameplay Features
+- **Combat System**: Add battles against AI civilizations or barbarians
+- **Wonder Building**: Construct famous wonders (Pyramids, Colosseum, etc.) for unique bonuses
+- **Achievements System**: Unlock achievements for milestones like "First Technology" or "Space Age"
+- **Events System**: Random events (plague, gold discovery, etc.) that affect resources
+- **Prestige/Rebirth**: Reset with bonuses for replayability
+
+### 🏗️ Buildings & Infrastructure
+- **Building System**: Farms, mines, libraries that boost resource production
+- **City Management**: Multiple cities with different specializations
+- **Population System**: Citizens that can be assigned to different tasks
+
+### ⚔️ Military Enhancements
+- **Unit Upgrades**: Upgrade existing units to more powerful versions
+- **Formations/Tactics**: Different combat strategies
+- **Defense System**: Walls and defensive structures
+- **Conquests**: Capture territories for resource bonuses
+
+### 📊 Economy & Trade
+- **Trading System**: Trade resources with AI merchants
+- **Market Fluctuations**: Dynamic resource prices
+- **Happiness/Morale**: Affects productivity and military effectiveness
+
+### 🎨 UI/UX Improvements
+- **Statistics Page**: Track historical data and graphs
+- **Offline Progress**: Earn resources while away
+- **Sound Effects & Music**: Audio feedback for actions
+- **Dark/Light Theme Toggle**: User preference for visual theme
+- **Tutorial System**: Guided introduction for new players
+
+### 🔧 Technical Enhancements
+- **Cloud Saves**: Sync progress across devices
+- **Mobile Responsive**: Improve touch controls for mobile
+- **Keyboard Shortcuts**: Quick actions for power users
+- **Modding Support**: Allow custom technologies and units
+
 ## License
 
 ISC
