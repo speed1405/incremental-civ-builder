@@ -96,9 +96,9 @@ export class Game {
     return {
       currentEra: 'stone_age',
       resources: {
-        food: 100,
-        wood: 50,
-        stone: 25,
+        food: 0,
+        wood: 0,
+        stone: 0,
         gold: 0,
         science: 0,
       },

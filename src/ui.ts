@@ -152,27 +152,22 @@ export class GameUI {
   }
 
   private renderResourcesTab(): void {
-    const container = document.getElementById('gather-buttons');
-    if (!container) return;
-    
-    // Gather buttons are already in HTML, just show current multipliers
     const { resourceMultipliers } = this.game.state;
-    container.innerHTML = `
-      <button id="gather-food" class="gather-btn">
-        🍖 Gather Food (+${resourceMultipliers.food.toFixed(1)})
-      </button>
-      <button id="gather-wood" class="gather-btn">
-        🪵 Gather Wood (+${resourceMultipliers.wood.toFixed(1)})
-      </button>
-      <button id="gather-stone" class="gather-btn">
-        🪨 Gather Stone (+${resourceMultipliers.stone.toFixed(1)})
-      </button>
-    `;
-
-    // Re-attach event listeners
-    document.getElementById('gather-food')?.addEventListener('click', () => this.game.gatherFood());
-    document.getElementById('gather-wood')?.addEventListener('click', () => this.game.gatherWood());
-    document.getElementById('gather-stone')?.addEventListener('click', () => this.game.gatherStone());
+    
+    // Only update button text, don't recreate the buttons (keeps event listeners intact)
+    const foodBtn = document.getElementById('gather-food');
+    const woodBtn = document.getElementById('gather-wood');
+    const stoneBtn = document.getElementById('gather-stone');
+    
+    if (foodBtn) {
+      foodBtn.textContent = `🍖 Gather Food (+${resourceMultipliers.food.toFixed(1)})`;
+    }
+    if (woodBtn) {
+      woodBtn.textContent = `🪵 Gather Wood (+${resourceMultipliers.wood.toFixed(1)})`;
+    }
+    if (stoneBtn) {
+      stoneBtn.textContent = `🪨 Gather Stone (+${resourceMultipliers.stone.toFixed(1)})`;
+    }
   }
 
   private renderBuildingsTab(): void {
