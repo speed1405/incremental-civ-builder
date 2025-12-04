@@ -1,6 +1,11 @@
 // Combat system with missions based on tech era
 import { calculateArmyPower } from './barracks.js';
 import { ERAS } from './eras.js';
+// Combat constants
+const DEFENSE_MITIGATION_FACTOR = 0.3;
+const MAX_BATTLE_ROUNDS = 50;
+const DAMAGE_RANDOM_MIN = 0.8;
+const DAMAGE_RANDOM_RANGE = 0.4;
 // Generate missions for each era
 export function generateMissions() {
     const missions = [];
@@ -53,11 +58,11 @@ export function generateMissions() {
     });
     missions.push({
         id: 'bronze_warlord',
-        name: 'Warlord\'s Army',
+        name: "Warlord's Army",
         description: 'A warlord seeks to conquer your lands with his chariot army.',
         era: 'bronze_age',
         enemyArmy: {
-            name: 'Warlord\'s Forces',
+            name: "Warlord's Forces",
             troops: [],
             attack: 40,
             defense: 20,
@@ -356,9 +361,9 @@ export function getMissionById(missions, id) {
 // Calculate damage with some randomness
 function calculateDamage(attack, defense) {
     // Base damage is attack minus some defense mitigation
-    const baseDamage = Math.max(1, attack - (defense * 0.3));
+    const baseDamage = Math.max(1, attack - (defense * DEFENSE_MITIGATION_FACTOR));
     // Add some randomness (80% to 120% of base damage)
-    const randomFactor = 0.8 + Math.random() * 0.4;
+    const randomFactor = DAMAGE_RANDOM_MIN + Math.random() * DAMAGE_RANDOM_RANGE;
     return Math.floor(baseDamage * randomFactor);
 }
 // Generate battle messages
@@ -412,8 +417,7 @@ export function generateBattleLogs(playerArmy, enemyArmy) {
     let playerHealth = playerArmy.health;
     let enemyHealth = enemyArmy.health;
     let round = 1;
-    const maxRounds = 50; // Prevent infinite battles
-    while (playerHealth > 0 && enemyHealth > 0 && round <= maxRounds) {
+    while (playerHealth > 0 && enemyHealth > 0 && round <= MAX_BATTLE_ROUNDS) {
         const log = simulateBattleRound(playerHealth, enemyHealth, playerArmy.attack, playerArmy.defense, enemyArmy.attack, enemyArmy.defense, round);
         playerHealth = log.playerHealth;
         enemyHealth = log.enemyHealth;

@@ -34,6 +34,11 @@ export class GameUI {
     }
     switchTab(tab) {
         this.currentTab = tab;
+        // Clean up battle animation when switching away from combat tab
+        if (tab !== 'combat' && this.battleAnimationInterval) {
+            clearInterval(this.battleAnimationInterval);
+            this.battleAnimationInterval = null;
+        }
         // Update tab buttons
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.remove('active');
