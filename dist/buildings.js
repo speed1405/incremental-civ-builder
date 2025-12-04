@@ -352,7 +352,7 @@ export function canBuildBuilding(buildingId, unlockedBuildings, builtBuildings, 
     if (!buildingType)
         return false;
     // Check if unlocked (either no tech requirement or tech has been researched)
-    if (buildingType.unlockTech && !unlockedBuildings.has(buildingId))
+    if (buildingType.unlockTech && !unlockedBuildings.has(buildingType.id))
         return false;
     // Check if we've reached max count
     const existing = builtBuildings.find(b => b.typeId === buildingId);
