@@ -166,6 +166,8 @@ export class Game {
       conqueredTerritories: new Set<string>(),
       activeConquestBattle: null,
       conquestMode: false,
+      // Skill tree and legacy system
+      skillTree: createInitialSkillTreeState(),
     };
   }
 
