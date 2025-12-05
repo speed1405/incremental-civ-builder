@@ -37,6 +37,7 @@ export interface Statistics {
     clickCount: number;
     offlineEarnings: number;
     totalBuildingsConstructed: number;
+    territoriesConquered: number;
 }
 export declare function createInitialStatistics(): Statistics;
 export declare function createInitialAchievementProgress(): Map<string, AchievementProgress>;

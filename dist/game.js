@@ -2,7 +2,7 @@
 import { ERAS, getEraById, getNextEra } from './eras.js';
 import { TECHNOLOGIES, getTechById, canResearch, TECH_IDS } from './research.js';
 import { TROOP_TYPES, getTroopTypeById, canTrainTroop, calculateArmyPower } from './barracks.js';
-import { generateMissions, getMissionById, getMissionsByEra, simulateCombat, canStartMission, isMissionAvailable, } from './combat.js';
+import { generateMissions, getMissionById, getMissionsByEra, simulateCombat, canStartMission, isMissionAvailable, generateTerritories, getTerritoryById, getTerritoriesByEra, isTerritoryAvailable, calculateConquestBonuses, calculateConquestMultipliers, simulateTerritoryConquest, } from './combat.js';
 import { ACHIEVEMENTS, getAchievementById, createInitialStatistics, createInitialAchievementProgress, } from './achievements.js';
 import { BUILDING_TYPES, getBuildingTypeById, canBuildBuilding, calculateBuildingProduction, getTotalBuildingCount, } from './buildings.js';
 export class Game {
@@ -51,6 +51,11 @@ export class Game {
             buildings: [],
             constructionQueue: [],
             unlockedBuildings: new Set(['hut']), // Hut is available from start
+            // Conquest mode
+            territories: generateTerritories(),
+            conqueredTerritories: new Set(),
+            activeConquestBattle: null,
+            conquestMode: false,
         };
     }
     setOnAchievementUnlocked(callback) {
@@ -85,12 +90,21 @@ export class Game {
             return;
         // Calculate building production
         const buildingProduction = calculateBuildingProduction(this.state.buildings);
-        // Calculate resource gains (era base rate + building production) * multipliers
-        const foodGain = (era.resources.food.baseRate + buildingProduction.food) * this.state.resourceMultipliers.food * delta;
-        const woodGain = (era.resources.wood.baseRate + buildingProduction.wood) * this.state.resourceMultipliers.wood * delta;
-        const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone) * this.state.resourceMultipliers.stone * delta;
-        const goldGain = (era.resources.gold.baseRate + buildingProduction.gold) * this.state.resourceMultipliers.gold * delta;
-        const scienceGain = (era.resources.science.baseRate + buildingProduction.science) * this.state.resourceMultipliers.science * delta;
+        // Calculate conquest bonuses
+        const conquestBonuses = this.getConquestBonuses();
+        const conquestMultipliers = this.getConquestMultipliers();
+        // Calculate total multipliers (base + conquest)
+        const totalFoodMultiplier = this.state.resourceMultipliers.food * conquestMultipliers.food;
+        const totalWoodMultiplier = this.state.resourceMultipliers.wood * conquestMultipliers.wood;
+        const totalStoneMultiplier = this.state.resourceMultipliers.stone * conquestMultipliers.stone;
+        const totalGoldMultiplier = this.state.resourceMultipliers.gold * conquestMultipliers.gold;
+        const totalScienceMultiplier = this.state.resourceMultipliers.science * conquestMultipliers.science;
+        // Calculate resource gains (era base rate + building production + conquest flat) * multipliers
+        const foodGain = (era.resources.food.baseRate + buildingProduction.food + conquestBonuses.food) * totalFoodMultiplier * delta;
+        const woodGain = (era.resources.wood.baseRate + buildingProduction.wood + conquestBonuses.wood) * totalWoodMultiplier * delta;
+        const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone + conquestBonuses.stone) * totalStoneMultiplier * delta;
+        const goldGain = (era.resources.gold.baseRate + buildingProduction.gold + conquestBonuses.gold) * totalGoldMultiplier * delta;
+        const scienceGain = (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science) * totalScienceMultiplier * delta;
         // Update resources based on era rates and multipliers
         this.state.resources.food += foodGain;
         this.state.resources.wood += woodGain;
@@ -108,7 +122,7 @@ export class Game {
             const tech = getTechById(this.state.currentResearch);
             if (tech) {
                 // Research progresses based on science generation
-                this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science) * this.state.resourceMultipliers.science * delta;
+                this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science) * totalScienceMultiplier * delta;
                 if (this.state.researchProgress >= tech.cost.science) {
                     this.completeResearch();
                 }
@@ -422,6 +436,120 @@ export class Game {
     isMissionCompleted(missionId) {
         return this.state.completedMissions.has(missionId);
     }
+    // Conquest mode methods
+    toggleConquestMode() {
+        this.state.conquestMode = !this.state.conquestMode;
+        this.notifyStateChange();
+    }
+    getAvailableTerritories() {
+        return this.state.territories.filter(t => isTerritoryAvailable(t, this.state.currentEra));
+    }
+    getTerritoriesByCurrentEra() {
+        return getTerritoriesByEra(this.state.territories, this.state.currentEra);
+    }
+    canStartConquest() {
+        return canStartMission(this.state.army) && !this.state.activeConquestBattle && !this.state.activeBattle;
+    }
+    startConquest(territoryId) {
+        const territory = getTerritoryById(this.state.territories, territoryId);
+        if (!territory)
+            return false;
+        if (!isTerritoryAvailable(territory, this.state.currentEra))
+            return false;
+        if (!canStartMission(this.state.army))
+            return false;
+        if (this.state.activeConquestBattle)
+            return false;
+        if (this.state.activeBattle)
+            return false;
+        // Simulate the full battle and store all logs
+        const result = simulateTerritoryConquest(this.state.army, territory);
+        const playerPower = calculateArmyPower(this.state.army);
+        // Create active battle with pre-computed logs
+        this.state.activeConquestBattle = {
+            missionId: territoryId, // Using missionId to store territoryId
+            logs: result.logs,
+            currentRound: 0,
+            isComplete: false,
+            result: result,
+            playerStartHealth: playerPower.health,
+            enemyStartHealth: territory.enemyArmy.health,
+        };
+        this.notifyStateChange();
+        return true;
+    }
+    advanceConquestRound() {
+        if (!this.state.activeConquestBattle)
+            return false;
+        if (this.state.activeConquestBattle.isComplete)
+            return false;
+        this.state.activeConquestBattle.currentRound++;
+        // Check if battle is complete
+        if (this.state.activeConquestBattle.currentRound >= this.state.activeConquestBattle.logs.length) {
+            this.completeConquest();
+        }
+        this.notifyStateChange();
+        return true;
+    }
+    completeConquest() {
+        if (!this.state.activeConquestBattle || !this.state.activeConquestBattle.result)
+            return;
+        this.state.activeConquestBattle.isComplete = true;
+        const result = this.state.activeConquestBattle.result;
+        const territoryId = this.state.activeConquestBattle.missionId;
+        if (result.victory && result.rewards) {
+            // Add rewards
+            this.state.resources.food += result.rewards.food;
+            this.state.resources.wood += result.rewards.wood;
+            this.state.resources.stone += result.rewards.stone;
+            this.state.resources.gold += result.rewards.gold;
+            this.state.resources.science += result.rewards.science;
+            // Update statistics for rewards
+            this.state.statistics.totalFoodGathered += result.rewards.food;
+            this.state.statistics.totalWoodGathered += result.rewards.wood;
+            this.state.statistics.totalStoneGathered += result.rewards.stone;
+            this.state.statistics.totalGoldEarned += result.rewards.gold;
+            this.state.statistics.totalScienceGenerated += result.rewards.science;
+            // Mark territory as conquered
+            this.state.conqueredTerritories.add(territoryId);
+            // Update the territory object
+            const territory = getTerritoryById(this.state.territories, territoryId);
+            if (territory) {
+                territory.conquered = true;
+            }
+            // Update statistics
+            this.state.statistics.territoriesConquered = (this.state.statistics.territoriesConquered || 0) + 1;
+            this.state.statistics.battlesWon++;
+        }
+        else {
+            this.state.statistics.battlesLost++;
+        }
+        // Apply casualties to army
+        if (result.casualtyPercent > 0) {
+            this.applyCasualties(result.casualtyPercent);
+        }
+        // Check achievements after conquest
+        this.checkAchievements();
+    }
+    dismissConquestBattle() {
+        this.state.activeConquestBattle = null;
+        this.notifyStateChange();
+    }
+    isTerritoryConquered(territoryId) {
+        return this.state.conqueredTerritories.has(territoryId);
+    }
+    getConquestBonuses() {
+        return calculateConquestBonuses(this.state.territories);
+    }
+    getConquestMultipliers() {
+        return calculateConquestMultipliers(this.state.territories);
+    }
+    getConqueredTerritoryCount() {
+        return this.state.conqueredTerritories.size;
+    }
+    getTotalTerritoryCount() {
+        return this.state.territories.length;
+    }
     // Get available technologies
     getAvailableTechs() {
         return TECHNOLOGIES.filter(tech => {
@@ -596,8 +724,10 @@ export class Game {
             unlockedTroops: Array.from(this.state.unlockedTroops),
             completedMissions: Array.from(this.state.completedMissions),
             unlockedBuildings: Array.from(this.state.unlockedBuildings),
+            conqueredTerritories: Array.from(this.state.conqueredTerritories),
             achievements: achievementsArray,
             activeBattle: null, // Don't save active battles
+            activeConquestBattle: null, // Don't save active conquest battles
             saveTime: Date.now(), // Save timestamp for offline progress
         };
         return JSON.stringify(saveData);
@@ -639,6 +769,21 @@ export class Game {
                     }
                 }
             }
+            // Handle conquered territories (may not exist in old saves)
+            let conqueredTerritoriesSet;
+            if (saveData.conqueredTerritories && Array.isArray(saveData.conqueredTerritories)) {
+                conqueredTerritoriesSet = new Set(saveData.conqueredTerritories);
+            }
+            else {
+                conqueredTerritoriesSet = new Set();
+            }
+            // Generate territories and restore conquered state
+            const territories = generateTerritories();
+            for (const territory of territories) {
+                if (conqueredTerritoriesSet.has(territory.id)) {
+                    territory.conquered = true;
+                }
+            }
             this.state = {
                 ...saveData,
                 researchedTechs: new Set(saveData.researchedTechs),
@@ -654,6 +799,11 @@ export class Game {
                 buildings: saveData.buildings || [],
                 constructionQueue: saveData.constructionQueue || [],
                 unlockedBuildings: unlockedBuildingsSet,
+                // Conquest mode
+                territories: territories,
+                conqueredTerritories: conqueredTerritoriesSet,
+                activeConquestBattle: null,
+                conquestMode: saveData.conquestMode || false,
             };
             // Calculate offline progress if save time is available
             if (saveData.saveTime) {

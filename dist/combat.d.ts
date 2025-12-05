@@ -1,10 +1,12 @@
 import { Troop } from './barracks.js';
+export type ArmySize = 'small' | 'medium' | 'large' | 'boss';
 export interface EnemyArmy {
     name: string;
     troops: Troop[];
     attack: number;
     defense: number;
     health: number;
+    size?: ArmySize;
 }
 export interface Mission {
     id: string;
@@ -20,6 +22,42 @@ export interface Mission {
         science: number;
     };
     unlocked: boolean;
+}
+export interface Territory {
+    id: string;
+    name: string;
+    description: string;
+    era: string;
+    conquered: boolean;
+    enemyArmy: EnemyArmy;
+    bonuses: {
+        resourceMultiplier?: {
+            resource: string;
+            multiplier: number;
+        };
+        flatBonus?: {
+            resource: string;
+            amount: number;
+        };
+    };
+    rewards: {
+        food: number;
+        wood: number;
+        stone: number;
+        gold: number;
+        science: number;
+    };
+}
+export interface ConquestState {
+    territories: Territory[];
+    conqueredCount: number;
+    totalBonuses: {
+        food: number;
+        wood: number;
+        stone: number;
+        gold: number;
+        science: number;
+    };
 }
 export interface BattleLog {
     round: number;
@@ -68,3 +106,22 @@ export declare function simulateCombat(playerArmy: Troop[], mission: Mission): B
 export declare function canStartMission(playerArmy: Troop[]): boolean;
 export declare function getEraIndex(eraId: string): number;
 export declare function isMissionAvailable(mission: Mission, currentEra: string): boolean;
+export declare function generateTerritories(): Territory[];
+export declare function getTerritoryById(territories: Territory[], id: string): Territory | undefined;
+export declare function getTerritoriesByEra(territories: Territory[], era: string): Territory[];
+export declare function isTerritoryAvailable(territory: Territory, currentEra: string): boolean;
+export declare function calculateConquestBonuses(territories: Territory[]): {
+    food: number;
+    wood: number;
+    stone: number;
+    gold: number;
+    science: number;
+};
+export declare function calculateConquestMultipliers(territories: Territory[]): {
+    food: number;
+    wood: number;
+    stone: number;
+    gold: number;
+    science: number;
+};
+export declare function simulateTerritoryConquest(playerArmy: Troop[], territory: Territory): BattleResult;

@@ -411,6 +411,7 @@ export function createInitialStatistics() {
         clickCount: 0,
         offlineEarnings: 0,
         totalBuildingsConstructed: 0,
+        territoriesConquered: 0,
     };
 }
 export function createInitialAchievementProgress() {

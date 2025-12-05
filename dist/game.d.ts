@@ -1,7 +1,7 @@
 import { ERAS } from './eras.js';
 import { Technology, TECHNOLOGIES } from './research.js';
 import { TroopType, TROOP_TYPES, TrainingTroop, Troop } from './barracks.js';
-import { Mission, ActiveBattle } from './combat.js';
+import { Mission, ActiveBattle, Territory } from './combat.js';
 import { Achievement, AchievementProgress, Statistics, ACHIEVEMENTS } from './achievements.js';
 import { BuildingType, BUILDING_TYPES, Building, ConstructingBuilding } from './buildings.js';
 export interface GameState {
@@ -32,6 +32,10 @@ export interface GameState {
     completedMissions: Set<string>;
     activeBattle: ActiveBattle | null;
     battleAnimationSpeed: number;
+    territories: Territory[];
+    conqueredTerritories: Set<string>;
+    activeConquestBattle: ActiveBattle | null;
+    conquestMode: boolean;
     statistics: Statistics;
     achievements: Map<string, AchievementProgress>;
     pendingAchievementNotifications: string[];
@@ -100,6 +104,31 @@ export declare class Game {
     dismissBattle(): void;
     setBattleSpeed(speed: number): void;
     isMissionCompleted(missionId: string): boolean;
+    toggleConquestMode(): void;
+    getAvailableTerritories(): Territory[];
+    getTerritoriesByCurrentEra(): Territory[];
+    canStartConquest(): boolean;
+    startConquest(territoryId: string): boolean;
+    advanceConquestRound(): boolean;
+    private completeConquest;
+    dismissConquestBattle(): void;
+    isTerritoryConquered(territoryId: string): boolean;
+    getConquestBonuses(): {
+        food: number;
+        wood: number;
+        stone: number;
+        gold: number;
+        science: number;
+    };
+    getConquestMultipliers(): {
+        food: number;
+        wood: number;
+        stone: number;
+        gold: number;
+        science: number;
+    };
+    getConqueredTerritoryCount(): number;
+    getTotalTerritoryCount(): number;
     getAvailableTechs(): Technology[];
     getAvailableTroops(): TroopType[];
     private checkAchievements;
@@ -119,6 +148,6 @@ export declare class Game {
     resetGame(): void;
 }
 export { ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES };
-export type { Mission, ActiveBattle, BattleResult, BattleLog } from './combat.js';
+export type { Mission, ActiveBattle, BattleResult, BattleLog, Territory, ArmySize } from './combat.js';
 export type { Achievement, AchievementProgress, Statistics } from './achievements.js';
 export type { BuildingType, Building, ConstructingBuilding } from './buildings.js';

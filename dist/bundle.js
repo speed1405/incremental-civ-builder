@@ -815,14 +815,15 @@
     missions.push({
       id: "stone_wolves",
       name: "Wolf Pack",
-      description: "A pack of wolves threatens your village. Defend your people!",
+      description: "A small pack of wolves threatens your village. Defend your people!",
       era: "stone_age",
       enemyArmy: {
         name: "Wolf Pack",
         troops: [],
         attack: 5,
         defense: 2,
-        health: 30
+        health: 30,
+        size: "small"
       },
       rewards: { food: 50, wood: 20, stone: 10, gold: 0, science: 5 },
       unlocked: true
@@ -837,9 +838,58 @@
         troops: [],
         attack: 10,
         defense: 5,
-        health: 60
+        health: 60,
+        size: "medium"
       },
       rewards: { food: 100, wood: 50, stone: 30, gold: 0, science: 10 },
+      unlocked: true
+    });
+    missions.push({
+      id: "stone_mammoth_hunters",
+      name: "Mammoth Hunter Clan",
+      description: "A large clan of mammoth hunters wants your territory.",
+      era: "stone_age",
+      enemyArmy: {
+        name: "Mammoth Hunter Clan",
+        troops: [],
+        attack: 15,
+        defense: 8,
+        health: 100,
+        size: "large"
+      },
+      rewards: { food: 180, wood: 90, stone: 60, gold: 0, science: 20 },
+      unlocked: true
+    });
+    missions.push({
+      id: "stone_cave_beast",
+      name: "Cave Beast",
+      description: "A legendary beast terrorizes the land. Only the bravest dare face it!",
+      era: "stone_age",
+      enemyArmy: {
+        name: "Ancient Cave Beast",
+        troops: [],
+        attack: 25,
+        defense: 15,
+        health: 150,
+        size: "boss"
+      },
+      rewards: { food: 300, wood: 150, stone: 100, gold: 20, science: 40 },
+      unlocked: true
+    });
+    missions.push({
+      id: "bronze_scouts",
+      name: "Enemy Scouts",
+      description: "Enemy scouts probe your defenses. Eliminate them!",
+      era: "bronze_age",
+      enemyArmy: {
+        name: "Scout Party",
+        troops: [],
+        attack: 15,
+        defense: 8,
+        health: 80,
+        size: "small"
+      },
+      rewards: { food: 100, wood: 70, stone: 50, gold: 30, science: 20 },
       unlocked: true
     });
     missions.push({
@@ -852,24 +902,58 @@
         troops: [],
         attack: 25,
         defense: 15,
-        health: 120
+        health: 120,
+        size: "medium"
       },
       rewards: { food: 150, wood: 100, stone: 80, gold: 50, science: 30 },
       unlocked: true
     });
     missions.push({
+      id: "bronze_chariot_army",
+      name: "Chariot Army",
+      description: "A massive chariot army approaches your borders!",
+      era: "bronze_age",
+      enemyArmy: {
+        name: "Chariot Legion",
+        troops: [],
+        attack: 35,
+        defense: 18,
+        health: 160,
+        size: "large"
+      },
+      rewards: { food: 200, wood: 130, stone: 100, gold: 80, science: 45 },
+      unlocked: true
+    });
+    missions.push({
       id: "bronze_warlord",
       name: "Warlord's Army",
-      description: "A warlord seeks to conquer your lands with his chariot army.",
+      description: "The Bronze Warlord seeks to conquer your lands with his elite army.",
       era: "bronze_age",
       enemyArmy: {
         name: "Warlord's Forces",
         troops: [],
-        attack: 40,
-        defense: 20,
-        health: 180
+        attack: 50,
+        defense: 25,
+        health: 220,
+        size: "boss"
       },
-      rewards: { food: 250, wood: 150, stone: 120, gold: 100, science: 50 },
+      rewards: { food: 350, wood: 200, stone: 160, gold: 150, science: 70 },
+      unlocked: true
+    });
+    missions.push({
+      id: "iron_raiders",
+      name: "Iron Raiders",
+      description: "Small raiding parties with iron weapons test your defenses.",
+      era: "iron_age",
+      enemyArmy: {
+        name: "Iron Raiders",
+        troops: [],
+        attack: 40,
+        defense: 25,
+        health: 200,
+        size: "small"
+      },
+      rewards: { food: 280, wood: 180, stone: 140, gold: 120, science: 70 },
       unlocked: true
     });
     missions.push({
@@ -882,54 +966,122 @@
         troops: [],
         attack: 60,
         defense: 40,
-        health: 300
+        health: 300,
+        size: "medium"
       },
       rewards: { food: 400, wood: 250, stone: 200, gold: 200, science: 100 },
       unlocked: true
     });
     missions.push({
+      id: "iron_phalanx",
+      name: "Iron Phalanx",
+      description: "A disciplined phalanx of iron-clad warriors marches against you.",
+      era: "iron_age",
+      enemyArmy: {
+        name: "Iron Phalanx",
+        troops: [],
+        attack: 80,
+        defense: 55,
+        health: 400,
+        size: "large"
+      },
+      rewards: { food: 550, wood: 350, stone: 280, gold: 300, science: 140 },
+      unlocked: true
+    });
+    missions.push({
       id: "iron_empire",
       name: "Empire Strike",
-      description: "The neighboring empire sends its legions against you.",
+      description: "The neighboring empire sends its elite legions against you.",
       era: "iron_age",
       enemyArmy: {
         name: "Imperial Legion",
         troops: [],
-        attack: 90,
-        defense: 60,
-        health: 450
+        attack: 100,
+        defense: 70,
+        health: 550,
+        size: "boss"
       },
-      rewards: { food: 600, wood: 400, stone: 300, gold: 350, science: 150 },
+      rewards: { food: 700, wood: 450, stone: 350, gold: 400, science: 180 },
+      unlocked: true
+    });
+    missions.push({
+      id: "classical_mercenaries",
+      name: "Mercenary Band",
+      description: "A small band of mercenaries threatens your borders.",
+      era: "classical_age",
+      enemyArmy: {
+        name: "Mercenary Band",
+        troops: [],
+        attack: 90,
+        defense: 50,
+        health: 450,
+        size: "small"
+      },
+      rewards: { food: 600, wood: 380, stone: 300, gold: 350, science: 150 },
       unlocked: true
     });
     missions.push({
       id: "classical_horde",
       name: "Barbarian Horde",
-      description: "A massive barbarian horde approaches your civilization.",
+      description: "A barbarian horde approaches your civilization.",
       era: "classical_age",
       enemyArmy: {
         name: "Barbarian Horde",
         troops: [],
         attack: 120,
         defense: 70,
-        health: 600
+        health: 600,
+        size: "medium"
       },
       rewards: { food: 800, wood: 500, stone: 400, gold: 500, science: 200 },
       unlocked: true
     });
     missions.push({
+      id: "classical_legion",
+      name: "Enemy Legion",
+      description: "A massive legion of enemy soldiers marches toward your lands.",
+      era: "classical_age",
+      enemyArmy: {
+        name: "Enemy Legion",
+        troops: [],
+        attack: 145,
+        defense: 90,
+        health: 750,
+        size: "large"
+      },
+      rewards: { food: 950, wood: 620, stone: 470, gold: 620, science: 270 },
+      unlocked: true
+    });
+    missions.push({
       id: "classical_rivals",
       name: "Rival Kingdom",
-      description: "The rival kingdom declares war. Defend your honor!",
+      description: "The rival kingdom declares war. Defend your honor against their elite forces!",
       era: "classical_age",
       enemyArmy: {
         name: "Royal Army",
         troops: [],
-        attack: 160,
-        defense: 100,
-        health: 800
+        attack: 180,
+        defense: 110,
+        health: 900,
+        size: "boss"
       },
-      rewards: { food: 1e3, wood: 700, stone: 500, gold: 700, science: 300 },
+      rewards: { food: 1200, wood: 800, stone: 600, gold: 800, science: 350 },
+      unlocked: true
+    });
+    missions.push({
+      id: "medieval_raiders",
+      name: "Viking Raiders",
+      description: "Viking raiders land on your shores seeking plunder.",
+      era: "medieval_age",
+      enemyArmy: {
+        name: "Viking Raiders",
+        troops: [],
+        attack: 150,
+        defense: 100,
+        health: 750,
+        size: "small"
+      },
+      rewards: { food: 1100, wood: 750, stone: 600, gold: 750, science: 300 },
       unlocked: true
     });
     missions.push({
@@ -942,24 +1094,58 @@
         troops: [],
         attack: 200,
         defense: 150,
-        health: 1e3
+        health: 1e3,
+        size: "medium"
       },
       rewards: { food: 1500, wood: 1e3, stone: 800, gold: 1e3, science: 400 },
       unlocked: true
     });
     missions.push({
+      id: "medieval_mongol_horde",
+      name: "Mongol Horde",
+      description: "The great Mongol horde sweeps across your land.",
+      era: "medieval_age",
+      enemyArmy: {
+        name: "Mongol Horde",
+        troops: [],
+        attack: 250,
+        defense: 170,
+        health: 1250,
+        size: "large"
+      },
+      rewards: { food: 1800, wood: 1250, stone: 1e3, gold: 1250, science: 520 },
+      unlocked: true
+    });
+    missions.push({
       id: "medieval_crusade",
       name: "Holy Crusade",
-      description: "A crusading army marches against your lands.",
+      description: "A massive crusading army marches against your lands with divine fury.",
       era: "medieval_age",
       enemyArmy: {
         name: "Crusader Army",
         troops: [],
-        attack: 280,
-        defense: 200,
-        health: 1400
+        attack: 320,
+        defense: 220,
+        health: 1600,
+        size: "boss"
       },
-      rewards: { food: 2e3, wood: 1500, stone: 1200, gold: 1500, science: 600 },
+      rewards: { food: 2400, wood: 1700, stone: 1400, gold: 1800, science: 700 },
+      unlocked: true
+    });
+    missions.push({
+      id: "renaissance_privateers",
+      name: "Privateers",
+      description: "Enemy privateers raid your shipping lanes.",
+      era: "renaissance",
+      enemyArmy: {
+        name: "Privateer Fleet",
+        troops: [],
+        attack: 280,
+        defense: 160,
+        health: 1400,
+        size: "small"
+      },
+      rewards: { food: 2200, wood: 1500, stone: 1100, gold: 1800, science: 600 },
       unlocked: true
     });
     missions.push({
@@ -972,24 +1158,58 @@
         troops: [],
         attack: 350,
         defense: 200,
-        health: 1800
+        health: 1800,
+        size: "medium"
       },
       rewards: { food: 3e3, wood: 2e3, stone: 1500, gold: 2500, science: 800 },
       unlocked: true
     });
     missions.push({
+      id: "renaissance_conquistadors",
+      name: "Conquistadors",
+      description: "A large force of conquistadors seeks to claim your lands.",
+      era: "renaissance",
+      enemyArmy: {
+        name: "Conquistador Army",
+        troops: [],
+        attack: 400,
+        defense: 250,
+        health: 2200,
+        size: "large"
+      },
+      rewards: { food: 3600, wood: 2600, stone: 1800, gold: 3100, science: 1e3 },
+      unlocked: true
+    });
+    missions.push({
       id: "renaissance_empire",
       name: "Colonial War",
-      description: "A colonial empire threatens your independence.",
+      description: "A powerful colonial empire threatens your independence with their full might.",
       era: "renaissance",
       enemyArmy: {
         name: "Colonial Army",
         troops: [],
-        attack: 450,
-        defense: 280,
-        health: 2400
+        attack: 500,
+        defense: 310,
+        health: 2800,
+        size: "boss"
       },
-      rewards: { food: 4e3, wood: 3e3, stone: 2e3, gold: 3500, science: 1200 },
+      rewards: { food: 4800, wood: 3500, stone: 2400, gold: 4200, science: 1400 },
+      unlocked: true
+    });
+    missions.push({
+      id: "industrial_militia",
+      name: "Rebel Militia",
+      description: "Armed militia rebels challenge your authority.",
+      era: "industrial_age",
+      enemyArmy: {
+        name: "Rebel Militia",
+        troops: [],
+        attack: 450,
+        defense: 260,
+        health: 2200,
+        size: "small"
+      },
+      rewards: { food: 4500, wood: 3e3, stone: 2200, gold: 3800, science: 1500 },
       unlocked: true
     });
     missions.push({
@@ -1002,24 +1222,58 @@
         troops: [],
         attack: 600,
         defense: 350,
-        health: 3e3
+        health: 3e3,
+        size: "medium"
       },
       rewards: { food: 6e3, wood: 4e3, stone: 3e3, gold: 5e3, science: 2e3 },
       unlocked: true
     });
     missions.push({
+      id: "industrial_coalition",
+      name: "Enemy Coalition",
+      description: "Multiple nations form a coalition against you.",
+      era: "industrial_age",
+      enemyArmy: {
+        name: "Coalition Forces",
+        troops: [],
+        attack: 720,
+        defense: 440,
+        health: 3600,
+        size: "large"
+      },
+      rewards: { food: 7200, wood: 5200, stone: 3700, gold: 6200, science: 2600 },
+      unlocked: true
+    });
+    missions.push({
       id: "industrial_invasion",
       name: "Great War",
-      description: "A great power declares total war against your nation.",
+      description: "A great power declares total war against your nation. This is an existential threat!",
       era: "industrial_age",
       enemyArmy: {
         name: "War Machine",
         troops: [],
-        attack: 800,
-        defense: 500,
-        health: 4e3
+        attack: 900,
+        defense: 560,
+        health: 4500,
+        size: "boss"
       },
-      rewards: { food: 8e3, wood: 6e3, stone: 4e3, gold: 7e3, science: 3e3 },
+      rewards: { food: 9600, wood: 7200, stone: 4800, gold: 8400, science: 3600 },
+      unlocked: true
+    });
+    missions.push({
+      id: "modern_insurgents",
+      name: "Insurgent Forces",
+      description: "Well-equipped insurgent forces operate in your territory.",
+      era: "modern_age",
+      enemyArmy: {
+        name: "Insurgent Army",
+        troops: [],
+        attack: 750,
+        defense: 450,
+        health: 3800,
+        size: "small"
+      },
+      rewards: { food: 7500, wood: 5200, stone: 3800, gold: 7500, science: 3800 },
       unlocked: true
     });
     missions.push({
@@ -1032,24 +1286,58 @@
         troops: [],
         attack: 1e3,
         defense: 600,
-        health: 5e3
+        health: 5e3,
+        size: "medium"
       },
       rewards: { food: 1e4, wood: 7e3, stone: 5e3, gold: 1e4, science: 5e3 },
       unlocked: true
     });
     missions.push({
+      id: "modern_alliance",
+      name: "Enemy Alliance",
+      description: "A military alliance mobilizes against your nation.",
+      era: "modern_age",
+      enemyArmy: {
+        name: "Allied Forces",
+        troops: [],
+        attack: 1250,
+        defense: 780,
+        health: 6200,
+        size: "large"
+      },
+      rewards: { food: 13e3, wood: 9e3, stone: 6800, gold: 13e3, science: 6800 },
+      unlocked: true
+    });
+    missions.push({
       id: "modern_superpower",
       name: "Superpower Clash",
-      description: "Face the military might of a global superpower.",
+      description: "Face the full military might of a global superpower.",
       era: "modern_age",
       enemyArmy: {
         name: "Superpower Forces",
         troops: [],
-        attack: 1400,
-        defense: 900,
-        health: 7e3
+        attack: 1600,
+        defense: 1e3,
+        health: 8e3,
+        size: "boss"
       },
-      rewards: { food: 15e3, wood: 1e4, stone: 8e3, gold: 15e3, science: 8e3 },
+      rewards: { food: 18e3, wood: 12e3, stone: 9600, gold: 18e3, science: 9600 },
+      unlocked: true
+    });
+    missions.push({
+      id: "atomic_rogue_state",
+      name: "Rogue State",
+      description: "A rogue state threatens nuclear confrontation.",
+      era: "atomic_age",
+      enemyArmy: {
+        name: "Rogue Forces",
+        troops: [],
+        attack: 1500,
+        defense: 900,
+        health: 7500,
+        size: "small"
+      },
+      rewards: { food: 15e3, wood: 11e3, stone: 9e3, gold: 19e3, science: 9e3 },
       unlocked: true
     });
     missions.push({
@@ -1062,9 +1350,26 @@
         troops: [],
         attack: 2e3,
         defense: 1200,
-        health: 1e4
+        health: 1e4,
+        size: "medium"
       },
       rewards: { food: 2e4, wood: 15e3, stone: 12e3, gold: 25e3, science: 12e3 },
+      unlocked: true
+    });
+    missions.push({
+      id: "atomic_bloc",
+      name: "Enemy Bloc",
+      description: "An entire bloc of nuclear powers aligns against you.",
+      era: "atomic_age",
+      enemyArmy: {
+        name: "Nuclear Bloc",
+        troops: [],
+        attack: 2600,
+        defense: 1560,
+        health: 13e3,
+        size: "large"
+      },
+      rewards: { food: 26e3, wood: 21e3, stone: 17e3, gold: 34e3, science: 17e3 },
       unlocked: true
     });
     missions.push({
@@ -1075,11 +1380,28 @@
       enemyArmy: {
         name: "World Coalition",
         troops: [],
-        attack: 3e3,
-        defense: 1800,
-        health: 15e3
+        attack: 3400,
+        defense: 2e3,
+        health: 17e3,
+        size: "boss"
       },
-      rewards: { food: 3e4, wood: 25e3, stone: 2e4, gold: 4e4, science: 2e4 },
+      rewards: { food: 36e3, wood: 3e4, stone: 24e3, gold: 48e3, science: 24e3 },
+      unlocked: true
+    });
+    missions.push({
+      id: "info_hackers",
+      name: "Cyber Terrorists",
+      description: "Cyber terrorists with military backing launch attacks.",
+      era: "information_age",
+      enemyArmy: {
+        name: "Cyber Terrorists",
+        troops: [],
+        attack: 3e3,
+        defense: 1900,
+        health: 15e3,
+        size: "small"
+      },
+      rewards: { food: 3e4, wood: 22e3, stone: 18e3, gold: 45e3, science: 26e3 },
       unlocked: true
     });
     missions.push({
@@ -1092,24 +1414,58 @@
         troops: [],
         attack: 4e3,
         defense: 2500,
-        health: 2e4
+        health: 2e4,
+        size: "medium"
       },
       rewards: { food: 4e4, wood: 3e4, stone: 25e3, gold: 6e4, science: 35e3 },
       unlocked: true
     });
     missions.push({
+      id: "info_drone_swarm",
+      name: "Drone Swarm",
+      description: "Autonomous drone swarms overwhelm conventional defenses.",
+      era: "information_age",
+      enemyArmy: {
+        name: "Drone Swarm",
+        troops: [],
+        attack: 5e3,
+        defense: 3100,
+        health: 25e3,
+        size: "large"
+      },
+      rewards: { food: 52e3, wood: 39e3, stone: 31e3, gold: 72e3, science: 44e3 },
+      unlocked: true
+    });
+    missions.push({
       id: "info_ai_uprising",
       name: "AI Uprising",
-      description: "Rogue AI systems control an army of machines.",
+      description: "Rogue AI systems control an army of machines. The singularity is here!",
       era: "information_age",
       enemyArmy: {
         name: "Machine Army",
         troops: [],
-        attack: 5500,
-        defense: 3500,
-        health: 28e3
+        attack: 6200,
+        defense: 4e3,
+        health: 32e3,
+        size: "boss"
       },
-      rewards: { food: 6e4, wood: 45e3, stone: 35e3, gold: 8e4, science: 5e4 },
+      rewards: { food: 72e3, wood: 54e3, stone: 42e3, gold: 96e3, science: 6e4 },
+      unlocked: true
+    });
+    missions.push({
+      id: "future_rebels",
+      name: "Space Rebels",
+      description: "Rebel forces with advanced tech challenge your authority.",
+      era: "future_age",
+      enemyArmy: {
+        name: "Space Rebels",
+        troops: [],
+        attack: 6e3,
+        defense: 3800,
+        health: 3e4,
+        size: "small"
+      },
+      rewards: { food: 75e3, wood: 52e3, stone: 38e3, gold: 112e3, science: 75e3 },
       unlocked: true
     });
     missions.push({
@@ -1122,9 +1478,26 @@
         troops: [],
         attack: 8e3,
         defense: 5e3,
-        health: 4e4
+        health: 4e4,
+        size: "medium"
       },
       rewards: { food: 1e5, wood: 7e4, stone: 5e4, gold: 15e4, science: 1e5 },
+      unlocked: true
+    });
+    missions.push({
+      id: "future_galactic_empire",
+      name: "Galactic Empire",
+      description: "A galactic empire sends its armada to conquer Earth.",
+      era: "future_age",
+      enemyArmy: {
+        name: "Imperial Armada",
+        troops: [],
+        attack: 10500,
+        defense: 6500,
+        health: 52e3,
+        size: "large"
+      },
+      rewards: { food: 13e4, wood: 91e3, stone: 65e3, gold: 195e3, science: 13e4 },
       unlocked: true
     });
     missions.push({
@@ -1135,11 +1508,12 @@
       enemyArmy: {
         name: "Singularity Entity",
         troops: [],
-        attack: 12e3,
-        defense: 8e3,
-        health: 6e4
+        attack: 14e3,
+        defense: 9e3,
+        health: 7e4,
+        size: "boss"
       },
-      rewards: { food: 2e5, wood: 15e4, stone: 1e5, gold: 3e5, science: 2e5 },
+      rewards: { food: 24e4, wood: 18e4, stone: 12e4, gold: 36e4, science: 24e4 },
       unlocked: true
     });
     return missions;
@@ -1238,6 +1612,452 @@
     const missionEraIndex = getEraIndex(mission.era);
     const currentEraIndex = getEraIndex(currentEra);
     return missionEraIndex <= currentEraIndex;
+  }
+  function generateTerritories() {
+    const territories = [];
+    territories.push({
+      id: "territory_river_valley",
+      name: "River Valley",
+      description: "A fertile valley with abundant food sources.",
+      era: "stone_age",
+      conquered: false,
+      enemyArmy: {
+        name: "River Tribe",
+        troops: [],
+        attack: 8,
+        defense: 4,
+        health: 50,
+        size: "small"
+      },
+      bonuses: { flatBonus: { resource: "food", amount: 1 } },
+      rewards: { food: 80, wood: 40, stone: 20, gold: 0, science: 10 }
+    });
+    territories.push({
+      id: "territory_forest_encampment",
+      name: "Forest Encampment",
+      description: "Dense woodland rich with timber.",
+      era: "stone_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Forest Dwellers",
+        troops: [],
+        attack: 12,
+        defense: 6,
+        health: 70,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "wood", amount: 1 } },
+      rewards: { food: 60, wood: 100, stone: 30, gold: 0, science: 15 }
+    });
+    territories.push({
+      id: "territory_copper_mines",
+      name: "Copper Mines",
+      description: "Rich copper deposits for bronze production.",
+      era: "bronze_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Mine Guards",
+        troops: [],
+        attack: 30,
+        defense: 20,
+        health: 150,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 2 } },
+      rewards: { food: 200, wood: 150, stone: 200, gold: 150, science: 50 }
+    });
+    territories.push({
+      id: "territory_trade_crossroads",
+      name: "Trade Crossroads",
+      description: "A strategic trading hub.",
+      era: "bronze_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Merchant Guards",
+        troops: [],
+        attack: 45,
+        defense: 25,
+        health: 200,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "gold", multiplier: 1.1 } },
+      rewards: { food: 300, wood: 200, stone: 180, gold: 250, science: 80 }
+    });
+    territories.push({
+      id: "territory_iron_hills",
+      name: "Iron Hills",
+      description: "Mountains rich with iron ore.",
+      era: "iron_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Hill Clan",
+        troops: [],
+        attack: 70,
+        defense: 50,
+        health: 350,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "stone", amount: 3 } },
+      rewards: { food: 500, wood: 350, stone: 400, gold: 300, science: 150 }
+    });
+    territories.push({
+      id: "territory_coastal_fortress",
+      name: "Coastal Fortress",
+      description: "A strategic naval position.",
+      era: "iron_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Coastal Garrison",
+        troops: [],
+        attack: 95,
+        defense: 70,
+        health: 500,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "food", multiplier: 1.15 } },
+      rewards: { food: 700, wood: 500, stone: 400, gold: 450, science: 200 }
+    });
+    territories.push({
+      id: "territory_ancient_library",
+      name: "Ancient Library",
+      description: "A repository of ancient knowledge.",
+      era: "classical_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Library Guards",
+        troops: [],
+        attack: 140,
+        defense: 90,
+        health: 700,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 5 } },
+      rewards: { food: 900, wood: 600, stone: 500, gold: 700, science: 500 }
+    });
+    territories.push({
+      id: "territory_golden_city",
+      name: "Golden City",
+      description: "A wealthy city of gold and culture.",
+      era: "classical_age",
+      conquered: false,
+      enemyArmy: {
+        name: "City Guard",
+        troops: [],
+        attack: 175,
+        defense: 120,
+        health: 900,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "gold", multiplier: 1.2 } },
+      rewards: { food: 1100, wood: 750, stone: 600, gold: 1200, science: 400 }
+    });
+    territories.push({
+      id: "territory_castle_keep",
+      name: "Castle Keep",
+      description: "An impenetrable fortress.",
+      era: "medieval_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Castle Defenders",
+        troops: [],
+        attack: 240,
+        defense: 180,
+        health: 1200,
+        size: "large"
+      },
+      bonuses: { flatBonus: { resource: "stone", amount: 5 } },
+      rewards: { food: 1800, wood: 1200, stone: 1500, gold: 1400, science: 700 }
+    });
+    territories.push({
+      id: "territory_holy_land",
+      name: "Holy Land",
+      description: "A sacred territory with immense spiritual value.",
+      era: "medieval_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Zealot Army",
+        troops: [],
+        attack: 300,
+        defense: 210,
+        health: 1500,
+        size: "boss"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.2 } },
+      rewards: { food: 2200, wood: 1600, stone: 1300, gold: 2e3, science: 1e3 }
+    });
+    territories.push({
+      id: "territory_trading_port",
+      name: "Trading Port",
+      description: "A bustling international trading port.",
+      era: "renaissance",
+      conquered: false,
+      enemyArmy: {
+        name: "Port Militia",
+        troops: [],
+        attack: 400,
+        defense: 250,
+        health: 2e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 10 } },
+      rewards: { food: 3500, wood: 2500, stone: 2e3, gold: 4e3, science: 1500 }
+    });
+    territories.push({
+      id: "territory_new_world_colony",
+      name: "New World Colony",
+      description: "A rich colony in the new world.",
+      era: "renaissance",
+      conquered: false,
+      enemyArmy: {
+        name: "Colonial Defense",
+        troops: [],
+        attack: 480,
+        defense: 300,
+        health: 2600,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "food", multiplier: 1.25 } },
+      rewards: { food: 5e3, wood: 3500, stone: 2500, gold: 4500, science: 1800 }
+    });
+    territories.push({
+      id: "territory_coal_basin",
+      name: "Coal Basin",
+      description: "Vast coal deposits to fuel your industries.",
+      era: "industrial_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Mining Company",
+        troops: [],
+        attack: 650,
+        defense: 400,
+        health: 3200,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "stone", amount: 15 } },
+      rewards: { food: 7e3, wood: 5e3, stone: 6e3, gold: 6e3, science: 3e3 }
+    });
+    territories.push({
+      id: "territory_industrial_heartland",
+      name: "Industrial Heartland",
+      description: "The manufacturing hub of a nation.",
+      era: "industrial_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Industrial Guard",
+        troops: [],
+        attack: 850,
+        defense: 540,
+        health: 4200,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "wood", multiplier: 1.3 } },
+      rewards: { food: 9e3, wood: 7500, stone: 5500, gold: 8e3, science: 4e3 }
+    });
+    territories.push({
+      id: "territory_oil_fields",
+      name: "Oil Fields",
+      description: "Strategic petroleum reserves.",
+      era: "modern_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Oil Defense Force",
+        troops: [],
+        attack: 1100,
+        defense: 700,
+        health: 5500,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 30 } },
+      rewards: { food: 12e3, wood: 8500, stone: 6500, gold: 18e3, science: 7e3 }
+    });
+    territories.push({
+      id: "territory_tech_hub",
+      name: "Tech Hub",
+      description: "A center of technological innovation.",
+      era: "modern_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Tech Security",
+        troops: [],
+        attack: 1500,
+        defense: 950,
+        health: 7500,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.35 } },
+      rewards: { food: 16e3, wood: 11e3, stone: 9e3, gold: 2e4, science: 15e3 }
+    });
+    territories.push({
+      id: "territory_nuclear_facility",
+      name: "Nuclear Facility",
+      description: "A secured nuclear research center.",
+      era: "atomic_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Nuclear Guard",
+        troops: [],
+        attack: 2200,
+        defense: 1350,
+        health: 11e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 50 } },
+      rewards: { food: 24e3, wood: 18e3, stone: 15e3, gold: 35e3, science: 25e3 }
+    });
+    territories.push({
+      id: "territory_space_launch_complex",
+      name: "Space Launch Complex",
+      description: "Gateway to the stars.",
+      era: "atomic_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Space Command",
+        troops: [],
+        attack: 3200,
+        defense: 1950,
+        health: 16e3,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.4 } },
+      rewards: { food: 34e3, wood: 28e3, stone: 22e3, gold: 46e3, science: 35e3 }
+    });
+    territories.push({
+      id: "territory_data_center",
+      name: "Global Data Center",
+      description: "The nerve center of worldwide communications.",
+      era: "information_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Cyber Defense",
+        troops: [],
+        attack: 4500,
+        defense: 2800,
+        health: 22e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 80 } },
+      rewards: { food: 48e3, wood: 35e3, stone: 28e3, gold: 7e4, science: 55e3 }
+    });
+    territories.push({
+      id: "territory_ai_nexus",
+      name: "AI Nexus",
+      description: "The central hub of artificial intelligence.",
+      era: "information_age",
+      conquered: false,
+      enemyArmy: {
+        name: "AI Defense Grid",
+        troops: [],
+        attack: 5800,
+        defense: 3800,
+        health: 3e4,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.5 } },
+      rewards: { food: 68e3, wood: 5e4, stone: 4e4, gold: 9e4, science: 75e3 }
+    });
+    territories.push({
+      id: "territory_space_station",
+      name: "Orbital Space Station",
+      description: "A strategic foothold in orbit.",
+      era: "future_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Orbital Guard",
+        troops: [],
+        attack: 9e3,
+        defense: 5500,
+        health: 45e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 150 } },
+      rewards: { food: 12e4, wood: 84e3, stone: 6e4, gold: 18e4, science: 15e4 }
+    });
+    territories.push({
+      id: "territory_dyson_sphere",
+      name: "Dyson Sphere",
+      description: "Harness the power of a star!",
+      era: "future_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Stellar Guardians",
+        troops: [],
+        attack: 13e3,
+        defense: 8500,
+        health: 65e3,
+        size: "boss"
+      },
+      bonuses: { resourceMultiplier: { resource: "gold", multiplier: 2 } },
+      rewards: { food: 2e5, wood: 15e4, stone: 1e5, gold: 35e4, science: 25e4 }
+    });
+    return territories;
+  }
+  function getTerritoryById(territories, id) {
+    return territories.find((t) => t.id === id);
+  }
+  function getTerritoriesByEra(territories, era) {
+    return territories.filter((t) => t.era === era);
+  }
+  function isTerritoryAvailable(territory, currentEra) {
+    const territoryEraIndex = getEraIndex(territory.era);
+    const currentEraIndex = getEraIndex(currentEra);
+    return territoryEraIndex <= currentEraIndex;
+  }
+  function calculateConquestBonuses(territories) {
+    const bonuses = { food: 0, wood: 0, stone: 0, gold: 0, science: 0 };
+    for (const territory of territories) {
+      if (territory.conquered && territory.bonuses.flatBonus) {
+        const resource = territory.bonuses.flatBonus.resource;
+        bonuses[resource] += territory.bonuses.flatBonus.amount;
+      }
+    }
+    return bonuses;
+  }
+  function calculateConquestMultipliers(territories) {
+    const multipliers = { food: 1, wood: 1, stone: 1, gold: 1, science: 1 };
+    for (const territory of territories) {
+      if (territory.conquered && territory.bonuses.resourceMultiplier) {
+        const resource = territory.bonuses.resourceMultiplier.resource;
+        multipliers[resource] *= territory.bonuses.resourceMultiplier.multiplier;
+      }
+    }
+    return multipliers;
+  }
+  function simulateTerritoryConquest(playerArmy, territory) {
+    const playerPower = calculateArmyPower(playerArmy);
+    if (playerPower.health <= 0) {
+      return {
+        victory: false,
+        logs: [{
+          round: 1,
+          playerDamage: 0,
+          enemyDamage: territory.enemyArmy.health,
+          playerHealth: 0,
+          enemyHealth: territory.enemyArmy.health,
+          message: "You have no army to fight! The territory remains unconquered."
+        }],
+        playerStartHealth: 0,
+        enemyStartHealth: territory.enemyArmy.health,
+        playerEndHealth: 0,
+        enemyEndHealth: territory.enemyArmy.health,
+        casualtyPercent: 100
+      };
+    }
+    const logs = generateBattleLogs(playerPower, territory.enemyArmy);
+    const lastLog = logs[logs.length - 1];
+    const victory = lastLog.enemyHealth <= 0;
+    const playerEndHealth = lastLog.playerHealth;
+    const enemyEndHealth = lastLog.enemyHealth;
+    const casualtyPercent = Math.round((playerPower.health - playerEndHealth) / playerPower.health * 100);
+    return {
+      victory,
+      logs,
+      playerStartHealth: playerPower.health,
+      enemyStartHealth: territory.enemyArmy.health,
+      playerEndHealth,
+      enemyEndHealth,
+      rewards: victory ? territory.rewards : void 0,
+      casualtyPercent
+    };
   }
 
   // dist/achievements.js
@@ -1653,7 +2473,8 @@
       battlesLost: 0,
       clickCount: 0,
       offlineEarnings: 0,
-      totalBuildingsConstructed: 0
+      totalBuildingsConstructed: 0,
+      territoriesConquered: 0
     };
   }
   function createInitialAchievementProgress() {
@@ -2111,8 +2932,13 @@
         // Buildings system
         buildings: [],
         constructionQueue: [],
-        unlockedBuildings: /* @__PURE__ */ new Set(["hut"])
+        unlockedBuildings: /* @__PURE__ */ new Set(["hut"]),
         // Hut is available from start
+        // Conquest mode
+        territories: generateTerritories(),
+        conqueredTerritories: /* @__PURE__ */ new Set(),
+        activeConquestBattle: null,
+        conquestMode: false
       };
     }
     setOnAchievementUnlocked(callback) {
@@ -2145,11 +2971,18 @@
       if (!era)
         return;
       const buildingProduction = calculateBuildingProduction(this.state.buildings);
-      const foodGain = (era.resources.food.baseRate + buildingProduction.food) * this.state.resourceMultipliers.food * delta;
-      const woodGain = (era.resources.wood.baseRate + buildingProduction.wood) * this.state.resourceMultipliers.wood * delta;
-      const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone) * this.state.resourceMultipliers.stone * delta;
-      const goldGain = (era.resources.gold.baseRate + buildingProduction.gold) * this.state.resourceMultipliers.gold * delta;
-      const scienceGain = (era.resources.science.baseRate + buildingProduction.science) * this.state.resourceMultipliers.science * delta;
+      const conquestBonuses = this.getConquestBonuses();
+      const conquestMultipliers = this.getConquestMultipliers();
+      const totalFoodMultiplier = this.state.resourceMultipliers.food * conquestMultipliers.food;
+      const totalWoodMultiplier = this.state.resourceMultipliers.wood * conquestMultipliers.wood;
+      const totalStoneMultiplier = this.state.resourceMultipliers.stone * conquestMultipliers.stone;
+      const totalGoldMultiplier = this.state.resourceMultipliers.gold * conquestMultipliers.gold;
+      const totalScienceMultiplier = this.state.resourceMultipliers.science * conquestMultipliers.science;
+      const foodGain = (era.resources.food.baseRate + buildingProduction.food + conquestBonuses.food) * totalFoodMultiplier * delta;
+      const woodGain = (era.resources.wood.baseRate + buildingProduction.wood + conquestBonuses.wood) * totalWoodMultiplier * delta;
+      const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone + conquestBonuses.stone) * totalStoneMultiplier * delta;
+      const goldGain = (era.resources.gold.baseRate + buildingProduction.gold + conquestBonuses.gold) * totalGoldMultiplier * delta;
+      const scienceGain = (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science) * totalScienceMultiplier * delta;
       this.state.resources.food += foodGain;
       this.state.resources.wood += woodGain;
       this.state.resources.stone += stoneGain;
@@ -2163,7 +2996,7 @@
       if (this.state.currentResearch) {
         const tech = getTechById(this.state.currentResearch);
         if (tech) {
-          this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science) * this.state.resourceMultipliers.science * delta;
+          this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science) * totalScienceMultiplier * delta;
           if (this.state.researchProgress >= tech.cost.science) {
             this.completeResearch();
           }
@@ -2445,6 +3278,110 @@
     isMissionCompleted(missionId) {
       return this.state.completedMissions.has(missionId);
     }
+    // Conquest mode methods
+    toggleConquestMode() {
+      this.state.conquestMode = !this.state.conquestMode;
+      this.notifyStateChange();
+    }
+    getAvailableTerritories() {
+      return this.state.territories.filter((t) => isTerritoryAvailable(t, this.state.currentEra));
+    }
+    getTerritoriesByCurrentEra() {
+      return getTerritoriesByEra(this.state.territories, this.state.currentEra);
+    }
+    canStartConquest() {
+      return canStartMission(this.state.army) && !this.state.activeConquestBattle && !this.state.activeBattle;
+    }
+    startConquest(territoryId) {
+      const territory = getTerritoryById(this.state.territories, territoryId);
+      if (!territory)
+        return false;
+      if (!isTerritoryAvailable(territory, this.state.currentEra))
+        return false;
+      if (!canStartMission(this.state.army))
+        return false;
+      if (this.state.activeConquestBattle)
+        return false;
+      if (this.state.activeBattle)
+        return false;
+      const result = simulateTerritoryConquest(this.state.army, territory);
+      const playerPower = calculateArmyPower(this.state.army);
+      this.state.activeConquestBattle = {
+        missionId: territoryId,
+        // Using missionId to store territoryId
+        logs: result.logs,
+        currentRound: 0,
+        isComplete: false,
+        result,
+        playerStartHealth: playerPower.health,
+        enemyStartHealth: territory.enemyArmy.health
+      };
+      this.notifyStateChange();
+      return true;
+    }
+    advanceConquestRound() {
+      if (!this.state.activeConquestBattle)
+        return false;
+      if (this.state.activeConquestBattle.isComplete)
+        return false;
+      this.state.activeConquestBattle.currentRound++;
+      if (this.state.activeConquestBattle.currentRound >= this.state.activeConquestBattle.logs.length) {
+        this.completeConquest();
+      }
+      this.notifyStateChange();
+      return true;
+    }
+    completeConquest() {
+      if (!this.state.activeConquestBattle || !this.state.activeConquestBattle.result)
+        return;
+      this.state.activeConquestBattle.isComplete = true;
+      const result = this.state.activeConquestBattle.result;
+      const territoryId = this.state.activeConquestBattle.missionId;
+      if (result.victory && result.rewards) {
+        this.state.resources.food += result.rewards.food;
+        this.state.resources.wood += result.rewards.wood;
+        this.state.resources.stone += result.rewards.stone;
+        this.state.resources.gold += result.rewards.gold;
+        this.state.resources.science += result.rewards.science;
+        this.state.statistics.totalFoodGathered += result.rewards.food;
+        this.state.statistics.totalWoodGathered += result.rewards.wood;
+        this.state.statistics.totalStoneGathered += result.rewards.stone;
+        this.state.statistics.totalGoldEarned += result.rewards.gold;
+        this.state.statistics.totalScienceGenerated += result.rewards.science;
+        this.state.conqueredTerritories.add(territoryId);
+        const territory = getTerritoryById(this.state.territories, territoryId);
+        if (territory) {
+          territory.conquered = true;
+        }
+        this.state.statistics.territoriesConquered = (this.state.statistics.territoriesConquered || 0) + 1;
+        this.state.statistics.battlesWon++;
+      } else {
+        this.state.statistics.battlesLost++;
+      }
+      if (result.casualtyPercent > 0) {
+        this.applyCasualties(result.casualtyPercent);
+      }
+      this.checkAchievements();
+    }
+    dismissConquestBattle() {
+      this.state.activeConquestBattle = null;
+      this.notifyStateChange();
+    }
+    isTerritoryConquered(territoryId) {
+      return this.state.conqueredTerritories.has(territoryId);
+    }
+    getConquestBonuses() {
+      return calculateConquestBonuses(this.state.territories);
+    }
+    getConquestMultipliers() {
+      return calculateConquestMultipliers(this.state.territories);
+    }
+    getConqueredTerritoryCount() {
+      return this.state.conqueredTerritories.size;
+    }
+    getTotalTerritoryCount() {
+      return this.state.territories.length;
+    }
     // Get available technologies
     getAvailableTechs() {
       return TECHNOLOGIES.filter((tech) => {
@@ -2613,9 +3550,12 @@
         unlockedTroops: Array.from(this.state.unlockedTroops),
         completedMissions: Array.from(this.state.completedMissions),
         unlockedBuildings: Array.from(this.state.unlockedBuildings),
+        conqueredTerritories: Array.from(this.state.conqueredTerritories),
         achievements: achievementsArray,
         activeBattle: null,
         // Don't save active battles
+        activeConquestBattle: null,
+        // Don't save active conquest battles
         saveTime: Date.now()
         // Save timestamp for offline progress
       };
@@ -2651,6 +3591,18 @@
             }
           }
         }
+        let conqueredTerritoriesSet;
+        if (saveData.conqueredTerritories && Array.isArray(saveData.conqueredTerritories)) {
+          conqueredTerritoriesSet = new Set(saveData.conqueredTerritories);
+        } else {
+          conqueredTerritoriesSet = /* @__PURE__ */ new Set();
+        }
+        const territories = generateTerritories();
+        for (const territory of territories) {
+          if (conqueredTerritoriesSet.has(territory.id)) {
+            territory.conquered = true;
+          }
+        }
         this.state = {
           ...saveData,
           researchedTechs: new Set(saveData.researchedTechs),
@@ -2666,7 +3618,12 @@
           // Buildings system
           buildings: saveData.buildings || [],
           constructionQueue: saveData.constructionQueue || [],
-          unlockedBuildings: unlockedBuildingsSet
+          unlockedBuildings: unlockedBuildingsSet,
+          // Conquest mode
+          territories,
+          conqueredTerritories: conqueredTerritoriesSet,
+          activeConquestBattle: null,
+          conquestMode: saveData.conquestMode || false
         };
         if (saveData.saveTime) {
           this.calculateOfflineProgress(saveData.saveTime);
@@ -2690,6 +3647,7 @@
     constructor(game) {
       this.currentTab = "resources";
       this.battleAnimationInterval = null;
+      this.conquestAnimationInterval = null;
       this.achievementNotificationQueue = [];
       this.isShowingAchievement = false;
       this.renderTimeout = null;
@@ -2786,9 +3744,24 @@
             this.startMission(missionId);
           }
         }
+        if (target.classList.contains("territory-btn") && !target.hasAttribute("disabled")) {
+          const territoryId = target.dataset.territory;
+          if (territoryId) {
+            this.startInteraction();
+            this.startConquest(territoryId);
+          }
+        }
+        if (target.id === "toggle-conquest-mode" || target.classList.contains("mode-toggle-btn")) {
+          this.startInteraction();
+          this.game.toggleConquestMode();
+        }
         if (target.id === "dismiss-battle") {
           this.startInteraction();
           this.game.dismissBattle();
+        }
+        if (target.id === "dismiss-conquest-battle") {
+          this.startInteraction();
+          this.game.dismissConquestBattle();
         }
       });
       document.getElementById("combat-content")?.addEventListener("input", (e) => {
@@ -2802,6 +3775,9 @@
           if (!this.game.state.activeBattle?.isComplete) {
             this.startBattleAnimation();
           }
+          if (!this.game.state.activeConquestBattle?.isComplete) {
+            this.startConquestAnimation();
+          }
         }
       });
     }
@@ -2810,6 +3786,10 @@
       if (tab !== "combat" && this.battleAnimationInterval) {
         clearInterval(this.battleAnimationInterval);
         this.battleAnimationInterval = null;
+      }
+      if (tab !== "combat" && this.conquestAnimationInterval) {
+        clearInterval(this.conquestAnimationInterval);
+        this.conquestAnimationInterval = null;
       }
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.classList.remove("active");
@@ -3381,17 +4361,40 @@
         this.renderActiveBattle(container);
         return;
       }
-      let html = "<h3>\u2694\uFE0F Combat Missions</h3>";
-      html += '<p class="combat-intro">Choose a mission to test your army against enemy forces. Missions are organized by era - higher eras have tougher enemies but better rewards!</p>';
+      if (this.game.state.activeConquestBattle) {
+        this.renderActiveConquestBattle(container);
+        return;
+      }
+      const isConquestMode = this.game.state.conquestMode;
       const playerPower = this.game.getArmyPower();
+      let html = `
+      <div class="combat-mode-toggle">
+        <button class="mode-toggle-btn ${!isConquestMode ? "active" : ""}" id="toggle-conquest-mode">
+          \u2694\uFE0F Missions
+        </button>
+        <button class="mode-toggle-btn ${isConquestMode ? "active" : ""}" id="toggle-conquest-mode">
+          \u{1F3F0} Conquest
+        </button>
+      </div>
+    `;
       html += `
       <div class="army-power-summary">
         <span>Your Army: \u2694\uFE0F ${playerPower.attack} | \u{1F6E1}\uFE0F ${playerPower.defense} | \u2764\uFE0F ${playerPower.health}</span>
       </div>
     `;
       if (playerPower.health === 0) {
-        html += '<div class="warning-message">\u26A0\uFE0F You need troops to start missions! Train some in the Barracks first.</div>';
+        html += '<div class="warning-message">\u26A0\uFE0F You need troops to start battles! Train some in the Barracks first.</div>';
       }
+      if (isConquestMode) {
+        html += this.renderConquestMode(playerPower);
+      } else {
+        html += this.renderMissionsMode(playerPower);
+      }
+      container.innerHTML = html;
+    }
+    renderMissionsMode(playerPower) {
+      let html = "<h3>\u2694\uFE0F Combat Missions</h3>";
+      html += '<p class="combat-intro">Choose a mission to test your army against enemy forces. Missions are organized by era - higher eras have tougher enemies but better rewards! Missions feature armies of varying sizes: Small \u{1F539}, Medium \u{1F538}, Large \u{1F48E}, and Boss \u{1F451}.</p>';
       for (const era of ERAS) {
         const eraMissions = getMissionsByEra(this.game.state.missions, era.id);
         if (eraMissions.length === 0)
@@ -3407,10 +4410,11 @@
           const isCompleted = this.game.isMissionCompleted(mission.id);
           const canStart = isAvailable && playerPower.health > 0;
           const difficultyRating = this.getDifficultyRating(playerPower, mission);
+          const sizeIndicator = this.getArmySizeIndicator(mission.enemyArmy.size);
           html += `
           <div class="mission-card ${isCompleted ? "completed" : ""} ${!isAvailable ? "locked" : ""}">
             <div class="mission-header">
-              <h5>${mission.name}</h5>
+              <h5>${sizeIndicator} ${mission.name}</h5>
               ${isCompleted ? '<span class="completed-badge">\u2713 Completed</span>' : ""}
             </div>
             <p class="mission-desc">${mission.description}</p>
@@ -3445,7 +4449,261 @@
         }
         html += "</div></div>";
       }
+      return html;
+    }
+    renderConquestMode(playerPower) {
+      let html = "<h3>\u{1F3F0} Conquest Mode</h3>";
+      html += '<p class="combat-intro">Conquer territories to gain permanent bonuses! Each territory provides ongoing resource bonuses once conquered. Territories are organized by era - higher eras have stronger defenders but better rewards!</p>';
+      const conquestBonuses = this.game.getConquestBonuses();
+      const conquestMultipliers = this.game.getConquestMultipliers();
+      const conqueredCount = this.game.getConqueredTerritoryCount();
+      const totalCount = this.game.getTotalTerritoryCount();
+      html += `
+      <div class="conquest-overview">
+        <div class="conquest-progress">
+          <span>Territories Conquered: ${conqueredCount} / ${totalCount}</span>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${conqueredCount / totalCount * 100}%"></div>
+          </div>
+        </div>
+        <div class="conquest-bonuses">
+          <h4>Active Bonuses:</h4>
+          <div class="bonuses-list">
+            ${conquestBonuses.food > 0 ? `<span class="bonus-item">\u{1F356} +${conquestBonuses.food.toFixed(1)}/s</span>` : ""}
+            ${conquestBonuses.wood > 0 ? `<span class="bonus-item">\u{1FAB5} +${conquestBonuses.wood.toFixed(1)}/s</span>` : ""}
+            ${conquestBonuses.stone > 0 ? `<span class="bonus-item">\u{1FAA8} +${conquestBonuses.stone.toFixed(1)}/s</span>` : ""}
+            ${conquestBonuses.gold > 0 ? `<span class="bonus-item">\u{1F4B0} +${conquestBonuses.gold.toFixed(1)}/s</span>` : ""}
+            ${conquestBonuses.science > 0 ? `<span class="bonus-item">\u{1F52C} +${conquestBonuses.science.toFixed(1)}/s</span>` : ""}
+            ${conquestMultipliers.food > 1 ? `<span class="bonus-item multiplier">\u{1F356} \xD7${conquestMultipliers.food.toFixed(2)}</span>` : ""}
+            ${conquestMultipliers.wood > 1 ? `<span class="bonus-item multiplier">\u{1FAB5} \xD7${conquestMultipliers.wood.toFixed(2)}</span>` : ""}
+            ${conquestMultipliers.stone > 1 ? `<span class="bonus-item multiplier">\u{1FAA8} \xD7${conquestMultipliers.stone.toFixed(2)}</span>` : ""}
+            ${conquestMultipliers.gold > 1 ? `<span class="bonus-item multiplier">\u{1F4B0} \xD7${conquestMultipliers.gold.toFixed(2)}</span>` : ""}
+            ${conquestMultipliers.science > 1 ? `<span class="bonus-item multiplier">\u{1F52C} \xD7${conquestMultipliers.science.toFixed(2)}</span>` : ""}
+            ${conqueredCount === 0 ? '<span class="no-bonuses">No territories conquered yet!</span>' : ""}
+          </div>
+        </div>
+      </div>
+    `;
+      for (const era of ERAS) {
+        const eraTerritories = getTerritoriesByEra(this.game.state.territories, era.id);
+        if (eraTerritories.length === 0)
+          continue;
+        const isEraAvailable = isTerritoryAvailable(eraTerritories[0], this.game.state.currentEra);
+        html += `
+        <div class="territory-era-section ${!isEraAvailable ? "locked" : ""}">
+          <h4 class="territory-era-title">${era.name} Territories ${!isEraAvailable ? "\u{1F512}" : ""}</h4>
+          <div class="territory-grid">
+      `;
+        for (const territory of eraTerritories) {
+          const isAvailable = isTerritoryAvailable(territory, this.game.state.currentEra);
+          const isConquered = this.game.isTerritoryConquered(territory.id);
+          const canStart = isAvailable && playerPower.health > 0 && !isConquered;
+          const territoryAsMission = { enemyArmy: territory.enemyArmy };
+          const difficultyRating = this.getDifficultyRating(playerPower, territoryAsMission);
+          const sizeIndicator = this.getArmySizeIndicator(territory.enemyArmy.size);
+          let bonusText = "";
+          if (territory.bonuses.flatBonus) {
+            bonusText = `+${territory.bonuses.flatBonus.amount} ${this.getResourceEmoji(territory.bonuses.flatBonus.resource)}/s`;
+          } else if (territory.bonuses.resourceMultiplier) {
+            bonusText = `\xD7${territory.bonuses.resourceMultiplier.multiplier.toFixed(2)} ${this.getResourceEmoji(territory.bonuses.resourceMultiplier.resource)}`;
+          }
+          html += `
+          <div class="territory-card ${isConquered ? "conquered" : ""} ${!isAvailable ? "locked" : ""}">
+            <div class="territory-header">
+              <h5>${sizeIndicator} ${territory.name}</h5>
+              ${isConquered ? '<span class="conquered-badge">\u{1F3F4} Conquered</span>' : ""}
+            </div>
+            <p class="territory-desc">${territory.description}</p>
+            <div class="territory-bonus">
+              <span class="bonus-label">Permanent Bonus:</span>
+              <span class="bonus-value">${bonusText}</span>
+            </div>
+            <div class="enemy-stats">
+              <span class="enemy-label">Defenders: ${territory.enemyArmy.name}</span>
+              <div class="enemy-power">
+                <span>\u2694\uFE0F ${territory.enemyArmy.attack}</span>
+                <span>\u{1F6E1}\uFE0F ${territory.enemyArmy.defense}</span>
+                <span>\u2764\uFE0F ${territory.enemyArmy.health}</span>
+              </div>
+            </div>
+            <div class="difficulty-indicator ${difficultyRating.class}">
+              Difficulty: ${difficultyRating.label}
+            </div>
+            <div class="territory-rewards">
+              <span class="rewards-label">One-time Rewards:</span>
+              <div class="rewards-list">
+                ${territory.rewards.food > 0 ? `<span>\u{1F356} ${territory.rewards.food}</span>` : ""}
+                ${territory.rewards.wood > 0 ? `<span>\u{1FAB5} ${territory.rewards.wood}</span>` : ""}
+                ${territory.rewards.stone > 0 ? `<span>\u{1FAA8} ${territory.rewards.stone}</span>` : ""}
+                ${territory.rewards.gold > 0 ? `<span>\u{1F4B0} ${territory.rewards.gold}</span>` : ""}
+                ${territory.rewards.science > 0 ? `<span>\u{1F52C} ${territory.rewards.science}</span>` : ""}
+              </div>
+            </div>
+            <button class="territory-btn ${!canStart ? "disabled" : ""}" 
+                    data-territory="${territory.id}" 
+                    ${!canStart ? "disabled" : ""}>
+              ${!isAvailable ? "\u{1F512} Locked" : isConquered ? "\u{1F3F4} Conquered" : "\u2694\uFE0F Attack Territory"}
+            </button>
+          </div>
+        `;
+        }
+        html += "</div></div>";
+      }
+      return html;
+    }
+    getArmySizeIndicator(size) {
+      switch (size) {
+        case "small":
+          return "\u{1F539}";
+        case "medium":
+          return "\u{1F538}";
+        case "large":
+          return "\u{1F48E}";
+        case "boss":
+          return "\u{1F451}";
+        default:
+          return "\u{1F538}";
+      }
+    }
+    getResourceEmoji(resource) {
+      switch (resource) {
+        case "food":
+          return "\u{1F356}";
+        case "wood":
+          return "\u{1FAB5}";
+        case "stone":
+          return "\u{1FAA8}";
+        case "gold":
+          return "\u{1F4B0}";
+        case "science":
+          return "\u{1F52C}";
+        default:
+          return "\u{1F4E6}";
+      }
+    }
+    renderActiveConquestBattle(container) {
+      const battle = this.game.state.activeConquestBattle;
+      if (!battle)
+        return;
+      const territory = getTerritoryById(this.game.state.territories, battle.missionId);
+      if (!territory)
+        return;
+      const currentLog = battle.logs[battle.currentRound - 1];
+      const playerHealth = currentLog ? currentLog.playerHealth : battle.playerStartHealth;
+      const enemyHealth = currentLog ? currentLog.enemyHealth : battle.enemyStartHealth;
+      const playerHealthPercent = playerHealth / battle.playerStartHealth * 100;
+      const enemyHealthPercent = enemyHealth / battle.enemyStartHealth * 100;
+      let html = `
+      <div class="battle-arena conquest-battle">
+        <h3 class="battle-title">\u{1F3F0} Conquest: ${territory.name}</h3>
+        <p class="battle-vs">Your Army vs ${territory.enemyArmy.name}</p>
+        
+        <div class="battle-field">
+          <!-- Player Side -->
+          <div class="battle-side player-side">
+            <div class="army-icon ${battle.isComplete && battle.result?.victory ? "victorious" : ""} ${battle.isComplete && !battle.result?.victory ? "defeated" : ""}">
+              \u{1F3F0}
+            </div>
+            <h4>Your Army</h4>
+            <div class="health-bar-container">
+              <div class="health-bar">
+                <div class="health-fill player-health" style="width: ${playerHealthPercent}%"></div>
+              </div>
+              <span class="health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
+            </div>
+          </div>
+          
+          <!-- Battle Animation -->
+          <div class="battle-center">
+            <div class="battle-clash ${!battle.isComplete ? "animating" : ""}">
+              \u2694\uFE0F
+            </div>
+            <div class="round-counter">
+              Round ${battle.currentRound} / ${battle.logs.length}
+            </div>
+          </div>
+          
+          <!-- Enemy Side -->
+          <div class="battle-side enemy-side">
+            <div class="army-icon ${battle.isComplete && !battle.result?.victory ? "victorious" : ""} ${battle.isComplete && battle.result?.victory ? "defeated" : ""}">
+              \u{1F6E1}\uFE0F
+            </div>
+            <h4>${territory.enemyArmy.name}</h4>
+            <div class="health-bar-container">
+              <div class="health-bar">
+                <div class="health-fill enemy-health" style="width: ${enemyHealthPercent}%"></div>
+              </div>
+              <span class="health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Battle Log -->
+        <div class="battle-log-container">
+          <h4>Battle Log</h4>
+          <div class="battle-log" id="conquest-battle-log">
+    `;
+      for (let i = 0; i < battle.currentRound; i++) {
+        const log = battle.logs[i];
+        html += `
+        <div class="log-entry ${i === battle.currentRound - 1 ? "latest" : ""}">
+          <span class="log-round">Round ${log.round}:</span>
+          <span class="log-damage player-damage">You deal ${log.playerDamage} dmg</span>
+          <span class="log-separator">|</span>
+          <span class="log-damage enemy-damage">Enemy deals ${log.enemyDamage} dmg</span>
+        </div>
+      `;
+      }
+      html += `
+          </div>
+        </div>
+    `;
+      if (battle.isComplete && battle.result) {
+        const result = battle.result;
+        let bonusText = "";
+        if (territory.bonuses.flatBonus) {
+          bonusText = `+${territory.bonuses.flatBonus.amount} ${this.getResourceEmoji(territory.bonuses.flatBonus.resource)}/s`;
+        } else if (territory.bonuses.resourceMultiplier) {
+          bonusText = `\xD7${territory.bonuses.resourceMultiplier.multiplier.toFixed(2)} ${this.getResourceEmoji(territory.bonuses.resourceMultiplier.resource)}`;
+        }
+        html += `
+        <div class="battle-result ${result.victory ? "victory" : "defeat"}">
+          <h3>${result.victory ? "\u{1F389} Territory Conquered!" : "\u{1F480} Conquest Failed!"}</h3>
+          <p class="casualty-report">Casualties: ${result.casualtyPercent}% of your army</p>
+          ${result.victory ? `
+            <div class="conquest-reward">
+              <h4>Territory Bonus Unlocked:</h4>
+              <span class="bonus-unlocked">${bonusText}</span>
+            </div>
+            <div class="battle-rewards">
+              <h4>Rewards Earned:</h4>
+              <div class="rewards-list">
+                ${result.rewards && result.rewards.food > 0 ? `<span>\u{1F356} +${result.rewards.food}</span>` : ""}
+                ${result.rewards && result.rewards.wood > 0 ? `<span>\u{1FAB5} +${result.rewards.wood}</span>` : ""}
+                ${result.rewards && result.rewards.stone > 0 ? `<span>\u{1FAA8} +${result.rewards.stone}</span>` : ""}
+                ${result.rewards && result.rewards.gold > 0 ? `<span>\u{1F4B0} +${result.rewards.gold}</span>` : ""}
+                ${result.rewards && result.rewards.science > 0 ? `<span>\u{1F52C} +${result.rewards.science}</span>` : ""}
+              </div>
+            </div>
+          ` : ""}
+          <button class="dismiss-battle-btn" id="dismiss-conquest-battle">Return to Conquest</button>
+        </div>
+      `;
+      }
+      html += `
+      <div class="battle-controls">
+        <label>Battle Speed:</label>
+        <input type="range" id="battle-speed" min="100" max="2000" step="100" 
+               value="${this.game.state.battleAnimationSpeed}">
+        <span id="speed-display">${this.game.state.battleAnimationSpeed}ms</span>
+      </div>
+    `;
+      html += "</div>";
       container.innerHTML = html;
+      const battleLog = document.getElementById("conquest-battle-log");
+      if (battleLog) {
+        battleLog.scrollTop = battleLog.scrollHeight;
+      }
     }
     getDifficultyRating(playerPower, mission) {
       const playerTotal = playerPower.attack + playerPower.defense + playerPower.health;
@@ -3476,9 +4734,15 @@
         this.renderActiveBattle(container);
         return;
       }
+      if (this.game.state.activeConquestBattle) {
+        this.renderActiveConquestBattle(container);
+        return;
+      }
       const completedCount = this.game.state.completedMissions.size;
+      const conqueredCount = this.game.state.conqueredTerritories.size;
       const armyHealth = this.game.getArmyPower().health;
-      const versionKey = `${completedCount}-${armyHealth}`;
+      const isConquestMode = this.game.state.conquestMode;
+      const versionKey = `${completedCount}-${conqueredCount}-${armyHealth}-${isConquestMode}`;
       const lastVersion = this.tabContentVersions.get("combat");
       if (lastVersion === void 0 || lastVersion.toString() !== versionKey) {
         this.tabContentVersions.set("combat", versionKey);
@@ -3498,11 +4762,44 @@
           }
         }
       });
+      const territoryButtons = container.querySelectorAll(".territory-btn");
+      territoryButtons.forEach((btn) => {
+        const territoryId = btn.dataset.territory;
+        if (territoryId) {
+          const territory = getTerritoryById(this.game.state.territories, territoryId);
+          if (territory) {
+            const isAvailable = isTerritoryAvailable(territory, this.game.state.currentEra);
+            const isConquered = this.game.isTerritoryConquered(territory.id);
+            const canStart = isAvailable && playerPower.health > 0 && !isConquered;
+            btn.disabled = !canStart;
+          }
+        }
+      });
     }
     startMission(missionId) {
       if (this.game.startMission(missionId)) {
         this.startBattleAnimation();
       }
+    }
+    startConquest(territoryId) {
+      if (this.game.startConquest(territoryId)) {
+        this.startConquestAnimation();
+      }
+    }
+    startConquestAnimation() {
+      if (this.conquestAnimationInterval) {
+        clearInterval(this.conquestAnimationInterval);
+      }
+      this.conquestAnimationInterval = window.setInterval(() => {
+        if (!this.game.state.activeConquestBattle || this.game.state.activeConquestBattle.isComplete) {
+          if (this.conquestAnimationInterval) {
+            clearInterval(this.conquestAnimationInterval);
+            this.conquestAnimationInterval = null;
+          }
+          return;
+        }
+        this.game.advanceConquestRound();
+      }, this.game.state.battleAnimationSpeed);
     }
     startBattleAnimation() {
       if (this.battleAnimationInterval) {

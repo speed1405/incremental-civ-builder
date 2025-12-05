@@ -3,6 +3,7 @@ export declare class GameUI {
     private game;
     private currentTab;
     private battleAnimationInterval;
+    private conquestAnimationInterval;
     private achievementNotificationQueue;
     private isShowingAchievement;
     private renderTimeout;
@@ -29,9 +30,16 @@ export declare class GameUI {
     private updateBarracksTab;
     private renderArmyTab;
     private renderCombatTab;
+    private renderMissionsMode;
+    private renderConquestMode;
+    private getArmySizeIndicator;
+    private getResourceEmoji;
+    private renderActiveConquestBattle;
     private getDifficultyRating;
     private updateCombatTab;
     private startMission;
+    private startConquest;
+    private startConquestAnimation;
     private startBattleAnimation;
     private renderActiveBattle;
     private saveGame;
