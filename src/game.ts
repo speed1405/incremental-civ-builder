@@ -49,6 +49,22 @@ import {
   calculateBuildingProduction,
   getTotalBuildingCount,
 } from './buildings.js';
+import {
+  Skill,
+  SkillTreeState,
+  LegacyMilestone,
+  SKILLS,
+  LEGACY_MILESTONES,
+  getSkillById,
+  getMilestoneById,
+  getSkillsByCategory,
+  canUnlockSkill,
+  getSkillLevel,
+  getSkillCost,
+  getSkillEffect,
+  createInitialSkillTreeState,
+  calculateSkillBonuses,
+} from './skills.js';
 
 export interface GameState {
   currentEra: string;
@@ -92,6 +108,8 @@ export interface GameState {
   buildings: Building[];
   constructionQueue: ConstructingBuilding[];
   unlockedBuildings: Set<string>;
+  // Skill tree and legacy system
+  skillTree: SkillTreeState;
 }
 
 export class Game {

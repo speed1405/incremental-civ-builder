@@ -150,7 +150,7 @@ export class GameUI {
         }
       }
       // Toggle conquest mode
-      if (target.id === 'toggle-conquest-mode' || target.classList.contains('mode-toggle-btn')) {
+      if (target.id === 'toggle-conquest-mode' || target.id === 'toggle-missions-mode') {
         this.startInteraction();
         this.game.toggleConquestMode();
       }
@@ -878,7 +878,7 @@ export class GameUI {
     // Mode toggle header
     let html = `
       <div class="combat-mode-toggle">
-        <button class="mode-toggle-btn ${!isConquestMode ? 'active' : ''}" id="toggle-conquest-mode">
+        <button class="mode-toggle-btn ${!isConquestMode ? 'active' : ''}" id="toggle-missions-mode">
           ⚔️ Missions
         </button>
         <button class="mode-toggle-btn ${isConquestMode ? 'active' : ''}" id="toggle-conquest-mode">

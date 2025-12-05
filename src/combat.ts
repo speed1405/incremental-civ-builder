@@ -1492,11 +1492,14 @@ export function calculateConquestBonuses(territories: Territory[]): {
   science: number;
 } {
   const bonuses = { food: 0, wood: 0, stone: 0, gold: 0, science: 0 };
+  const validResources = ['food', 'wood', 'stone', 'gold', 'science'];
   
   for (const territory of territories) {
     if (territory.conquered && territory.bonuses.flatBonus) {
-      const resource = territory.bonuses.flatBonus.resource as keyof typeof bonuses;
-      bonuses[resource] += territory.bonuses.flatBonus.amount;
+      const resource = territory.bonuses.flatBonus.resource;
+      if (validResources.includes(resource)) {
+        bonuses[resource as keyof typeof bonuses] += territory.bonuses.flatBonus.amount;
+      }
     }
   }
   
@@ -1511,11 +1514,14 @@ export function calculateConquestMultipliers(territories: Territory[]): {
   science: number;
 } {
   const multipliers = { food: 1, wood: 1, stone: 1, gold: 1, science: 1 };
+  const validResources = ['food', 'wood', 'stone', 'gold', 'science'];
   
   for (const territory of territories) {
     if (territory.conquered && territory.bonuses.resourceMultiplier) {
-      const resource = territory.bonuses.resourceMultiplier.resource as keyof typeof multipliers;
-      multipliers[resource] *= territory.bonuses.resourceMultiplier.multiplier;
+      const resource = territory.bonuses.resourceMultiplier.resource;
+      if (validResources.includes(resource)) {
+        multipliers[resource as keyof typeof multipliers] *= territory.bonuses.resourceMultiplier.multiplier;
+      }
     }
   }
   
