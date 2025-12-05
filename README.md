@@ -52,9 +52,9 @@ npm run build
 
 ### Run
 
-**Option 1: Offline single-file version** (simplest, recommended)
+**Option 1: Just open index.html** (simplest, recommended)
 
-After running `npm run build`, open `dist/game-offline.html` directly in your browser by double-clicking it. This is a completely self-contained file with all CSS and JavaScript inlined - no server required, works completely offline!
+After running `npm run build`, simply open `index.html` directly in your browser by double-clicking it. The build process inlines all CSS and JavaScript, making it a completely self-contained file - no server required, works completely offline!
 
 **Option 2: Use a local server** (for development)
 

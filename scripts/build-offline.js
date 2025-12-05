@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Build script to create a self-contained offline HTML file
- * This inlines all CSS and JavaScript so the game can be played
- * by simply opening the HTML file in a browser.
+ * This inlines all CSS and JavaScript directly into index.html so the game
+ * can be played by simply opening index.html in a browser - no server needed.
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -17,7 +17,6 @@ const projectRoot = join(__dirname, '..');
 const indexPath = join(projectRoot, 'index.html');
 const stylesPath = join(projectRoot, 'styles.css');
 const bundlePath = join(projectRoot, 'dist', 'bundle.js');
-const outputPath = join(projectRoot, 'dist', 'game-offline.html');
 
 // Check that required files exist
 const requiredFiles = [
@@ -44,7 +43,7 @@ try {
   process.exit(1);
 }
 
-// Create the self-contained HTML
+// Create the self-contained HTML by inlining CSS and JS
 let offlineHtml = indexHtml;
 
 // Replace the CSS link with inline styles (handles variations in formatting)
@@ -59,19 +58,14 @@ offlineHtml = offlineHtml.replace(
   `<script>\n${bundleJs}\n</script>`
 );
 
-// Ensure dist directory exists
-if (!existsSync(join(projectRoot, 'dist'))) {
-  mkdirSync(join(projectRoot, 'dist'), { recursive: true });
-}
-
-// Write the offline version
+// Write the self-contained version back to index.html
 try {
-  writeFileSync(outputPath, offlineHtml, 'utf-8');
+  writeFileSync(indexPath, offlineHtml, 'utf-8');
 } catch (error) {
   console.error(`❌ Error writing output file: ${error.message}`);
   process.exit(1);
 }
 
-console.log(`✅ Offline game built successfully!`);
-console.log(`📁 Output: dist/game-offline.html`);
-console.log(`\n🎮 To play: Simply open dist/game-offline.html in your browser`);
+console.log(`✅ Game built successfully!`);
+console.log(`📁 Output: index.html (self-contained with inline CSS and JS)`);
+console.log(`\n🎮 To play: Simply open index.html in your browser - no server needed!`);
