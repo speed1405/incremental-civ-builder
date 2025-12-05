@@ -36,6 +36,70 @@ export class GameUI {
         document.getElementById('save-game')?.addEventListener('click', () => this.saveGame());
         document.getElementById('load-game')?.addEventListener('click', () => this.loadGame());
         document.getElementById('reset-game')?.addEventListener('click', () => this.resetGame());
+        // Event delegation for dynamically created buttons
+        // Buildings tab - build buttons
+        document.getElementById('buildings-content')?.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.classList.contains('build-btn') && !target.hasAttribute('disabled')) {
+                const buildingId = target.dataset.building;
+                if (buildingId) {
+                    this.game.constructBuilding(buildingId);
+                }
+            }
+        });
+        // Research tab - research buttons
+        // Note: Research buttons are only rendered when available, but we check disabled
+        // for consistency with other button handlers and as a safety net for race conditions
+        document.getElementById('research-tree')?.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.classList.contains('research-btn') && !target.hasAttribute('disabled')) {
+                const techId = target.dataset.tech;
+                if (techId) {
+                    this.game.startResearch(techId);
+                }
+            }
+        });
+        // Barracks tab - train buttons
+        document.getElementById('barracks-content')?.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.classList.contains('train-btn') && !target.hasAttribute('disabled')) {
+                const troopId = target.dataset.troop;
+                if (troopId) {
+                    this.game.trainTroop(troopId);
+                }
+            }
+        });
+        // Combat tab - mission buttons
+        document.getElementById('combat-content')?.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.classList.contains('mission-btn') && !target.hasAttribute('disabled')) {
+                const missionId = target.dataset.mission;
+                if (missionId) {
+                    this.startMission(missionId);
+                }
+            }
+            // Dismiss battle button
+            if (target.id === 'dismiss-battle') {
+                this.game.dismissBattle();
+            }
+        });
+        // Combat tab - battle speed control
+        // Uses 'input' event instead of 'click' because range sliders fire input events
+        // when the value changes, separate from the click handler above
+        document.getElementById('combat-content')?.addEventListener('input', (e) => {
+            const target = e.target;
+            if (target.id === 'battle-speed') {
+                const speed = parseInt(target.value);
+                this.game.setBattleSpeed(speed);
+                const speedDisplay = document.getElementById('speed-display');
+                if (speedDisplay)
+                    speedDisplay.textContent = `${speed}ms`;
+                // Restart animation with new speed
+                if (!this.game.state.activeBattle?.isComplete) {
+                    this.startBattleAnimation();
+                }
+            }
+        });
     }
     switchTab(tab) {
         this.currentTab = tab;
@@ -257,15 +321,7 @@ export class GameUI {
             html += '</div></div>';
         }
         container.innerHTML = html;
-        // Attach build button listeners
-        container.querySelectorAll('.build-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const buildingId = e.target.dataset.building;
-                if (buildingId) {
-                    this.game.constructBuilding(buildingId);
-                }
-            });
-        });
+        // Event listeners are handled by event delegation in setupEventListeners()
     }
     canBuildBuilding(building) {
         const { resources } = this.game.state;
@@ -344,15 +400,7 @@ export class GameUI {
             html += '</div></div>';
         }
         container.innerHTML = html;
-        // Attach research button listeners
-        container.querySelectorAll('.research-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const techId = e.target.dataset.tech;
-                if (techId) {
-                    this.game.startResearch(techId);
-                }
-            });
-        });
+        // Event listeners are handled by event delegation in setupEventListeners()
     }
     canResearchTech(tech) {
         if (this.game.state.researchedTechs.has(tech.id))
@@ -430,15 +478,7 @@ export class GameUI {
             html += '</div>';
         }
         container.innerHTML = html;
-        // Attach train button listeners
-        container.querySelectorAll('.train-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const troopId = e.target.dataset.troop;
-                if (troopId) {
-                    this.game.trainTroop(troopId);
-                }
-            });
-        });
+        // Event listeners are handled by event delegation in setupEventListeners()
     }
     canTrainTroop(troop) {
         const { resources } = this.game.state;
@@ -583,15 +623,7 @@ export class GameUI {
             html += '</div></div>';
         }
         container.innerHTML = html;
-        // Attach mission button listeners
-        container.querySelectorAll('.mission-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const missionId = e.target.dataset.mission;
-                if (missionId) {
-                    this.startMission(missionId);
-                }
-            });
-        });
+        // Event listeners are handled by event delegation in setupEventListeners()
     }
     getDifficultyRating(playerPower, mission) {
         const playerTotal = playerPower.attack + playerPower.defense + playerPower.health;
@@ -751,22 +783,7 @@ export class GameUI {
         if (battleLog) {
             battleLog.scrollTop = battleLog.scrollHeight;
         }
-        // Attach dismiss button listener
-        document.getElementById('dismiss-battle')?.addEventListener('click', () => {
-            this.game.dismissBattle();
-        });
-        // Attach speed control listener
-        document.getElementById('battle-speed')?.addEventListener('input', (e) => {
-            const speed = parseInt(e.target.value);
-            this.game.setBattleSpeed(speed);
-            const speedDisplay = document.getElementById('speed-display');
-            if (speedDisplay)
-                speedDisplay.textContent = `${speed}ms`;
-            // Restart animation with new speed
-            if (!this.game.state.activeBattle?.isComplete) {
-                this.startBattleAnimation();
-            }
-        });
+        // Event listeners are handled by event delegation in setupEventListeners()
     }
     saveGame() {
         const saveString = this.game.saveGame();
