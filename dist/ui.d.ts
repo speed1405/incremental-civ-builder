@@ -7,6 +7,8 @@ export declare class GameUI {
     private isShowingAchievement;
     private renderTimeout;
     private isUserInteracting;
+    private lastRenderedTab;
+    private tabContentVersions;
     constructor(game: Game);
     private scheduleRender;
     private startInteraction;
@@ -18,13 +20,17 @@ export declare class GameUI {
     private renderResourcesTab;
     private renderBuildingsTab;
     private canBuildBuilding;
+    private updateBuildingsTab;
     private renderResearchTab;
     private canResearchTech;
+    private updateResearchTab;
     private renderBarracksTab;
     private canTrainTroop;
+    private updateBarracksTab;
     private renderArmyTab;
     private renderCombatTab;
     private getDifficultyRating;
+    private updateCombatTab;
     private startMission;
     private startBattleAnimation;
     private renderActiveBattle;

@@ -8,8 +8,8 @@ import { getAchievementsByCategory } from './achievements.js';
 import { getBuildingTypeById, calculateBuildingProduction } from './buildings.js';
 
 // UI timing constants
-const RENDER_DEBOUNCE_MS = 50;
-const INTERACTION_PAUSE_MS = 100;
+const RENDER_DEBOUNCE_MS = 100;
+const INTERACTION_PAUSE_MS = 300;
 
 export class GameUI {
   private game: Game;
@@ -19,6 +19,9 @@ export class GameUI {
   private isShowingAchievement: boolean = false;
   private renderTimeout: number | null = null;
   private isUserInteracting: boolean = false;
+  // Track last rendered state to avoid unnecessary full re-renders
+  private lastRenderedTab: string = '';
+  private tabContentVersions: Map<string, string> = new Map();
 
   constructor(game: Game) {
     this.game = game;
@@ -193,24 +196,45 @@ export class GameUI {
     this.renderHeader();
     this.renderResources();
     
+    // Only do a full tab re-render if the tab changed
+    const tabChanged = this.lastRenderedTab !== this.currentTab;
+    this.lastRenderedTab = this.currentTab;
+    
     switch (this.currentTab) {
       case 'resources':
         this.renderResourcesTab();
         break;
       case 'buildings':
-        this.renderBuildingsTab();
+        if (tabChanged) {
+          this.renderBuildingsTab();
+        } else {
+          this.updateBuildingsTab();
+        }
         break;
       case 'research':
-        this.renderResearchTab();
+        if (tabChanged) {
+          this.renderResearchTab();
+        } else {
+          this.updateResearchTab();
+        }
         break;
       case 'barracks':
-        this.renderBarracksTab();
+        if (tabChanged) {
+          this.renderBarracksTab();
+        } else {
+          this.updateBarracksTab();
+        }
         break;
       case 'army':
+        // Army tab is simpler, can always re-render
         this.renderArmyTab();
         break;
       case 'combat':
-        this.renderCombatTab();
+        if (tabChanged) {
+          this.renderCombatTab();
+        } else {
+          this.updateCombatTab();
+        }
         break;
       case 'achievements':
         this.renderAchievementsTab();
@@ -425,6 +449,65 @@ export class GameUI {
     return true;
   }
 
+  // Update buildings tab without full re-render - only updates dynamic elements
+  private updateBuildingsTab(): void {
+    const container = document.getElementById('buildings-content');
+    if (!container) {
+      // Container doesn't exist, need full render
+      this.renderBuildingsTab();
+      return;
+    }
+    
+    // Check if structure changed (new buildings unlocked, construction completed, queue changed)
+    const currentUnlockedCount = this.game.state.unlockedBuildings.size;
+    const currentBuildingCount = this.game.getTotalBuildingCount();
+    const currentQueueLength = this.game.state.constructionQueue.length;
+    
+    // Use a simple string key for version comparison
+    const versionKey = `${currentUnlockedCount}-${currentBuildingCount}-${currentQueueLength}`;
+    const lastVersion = this.tabContentVersions.get('buildings');
+    
+    if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
+      // Structure changed or first render, need full re-render
+      this.tabContentVersions.set('buildings', versionKey);
+      this.renderBuildingsTab();
+      return;
+    }
+    
+    // Update construction queue progress bars
+    const now = Date.now();
+    const constructionItems = container.querySelectorAll('.construction-item');
+    constructionItems.forEach((item, index) => {
+      const construction = this.game.state.constructionQueue[index];
+      if (construction) {
+        const buildingType = getBuildingTypeById(construction.buildingId);
+        if (buildingType) {
+          const remaining = Math.max(0, (construction.endTime - now) / 1000);
+          const progress = ((buildingType.buildTime - remaining) / buildingType.buildTime) * 100;
+          const progressFill = item.querySelector('.progress-fill') as HTMLElement;
+          const timeSpan = item.querySelector('span:last-child');
+          if (progressFill) progressFill.style.width = `${progress}%`;
+          if (timeSpan) timeSpan.textContent = `${remaining.toFixed(1)}s`;
+        }
+      }
+    });
+    
+    // Update build buttons enabled/disabled state
+    const buildButtons = container.querySelectorAll('.build-btn') as NodeListOf<HTMLButtonElement>;
+    buildButtons.forEach(btn => {
+      const buildingId = btn.dataset.building;
+      if (buildingId) {
+        const buildingType = getBuildingTypeById(buildingId);
+        if (buildingType) {
+          const canBuild = this.canBuildBuilding(buildingType);
+          const currentCount = this.game.getBuildingCount(buildingId);
+          const atMax = currentCount >= buildingType.maxCount;
+          btn.disabled = !canBuild || atMax;
+        }
+      }
+    });
+  }
+
   private renderResearchTab(): void {
     const container = document.getElementById('research-tree');
     if (!container) return;
@@ -506,6 +589,53 @@ export class GameUI {
     return this.game.state.resources.science >= tech.cost.science;
   }
 
+  // Update research tab without full re-render
+  private updateResearchTab(): void {
+    const container = document.getElementById('research-tree');
+    if (!container) {
+      this.renderResearchTab();
+      return;
+    }
+    
+    // Check if research completed or changed
+    const researchedCount = this.game.state.researchedTechs.size;
+    const currentResearch = this.game.state.currentResearch || '';
+    const versionKey = `${researchedCount}-${currentResearch}`;
+    const lastVersion = this.tabContentVersions.get('research');
+    
+    if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
+      // Research changed or first render, need full re-render
+      this.tabContentVersions.set('research', versionKey);
+      this.renderResearchTab();
+      return;
+    }
+    
+    // Update current research progress
+    if (this.game.state.currentResearch) {
+      const tech = getTechById(this.game.state.currentResearch);
+      if (tech) {
+        const progress = (this.game.state.researchProgress / tech.cost.science) * 100;
+        const progressFill = container.querySelector('.current-research .progress-fill') as HTMLElement;
+        const progressText = container.querySelector('.current-research p:last-child');
+        if (progressFill) progressFill.style.width = `${Math.min(progress, 100)}%`;
+        if (progressText) progressText.textContent = `${Math.floor(this.game.state.researchProgress)} / ${tech.cost.science} science`;
+      }
+    }
+    
+    // Update research buttons enabled/disabled state
+    const researchButtons = container.querySelectorAll('.research-btn') as NodeListOf<HTMLButtonElement>;
+    researchButtons.forEach(btn => {
+      const techId = btn.dataset.tech;
+      if (techId) {
+        const tech = getTechById(techId);
+        if (tech) {
+          const canResearch = this.canResearchTech(tech);
+          btn.disabled = !canResearch;
+        }
+      }
+    });
+  }
+
   private renderBarracksTab(): void {
     const container = document.getElementById('barracks-content');
     if (!container) return;
@@ -583,6 +713,60 @@ export class GameUI {
     if (troop.cost.wood && resources.wood < troop.cost.wood) return false;
     if (troop.cost.stone && resources.stone < troop.cost.stone) return false;
     return true;
+  }
+
+  // Update barracks tab without full re-render
+  private updateBarracksTab(): void {
+    const container = document.getElementById('barracks-content');
+    if (!container) {
+      this.renderBarracksTab();
+      return;
+    }
+    
+    // Check if troops unlocked or training queue structure changed
+    const unlockedCount = this.game.state.unlockedTroops.size;
+    const queueLength = this.game.state.trainingQueue.length;
+    const armyCount = this.game.state.army.reduce((sum, t) => sum + t.count, 0);
+    const versionKey = `${unlockedCount}-${queueLength}-${armyCount}`;
+    const lastVersion = this.tabContentVersions.get('barracks');
+    
+    if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
+      // Structure changed or first render, need full re-render
+      this.tabContentVersions.set('barracks', versionKey);
+      this.renderBarracksTab();
+      return;
+    }
+    
+    // Update training queue progress bars
+    const now = Date.now();
+    const trainingItems = container.querySelectorAll('.training-item');
+    trainingItems.forEach((item, index) => {
+      const training = this.game.state.trainingQueue[index];
+      if (training) {
+        const troopType = getTroopTypeById(training.troopId);
+        if (troopType) {
+          const remaining = Math.max(0, (training.endTime - now) / 1000);
+          const progress = ((troopType.trainTime - remaining) / troopType.trainTime) * 100;
+          const progressFill = item.querySelector('.progress-fill') as HTMLElement;
+          const timeSpan = item.querySelector('span:last-child');
+          if (progressFill) progressFill.style.width = `${progress}%`;
+          if (timeSpan) timeSpan.textContent = `${remaining.toFixed(1)}s`;
+        }
+      }
+    });
+    
+    // Update train buttons enabled/disabled state
+    const trainButtons = container.querySelectorAll('.train-btn') as NodeListOf<HTMLButtonElement>;
+    trainButtons.forEach(btn => {
+      const troopId = btn.dataset.troop;
+      if (troopId) {
+        const troopType = getTroopTypeById(troopId);
+        if (troopType) {
+          const canTrain = this.canTrainTroop(troopType);
+          btn.disabled = !canTrain;
+        }
+      }
+    });
   }
 
   private renderArmyTab(): void {
@@ -747,6 +931,50 @@ export class GameUI {
     if (ratio >= 0.7) return { label: 'Hard', class: 'difficulty-hard' };
     if (ratio >= 0.4) return { label: 'Very Hard', class: 'difficulty-very-hard' };
     return { label: 'Extreme', class: 'difficulty-extreme' };
+  }
+
+  // Update combat tab without full re-render
+  private updateCombatTab(): void {
+    const container = document.getElementById('combat-content');
+    if (!container) {
+      this.renderCombatTab();
+      return;
+    }
+    
+    // If there's an active battle, render battle view (it needs frequent updates)
+    if (this.game.state.activeBattle) {
+      // During active battle, we do need to re-render to show battle progress
+      this.renderActiveBattle(container);
+      return;
+    }
+    
+    // Check if mission state changed
+    const completedCount = this.game.state.completedMissions.size;
+    const armyHealth = this.game.getArmyPower().health;
+    const versionKey = `${completedCount}-${armyHealth}`;
+    const lastVersion = this.tabContentVersions.get('combat');
+    
+    if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
+      // Structure changed or first render, need full re-render
+      this.tabContentVersions.set('combat', versionKey);
+      this.renderCombatTab();
+      return;
+    }
+    
+    // Update mission buttons enabled/disabled state
+    const playerPower = this.game.getArmyPower();
+    const missionButtons = container.querySelectorAll('.mission-btn') as NodeListOf<HTMLButtonElement>;
+    missionButtons.forEach(btn => {
+      const missionId = btn.dataset.mission;
+      if (missionId) {
+        const mission = getMissionById(this.game.state.missions, missionId);
+        if (mission) {
+          const isAvailable = isMissionAvailable(mission, this.game.state.currentEra);
+          const canStart = isAvailable && playerPower.health > 0;
+          btn.disabled = !canStart;
+        }
+      }
+    });
   }
 
   private startMission(missionId: string): void {
