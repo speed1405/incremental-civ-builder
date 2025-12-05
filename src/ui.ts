@@ -39,9 +39,10 @@ export class GameUI {
       return;
     }
     
-    // Cancel any pending render
+    // If a render is already scheduled, don't reschedule
+    // (prevents the timeout from being continuously reset and never firing)
     if (this.renderTimeout !== null) {
-      window.clearTimeout(this.renderTimeout);
+      return;
     }
     
     // Schedule render with small delay to batch updates
