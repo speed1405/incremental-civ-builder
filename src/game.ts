@@ -692,6 +692,12 @@ export class Game {
 
   // Offline progress
   calculateOfflineProgress(lastSaveTime: number): void {
+    // Check if offline progress is unlocked (requires 'cloud_computing' research)
+    if (!this.state.researchedTechs.has('cloud_computing')) {
+      this.offlineProgress = null;
+      return;
+    }
+
     const now = Date.now();
     const offlineDuration = (now - lastSaveTime) / 1000; // seconds
     

@@ -361,6 +361,15 @@ export const TECHNOLOGIES = [
         effects: { unitUnlock: 'mech_infantry' },
     },
     {
+        id: 'cloud_computing',
+        name: 'Cloud Computing',
+        description: 'Earn resources even while offline. Your civilization continues to grow while you are away!',
+        era: 'information_age',
+        cost: { science: 16000 },
+        prerequisites: ['internet'],
+        effects: { specialUnlock: 'offline_progress' },
+    },
+    {
         id: 'nanotechnology',
         name: 'Nanotechnology',
         description: 'Microscopic engineering.',

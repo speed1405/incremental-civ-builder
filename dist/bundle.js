@@ -521,6 +521,15 @@
       effects: { unitUnlock: "mech_infantry" }
     },
     {
+      id: "cloud_computing",
+      name: "Cloud Computing",
+      description: "Earn resources even while offline. Your civilization continues to grow while you are away!",
+      era: "information_age",
+      cost: { science: 16e3 },
+      prerequisites: ["internet"],
+      effects: { specialUnlock: "offline_progress" }
+    },
+    {
       id: "nanotechnology",
       name: "Nanotechnology",
       description: "Microscopic engineering.",
@@ -2545,6 +2554,10 @@
     }
     // Offline progress
     calculateOfflineProgress(lastSaveTime) {
+      if (!this.state.researchedTechs.has("cloud_computing")) {
+        this.offlineProgress = null;
+        return;
+      }
       const now = Date.now();
       const offlineDuration = (now - lastSaveTime) / 1e3;
       const maxOfflineTime = 8 * 60 * 60;
@@ -2671,10 +2684,33 @@
       this.battleAnimationInterval = null;
       this.achievementNotificationQueue = [];
       this.isShowingAchievement = false;
+      this.renderTimeout = null;
+      this.isUserInteracting = false;
       this.game = game;
-      this.game.setOnStateChange(() => this.render());
+      this.game.setOnStateChange(() => this.scheduleRender());
       this.game.setOnAchievementUnlocked((achievement) => this.queueAchievementNotification(achievement));
       this.setupEventListeners();
+    }
+    // Debounced render to prevent rapid re-renders from interfering with clicks
+    scheduleRender() {
+      if (this.isUserInteracting) {
+        return;
+      }
+      if (this.renderTimeout !== null) {
+        window.clearTimeout(this.renderTimeout);
+      }
+      this.renderTimeout = window.setTimeout(() => {
+        this.renderTimeout = null;
+        this.render();
+      }, 50);
+    }
+    // Mark interaction start - prevents re-renders during click processing
+    startInteraction() {
+      this.isUserInteracting = true;
+      window.setTimeout(() => {
+        this.isUserInteracting = false;
+        this.scheduleRender();
+      }, 100);
     }
     setupEventListeners() {
       document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -2686,9 +2722,18 @@
           }
         });
       });
-      document.getElementById("gather-food")?.addEventListener("click", () => this.game.gatherFood());
-      document.getElementById("gather-wood")?.addEventListener("click", () => this.game.gatherWood());
-      document.getElementById("gather-stone")?.addEventListener("click", () => this.game.gatherStone());
+      document.getElementById("gather-food")?.addEventListener("click", () => {
+        this.startInteraction();
+        this.game.gatherFood();
+      });
+      document.getElementById("gather-wood")?.addEventListener("click", () => {
+        this.startInteraction();
+        this.game.gatherWood();
+      });
+      document.getElementById("gather-stone")?.addEventListener("click", () => {
+        this.startInteraction();
+        this.game.gatherStone();
+      });
       document.getElementById("save-game")?.addEventListener("click", () => this.saveGame());
       document.getElementById("load-game")?.addEventListener("click", () => this.loadGame());
       document.getElementById("reset-game")?.addEventListener("click", () => this.resetGame());
@@ -2697,6 +2742,7 @@
         if (target.classList.contains("build-btn") && !target.hasAttribute("disabled")) {
           const buildingId = target.dataset.building;
           if (buildingId) {
+            this.startInteraction();
             this.game.constructBuilding(buildingId);
           }
         }
@@ -2706,6 +2752,7 @@
         if (target.classList.contains("research-btn") && !target.hasAttribute("disabled")) {
           const techId = target.dataset.tech;
           if (techId) {
+            this.startInteraction();
             this.game.startResearch(techId);
           }
         }
@@ -2715,6 +2762,7 @@
         if (target.classList.contains("train-btn") && !target.hasAttribute("disabled")) {
           const troopId = target.dataset.troop;
           if (troopId) {
+            this.startInteraction();
             this.game.trainTroop(troopId);
           }
         }
@@ -2724,10 +2772,12 @@
         if (target.classList.contains("mission-btn") && !target.hasAttribute("disabled")) {
           const missionId = target.dataset.mission;
           if (missionId) {
+            this.startInteraction();
             this.startMission(missionId);
           }
         }
         if (target.id === "dismiss-battle") {
+          this.startInteraction();
           this.game.dismissBattle();
         }
       });

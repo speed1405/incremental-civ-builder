@@ -5,7 +5,11 @@ export declare class GameUI {
     private battleAnimationInterval;
     private achievementNotificationQueue;
     private isShowingAchievement;
+    private renderTimeout;
+    private isUserInteracting;
     constructor(game: Game);
+    private scheduleRender;
+    private startInteraction;
     private setupEventListeners;
     private switchTab;
     render(): void;

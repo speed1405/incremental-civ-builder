@@ -12,10 +12,38 @@ export class GameUI {
         this.battleAnimationInterval = null;
         this.achievementNotificationQueue = [];
         this.isShowingAchievement = false;
+        this.renderTimeout = null;
+        this.isUserInteracting = false;
         this.game = game;
-        this.game.setOnStateChange(() => this.render());
+        this.game.setOnStateChange(() => this.scheduleRender());
         this.game.setOnAchievementUnlocked((achievement) => this.queueAchievementNotification(achievement));
         this.setupEventListeners();
+    }
+    // Debounced render to prevent rapid re-renders from interfering with clicks
+    scheduleRender() {
+        // If user is currently interacting, delay the render
+        if (this.isUserInteracting) {
+            return;
+        }
+        // Cancel any pending render
+        if (this.renderTimeout !== null) {
+            window.clearTimeout(this.renderTimeout);
+        }
+        // Schedule render with small delay to batch updates
+        this.renderTimeout = window.setTimeout(() => {
+            this.renderTimeout = null;
+            this.render();
+        }, 50);
+    }
+    // Mark interaction start - prevents re-renders during click processing
+    startInteraction() {
+        this.isUserInteracting = true;
+        // Clear interaction flag after a short delay to allow click to complete
+        window.setTimeout(() => {
+            this.isUserInteracting = false;
+            // Trigger a render after interaction completes
+            this.scheduleRender();
+        }, 100);
     }
     setupEventListeners() {
         // Tab switching
@@ -29,9 +57,18 @@ export class GameUI {
             });
         });
         // Resource gathering
-        document.getElementById('gather-food')?.addEventListener('click', () => this.game.gatherFood());
-        document.getElementById('gather-wood')?.addEventListener('click', () => this.game.gatherWood());
-        document.getElementById('gather-stone')?.addEventListener('click', () => this.game.gatherStone());
+        document.getElementById('gather-food')?.addEventListener('click', () => {
+            this.startInteraction();
+            this.game.gatherFood();
+        });
+        document.getElementById('gather-wood')?.addEventListener('click', () => {
+            this.startInteraction();
+            this.game.gatherWood();
+        });
+        document.getElementById('gather-stone')?.addEventListener('click', () => {
+            this.startInteraction();
+            this.game.gatherStone();
+        });
         // Save/Load/Reset
         document.getElementById('save-game')?.addEventListener('click', () => this.saveGame());
         document.getElementById('load-game')?.addEventListener('click', () => this.loadGame());
@@ -43,6 +80,7 @@ export class GameUI {
             if (target.classList.contains('build-btn') && !target.hasAttribute('disabled')) {
                 const buildingId = target.dataset.building;
                 if (buildingId) {
+                    this.startInteraction();
                     this.game.constructBuilding(buildingId);
                 }
             }
@@ -55,6 +93,7 @@ export class GameUI {
             if (target.classList.contains('research-btn') && !target.hasAttribute('disabled')) {
                 const techId = target.dataset.tech;
                 if (techId) {
+                    this.startInteraction();
                     this.game.startResearch(techId);
                 }
             }
@@ -65,6 +104,7 @@ export class GameUI {
             if (target.classList.contains('train-btn') && !target.hasAttribute('disabled')) {
                 const troopId = target.dataset.troop;
                 if (troopId) {
+                    this.startInteraction();
                     this.game.trainTroop(troopId);
                 }
             }
@@ -75,11 +115,13 @@ export class GameUI {
             if (target.classList.contains('mission-btn') && !target.hasAttribute('disabled')) {
                 const missionId = target.dataset.mission;
                 if (missionId) {
+                    this.startInteraction();
                     this.startMission(missionId);
                 }
             }
             // Dismiss battle button
             if (target.id === 'dismiss-battle') {
+                this.startInteraction();
                 this.game.dismissBattle();
             }
         });

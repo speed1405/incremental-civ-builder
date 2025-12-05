@@ -15,6 +15,7 @@ export interface Technology {
             multiplier: number;
         };
         unitUnlock?: string;
+        specialUnlock?: string;
     };
 }
 export declare const TECHNOLOGIES: Technology[];
