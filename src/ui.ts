@@ -601,13 +601,22 @@ export class GameUI {
       
       for (const tech of techs) {
         const isResearched = this.game.state.researchedTechs.has(tech.id);
+        const hasPrereqs = this.hasPrerequisites(tech);
+        const canAfford = this.game.state.resources.science >= tech.cost.science;
         const isAvailable = this.canResearchTech(tech);
         const isCurrent = this.game.state.currentResearch === tech.id;
+        const isAnyResearchInProgress = this.game.state.currentResearch !== null;
         
         let statusClass = 'locked';
         if (isResearched) statusClass = 'researched';
         else if (isCurrent) statusClass = 'current';
         else if (isAvailable) statusClass = 'available';
+        else if (hasPrereqs) statusClass = 'unlocked'; // Has prereqs but can't afford or research in progress
+
+        // Show button if: prerequisites are met, not researched, and not currently being researched
+        const showButton = hasPrereqs && !isResearched && !isCurrent;
+        // Button is disabled if: can't afford OR another research is in progress
+        const buttonDisabled = !canAfford || isAnyResearchInProgress;
 
         html += `
           <div class="tech-card ${statusClass}" data-tech-id="${tech.id}">
@@ -615,8 +624,8 @@ export class GameUI {
             <p class="tech-desc">${tech.description}</p>
             <p class="tech-cost">Cost: ${tech.cost.science} science</p>
             ${isResearched ? '<span class="badge">✓ Researched</span>' : ''}
-            ${isAvailable && !isResearched && !isCurrent ? 
-              `<button class="research-btn" data-tech="${tech.id}">Research</button>` : ''}
+            ${showButton ? 
+              `<button class="research-btn" data-tech="${tech.id}" ${buttonDisabled ? 'disabled' : ''}>Research</button>` : ''}
           </div>
         `;
       }
@@ -637,6 +646,14 @@ export class GameUI {
     }
     
     return this.game.state.resources.science >= tech.cost.science;
+  }
+
+  // Check if prerequisites are met (regardless of science or current research)
+  private hasPrerequisites(tech: typeof TECHNOLOGIES[0]): boolean {
+    for (const prereq of tech.prerequisites) {
+      if (!this.game.state.researchedTechs.has(prereq)) return false;
+    }
+    return true;
   }
 
   // Update research tab without full re-render
@@ -679,8 +696,9 @@ export class GameUI {
       if (techId) {
         const tech = getTechById(techId);
         if (tech) {
-          const canResearch = this.canResearchTech(tech);
-          btn.disabled = !canResearch;
+          const canAfford = this.game.state.resources.science >= tech.cost.science;
+          const isAnyResearchInProgress = this.game.state.currentResearch !== null;
+          btn.disabled = !canAfford || isAnyResearchInProgress;
         }
       }
     });
