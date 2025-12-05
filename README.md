@@ -38,31 +38,26 @@ Progress through 11 different eras:
 
 ## Getting Started
 
-### Installation
+### 🎮 Play Instantly (No Build Required!)
+
+**Just open `index.html` in your browser!** That's it!
+
+The game is completely self-contained in a single HTML file with all CSS and JavaScript inlined. No installation, no build process, no server required - it works completely offline!
+
+- **Double-click** `index.html` to play
+- **Works offline** - save the file anywhere and play anytime
+- **Portable** - copy the single file to USB, share with friends, etc.
+
+### For Developers
+
+If you want to modify the TypeScript source files and rebuild:
 
 ```bash
 npm install
-```
-
-### Build
-
-```bash
 npm run build
 ```
 
-### Run
-
-**Option 1: Just open index.html** (simplest, recommended)
-
-After running `npm run build`, simply open `index.html` directly in your browser by double-clicking it. The build process inlines all CSS and JavaScript, making it a completely self-contained file - no server required, works completely offline!
-
-**Option 2: Use a local server** (for development)
-
-```bash
-npm start
-```
-
-This starts a local server at http://localhost:8080
+This compiles the TypeScript source files and creates an updated `index.html` with all assets inlined.
 
 ## How to Play
 
