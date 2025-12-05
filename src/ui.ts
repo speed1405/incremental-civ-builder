@@ -24,6 +24,9 @@ export class GameUI {
   // Track last rendered state to avoid unnecessary full re-renders
   private lastRenderedTab: string = '';
   private tabContentVersions: Map<string, string> = new Map();
+  // Track if a completed battle has already been rendered to avoid animation restarts
+  private battleResultRendered: boolean = false;
+  private conquestResultRendered: boolean = false;
 
   constructor(game: Game) {
     this.game = game;
@@ -159,11 +162,13 @@ export class GameUI {
       // Dismiss battle button
       if (target.id === 'dismiss-battle') {
         this.startInteraction();
+        this.battleResultRendered = false;
         this.game.dismissBattle();
       }
       // Dismiss conquest battle button
       if (target.id === 'dismiss-conquest-battle') {
         this.startInteraction();
+        this.conquestResultRendered = false;
         this.game.dismissConquestBattle();
       }
     });
@@ -1161,6 +1166,12 @@ export class GameUI {
     const battle = this.game.state.activeConquestBattle;
     if (!battle) return;
 
+    // Skip re-rendering if battle is complete and already rendered
+    // This prevents the victory/defeat animation from restarting and causing flashing
+    if (battle.isComplete && this.conquestResultRendered) {
+      return;
+    }
+
     const territory = getTerritoryById(this.game.state.territories, battle.missionId);
     if (!territory) return;
 
@@ -1296,6 +1307,11 @@ export class GameUI {
     if (battleLog) {
       battleLog.scrollTop = battleLog.scrollHeight;
     }
+    
+    // Mark conquest result as rendered to prevent re-render flashing
+    if (battle.isComplete) {
+      this.conquestResultRendered = true;
+    }
     // Event listeners are handled by event delegation in setupEventListeners()
   }
 
@@ -1384,6 +1400,8 @@ export class GameUI {
 
   private startMission(missionId: string): void {
     if (this.game.startMission(missionId)) {
+      // Reset battle result rendered flag for new battle
+      this.battleResultRendered = false;
       // Start battle animation
       this.startBattleAnimation();
     }
@@ -1391,6 +1409,8 @@ export class GameUI {
 
   private startConquest(territoryId: string): void {
     if (this.game.startConquest(territoryId)) {
+      // Reset conquest result rendered flag for new battle
+      this.conquestResultRendered = false;
       // Start conquest animation
       this.startConquestAnimation();
     }
@@ -1437,6 +1457,12 @@ export class GameUI {
   private renderActiveBattle(container: HTMLElement): void {
     const battle = this.game.state.activeBattle;
     if (!battle) return;
+
+    // Skip re-rendering if battle is complete and already rendered
+    // This prevents the victory/defeat animation from restarting and causing flashing
+    if (battle.isComplete && this.battleResultRendered) {
+      return;
+    }
 
     const mission = getMissionById(this.game.state.missions, battle.missionId);
     if (!mission) return;
@@ -1559,6 +1585,11 @@ export class GameUI {
     const battleLog = document.getElementById('battle-log');
     if (battleLog) {
       battleLog.scrollTop = battleLog.scrollHeight;
+    }
+    
+    // Mark battle result as rendered to prevent re-render flashing
+    if (battle.isComplete) {
+      this.battleResultRendered = true;
     }
     // Event listeners are handled by event delegation in setupEventListeners()
   }
