@@ -35,7 +35,7 @@ button,
 /* ===== Mobile-First Enhancements ===== */
 
 @media (max-width: 768px) {
-  /* Larger touch targets - minimum 44px as per accessibility guidelines */
+  /* Larger touch targets - minimum 48px for enhanced touch accessibility */
   .tab-btn {
     min-height: 48px;
     min-width: 48px;
@@ -296,11 +296,11 @@ button,
     font-size: 0.6rem;
   }
 
-  /* Smaller tab buttons */
+  /* Smaller tab buttons - maintain 48px min-height for accessibility */
   .tab-btn {
     padding: 10px 6px;
     font-size: 0.75rem;
-    min-height: 44px;
+    min-height: 48px;
   }
 
   .tab-container {
@@ -308,7 +308,7 @@ button,
     min-height: 300px;
   }
 
-  /* Single column stats */
+  /* Two column stats for small screens */
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
