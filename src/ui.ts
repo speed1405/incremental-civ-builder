@@ -469,7 +469,7 @@ export class GameUI {
     
     if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
       // Structure changed or first render, need full re-render
-      this.tabContentVersions.set('buildings', versionKey );
+      this.tabContentVersions.set('buildings', versionKey);
       this.renderBuildingsTab();
       return;
     }
@@ -605,7 +605,7 @@ export class GameUI {
     
     if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
       // Research changed or first render, need full re-render
-      this.tabContentVersions.set('research', versionKey );
+      this.tabContentVersions.set('research', versionKey);
       this.renderResearchTab();
       return;
     }
@@ -732,7 +732,7 @@ export class GameUI {
     
     if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
       // Structure changed or first render, need full re-render
-      this.tabContentVersions.set('barracks', versionKey );
+      this.tabContentVersions.set('barracks', versionKey);
       this.renderBarracksTab();
       return;
     }
@@ -956,7 +956,7 @@ export class GameUI {
     
     if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
       // Structure changed or first render, need full re-render
-      this.tabContentVersions.set('combat', versionKey );
+      this.tabContentVersions.set('combat', versionKey);
       this.renderCombatTab();
       return;
     }
