@@ -13,23 +13,49 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..');
 
+// Define file paths
+const indexPath = join(projectRoot, 'index.html');
+const stylesPath = join(projectRoot, 'styles.css');
+const bundlePath = join(projectRoot, 'dist', 'bundle.js');
+const outputPath = join(projectRoot, 'dist', 'game-offline.html');
+
+// Check that required files exist
+const requiredFiles = [
+  { path: indexPath, name: 'index.html' },
+  { path: stylesPath, name: 'styles.css' },
+  { path: bundlePath, name: 'dist/bundle.js (run "npm run bundle" first)' },
+];
+
+for (const file of requiredFiles) {
+  if (!existsSync(file.path)) {
+    console.error(`❌ Error: Required file not found: ${file.name}`);
+    process.exit(1);
+  }
+}
+
 // Read the source files
-const indexHtml = readFileSync(join(projectRoot, 'index.html'), 'utf-8');
-const stylesCss = readFileSync(join(projectRoot, 'styles.css'), 'utf-8');
-const bundleJs = readFileSync(join(projectRoot, 'dist', 'bundle.js'), 'utf-8');
+let indexHtml, stylesCss, bundleJs;
+try {
+  indexHtml = readFileSync(indexPath, 'utf-8');
+  stylesCss = readFileSync(stylesPath, 'utf-8');
+  bundleJs = readFileSync(bundlePath, 'utf-8');
+} catch (error) {
+  console.error(`❌ Error reading source files: ${error.message}`);
+  process.exit(1);
+}
 
 // Create the self-contained HTML
 let offlineHtml = indexHtml;
 
-// Replace the CSS link with inline styles
+// Replace the CSS link with inline styles (handles variations in formatting)
 offlineHtml = offlineHtml.replace(
-  '<link rel="stylesheet" href="styles.css">',
+  /<link\s+rel=["']stylesheet["']\s+href=["']styles\.css["']\s*\/?>/i,
   `<style>\n${stylesCss}\n</style>`
 );
 
-// Replace the script src with inline script
+// Replace the script src with inline script (handles variations in formatting)
 offlineHtml = offlineHtml.replace(
-  '<script src="dist/bundle.js"></script>',
+  /<script\s+src=["']dist\/bundle\.js["']\s*><\/script>/i,
   `<script>\n${bundleJs}\n</script>`
 );
 
@@ -39,8 +65,12 @@ if (!existsSync(join(projectRoot, 'dist'))) {
 }
 
 // Write the offline version
-const outputPath = join(projectRoot, 'dist', 'game-offline.html');
-writeFileSync(outputPath, offlineHtml, 'utf-8');
+try {
+  writeFileSync(outputPath, offlineHtml, 'utf-8');
+} catch (error) {
+  console.error(`❌ Error writing output file: ${error.message}`);
+  process.exit(1);
+}
 
 console.log(`✅ Offline game built successfully!`);
 console.log(`📁 Output: dist/game-offline.html`);
