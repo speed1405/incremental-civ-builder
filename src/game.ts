@@ -764,6 +764,39 @@ export class Game {
     return TROOP_TYPES.filter(troop => this.state.unlockedTroops.has(troop.id));
   }
 
+  // Skill Tree system
+  upgradeSkill(skillId: string): boolean {
+    const skill = getSkillById(skillId);
+    if (!skill) return false;
+
+    const currentLevel = getSkillLevel(skillId, this.state.skillTree.skillLevels);
+    if (currentLevel >= skill.maxLevel) return false;
+
+    const cost = getSkillCost(skill, currentLevel);
+    if (this.state.skillTree.legacyPoints < cost) return false;
+
+    if (!canUnlockSkill(skill, this.state.skillTree.skillLevels)) return false;
+
+    // Deduct cost and increase level
+    this.state.skillTree.legacyPoints -= cost;
+    this.state.skillTree.skillLevels.set(skillId, currentLevel + 1);
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  addLegacyPoints(points: number): void {
+    const bonuses = calculateSkillBonuses(this.state.skillTree.skillLevels);
+    const adjustedPoints = Math.floor(points * bonuses.legacyPointsMultiplier);
+    this.state.skillTree.legacyPoints += adjustedPoints;
+    this.state.skillTree.totalLegacyPointsEarned += adjustedPoints;
+    this.notifyStateChange();
+  }
+
+  getSkillBonuses(): ReturnType<typeof calculateSkillBonuses> {
+    return calculateSkillBonuses(this.state.skillTree.skillLevels);
+  }
+
   // Achievement system
   private checkAchievements(): void {
     for (const achievement of ACHIEVEMENTS) {
@@ -940,6 +973,16 @@ export class Game {
     // Convert achievements Map to array for JSON serialization
     const achievementsArray = Array.from(this.state.achievements.entries());
     
+    // Convert skillTree Maps and Sets to arrays for JSON serialization
+    const skillTreeSave = {
+      legacyPoints: this.state.skillTree.legacyPoints,
+      totalLegacyPointsEarned: this.state.skillTree.totalLegacyPointsEarned,
+      skillLevels: Array.from(this.state.skillTree.skillLevels.entries()),
+      completedMilestones: Array.from(this.state.skillTree.completedMilestones),
+      milestoneCompletionCounts: Array.from(this.state.skillTree.milestoneCompletionCounts.entries()),
+      prestigeCount: this.state.skillTree.prestigeCount,
+    };
+    
     const saveData = {
       ...this.state,
       researchedTechs: Array.from(this.state.researchedTechs),
@@ -948,6 +991,7 @@ export class Game {
       unlockedBuildings: Array.from(this.state.unlockedBuildings),
       conqueredTerritories: Array.from(this.state.conqueredTerritories),
       achievements: achievementsArray,
+      skillTree: skillTreeSave,
       activeBattle: null, // Don't save active battles
       activeConquestBattle: null, // Don't save active conquest battles
       saveTime: Date.now(), // Save timestamp for offline progress
@@ -1009,6 +1053,19 @@ export class Game {
           territory.conquered = true;
         }
       }
+
+      // Handle skill tree state (may not exist in old saves)
+      let skillTreeState = createInitialSkillTreeState();
+      if (saveData.skillTree) {
+        skillTreeState = {
+          legacyPoints: saveData.skillTree.legacyPoints || 0,
+          totalLegacyPointsEarned: saveData.skillTree.totalLegacyPointsEarned || 0,
+          skillLevels: new Map(saveData.skillTree.skillLevels || []),
+          completedMilestones: new Set(saveData.skillTree.completedMilestones || []),
+          milestoneCompletionCounts: new Map(saveData.skillTree.milestoneCompletionCounts || []),
+          prestigeCount: saveData.skillTree.prestigeCount || 0,
+        };
+      }
       
       this.state = {
         ...saveData,
@@ -1030,6 +1087,8 @@ export class Game {
         conqueredTerritories: conqueredTerritoriesSet,
         activeConquestBattle: null,
         conquestMode: saveData.conquestMode || false,
+        // Skill tree
+        skillTree: skillTreeState,
       };
       
       // Calculate offline progress if save time is available

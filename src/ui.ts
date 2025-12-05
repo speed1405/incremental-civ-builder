@@ -6,6 +6,7 @@ import { getTroopTypeById, calculateArmyPower } from './barracks.js';
 import { getMissionById, getMissionsByEra, isMissionAvailable, getTerritoryById, getTerritoriesByEra, isTerritoryAvailable } from './combat.js';
 import { getAchievementsByCategory } from './achievements.js';
 import { getBuildingTypeById, calculateBuildingProduction } from './buildings.js';
+import { SKILLS, LEGACY_MILESTONES, getSkillById, getSkillsByCategory, canUnlockSkill, getSkillLevel, getSkillCost, getSkillEffect, calculateSkillBonuses, Skill } from './skills.js';
 
 // UI timing constants
 const RENDER_DEBOUNCE_MS = 100;
@@ -187,6 +188,18 @@ export class GameUI {
         }
       }
     });
+
+    // Skills tab - skill upgrade buttons
+    document.getElementById('skills-content')?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains('skill-btn') && !target.hasAttribute('disabled')) {
+        const skillId = target.dataset.skill;
+        if (skillId) {
+          this.startInteraction();
+          this.game.upgradeSkill(skillId);
+        }
+      }
+    });
   }
 
   private switchTab(tab: string): void {
@@ -267,6 +280,13 @@ export class GameUI {
         break;
       case 'achievements':
         this.renderAchievementsTab();
+        break;
+      case 'skills':
+        if (tabChanged) {
+          this.renderSkillsTab();
+        } else {
+          this.updateSkillsTab();
+        }
         break;
     }
     
@@ -1805,6 +1825,319 @@ export class GameUI {
       if (e.target === popup) {
         popup.classList.add('fade-out');
         setTimeout(() => popup.remove(), 300);
+      }
+    });
+  }
+
+  // Skill Tree Tab
+  private renderSkillsTab(): void {
+    const container = document.getElementById('skills-content');
+    if (!container) return;
+
+    const { skillTree } = this.game.state;
+    const bonuses = calculateSkillBonuses(skillTree.skillLevels);
+
+    let html = '';
+
+    // Legacy Points Overview
+    html += `
+      <div class="skill-overview">
+        <div class="legacy-points-display">
+          <span class="legacy-icon">✨</span>
+          <span class="legacy-label">Legacy Points:</span>
+          <span class="legacy-value">${skillTree.legacyPoints}</span>
+        </div>
+        <div class="legacy-stats">
+          <span>Total Earned: ${skillTree.totalLegacyPointsEarned}</span>
+          <span>Prestige Count: ${skillTree.prestigeCount}</span>
+        </div>
+      </div>
+    `;
+
+    // Active Bonuses Summary
+    html += this.renderSkillBonusesSummary(bonuses);
+
+    // Skill Categories
+    const categories: { id: Skill['category']; name: string; icon: string }[] = [
+      { id: 'production', name: 'Production', icon: '📦' },
+      { id: 'military', name: 'Military', icon: '⚔️' },
+      { id: 'research', name: 'Research', icon: '🔬' },
+      { id: 'economy', name: 'Economy', icon: '💰' },
+      { id: 'special', name: 'Special', icon: '🌟' },
+    ];
+
+    html += '<h3>🎯 Skill Trees</h3>';
+
+    for (const category of categories) {
+      const categorySkills = getSkillsByCategory(category.id);
+      if (categorySkills.length === 0) continue;
+
+      html += `
+        <div class="skill-category">
+          <h4>${category.icon} ${category.name}</h4>
+          <div class="skill-grid">
+      `;
+
+      for (const skill of categorySkills) {
+        html += this.renderSkillCard(skill, skillTree.skillLevels);
+      }
+
+      html += '</div></div>';
+    }
+
+    // Legacy Milestones
+    html += this.renderLegacyMilestones();
+
+    container.innerHTML = html;
+  }
+
+  private renderSkillBonusesSummary(bonuses: ReturnType<typeof calculateSkillBonuses>): string {
+    const hasResourceBonuses = 
+      bonuses.resourceMultipliers.food > 1 || bonuses.resourceMultipliers.wood > 1 ||
+      bonuses.resourceMultipliers.stone > 1 || bonuses.resourceMultipliers.gold > 1 ||
+      bonuses.resourceMultipliers.science > 1;
+    const hasFlatBonuses = 
+      bonuses.flatBonuses.food > 0 || bonuses.flatBonuses.wood > 0 ||
+      bonuses.flatBonuses.stone > 0 || bonuses.flatBonuses.gold > 0 ||
+      bonuses.flatBonuses.science > 0;
+    const hasMilitaryBonuses = 
+      bonuses.militaryMultipliers.attack > 1 || bonuses.militaryMultipliers.defense > 1 ||
+      bonuses.militaryMultipliers.health > 1 || bonuses.militaryMultipliers.casualtyReduction > 0;
+    const hasOtherBonuses = 
+      bonuses.researchSpeedMultiplier > 1 || bonuses.startingResources > 0 ||
+      bonuses.techRetention > 0 || bonuses.legacyPointsMultiplier > 1;
+
+    if (!hasResourceBonuses && !hasFlatBonuses && !hasMilitaryBonuses && !hasOtherBonuses) {
+      return `
+        <div class="skill-bonuses-summary">
+          <h4>Active Skill Bonuses</h4>
+          <p class="no-bonuses">No skills unlocked yet. Spend legacy points to unlock permanent bonuses!</p>
+        </div>
+      `;
+    }
+
+    let html = `
+      <div class="skill-bonuses-summary">
+        <h4>Active Skill Bonuses</h4>
+        <div class="bonuses-grid">
+    `;
+
+    if (hasResourceBonuses) {
+      html += '<div class="bonus-group"><span class="bonus-group-label">Resource Multipliers:</span>';
+      if (bonuses.resourceMultipliers.food > 1) html += `<span class="bonus-value">🍖 ×${bonuses.resourceMultipliers.food.toFixed(2)}</span>`;
+      if (bonuses.resourceMultipliers.wood > 1) html += `<span class="bonus-value">🪵 ×${bonuses.resourceMultipliers.wood.toFixed(2)}</span>`;
+      if (bonuses.resourceMultipliers.stone > 1) html += `<span class="bonus-value">🪨 ×${bonuses.resourceMultipliers.stone.toFixed(2)}</span>`;
+      if (bonuses.resourceMultipliers.gold > 1) html += `<span class="bonus-value">💰 ×${bonuses.resourceMultipliers.gold.toFixed(2)}</span>`;
+      if (bonuses.resourceMultipliers.science > 1) html += `<span class="bonus-value">🔬 ×${bonuses.resourceMultipliers.science.toFixed(2)}</span>`;
+      html += '</div>';
+    }
+
+    if (hasFlatBonuses) {
+      html += '<div class="bonus-group"><span class="bonus-group-label">Flat Bonuses:</span>';
+      if (bonuses.flatBonuses.food > 0) html += `<span class="bonus-value">🍖 +${bonuses.flatBonuses.food.toFixed(1)}/s</span>`;
+      if (bonuses.flatBonuses.wood > 0) html += `<span class="bonus-value">🪵 +${bonuses.flatBonuses.wood.toFixed(1)}/s</span>`;
+      if (bonuses.flatBonuses.stone > 0) html += `<span class="bonus-value">🪨 +${bonuses.flatBonuses.stone.toFixed(1)}/s</span>`;
+      if (bonuses.flatBonuses.gold > 0) html += `<span class="bonus-value">💰 +${bonuses.flatBonuses.gold.toFixed(1)}/s</span>`;
+      if (bonuses.flatBonuses.science > 0) html += `<span class="bonus-value">🔬 +${bonuses.flatBonuses.science.toFixed(1)}/s</span>`;
+      html += '</div>';
+    }
+
+    if (hasMilitaryBonuses) {
+      html += '<div class="bonus-group"><span class="bonus-group-label">Military Bonuses:</span>';
+      if (bonuses.militaryMultipliers.attack > 1) html += `<span class="bonus-value">⚔️ ×${bonuses.militaryMultipliers.attack.toFixed(2)}</span>`;
+      if (bonuses.militaryMultipliers.defense > 1) html += `<span class="bonus-value">🛡️ ×${bonuses.militaryMultipliers.defense.toFixed(2)}</span>`;
+      if (bonuses.militaryMultipliers.health > 1) html += `<span class="bonus-value">❤️ ×${bonuses.militaryMultipliers.health.toFixed(2)}</span>`;
+      if (bonuses.militaryMultipliers.casualtyReduction > 0) html += `<span class="bonus-value">🎖️ -${(bonuses.militaryMultipliers.casualtyReduction * 100).toFixed(0)}% casualties</span>`;
+      html += '</div>';
+    }
+
+    if (hasOtherBonuses) {
+      html += '<div class="bonus-group"><span class="bonus-group-label">Other Bonuses:</span>';
+      if (bonuses.researchSpeedMultiplier > 1) html += `<span class="bonus-value">⏱️ ×${bonuses.researchSpeedMultiplier.toFixed(2)} research</span>`;
+      if (bonuses.startingResources > 0) html += `<span class="bonus-value">📦 +${bonuses.startingResources} starting</span>`;
+      if (bonuses.techRetention > 0) html += `<span class="bonus-value">🧬 ${(bonuses.techRetention * 100).toFixed(0)}% tech kept</span>`;
+      if (bonuses.legacyPointsMultiplier > 1) html += `<span class="bonus-value">✨ ×${bonuses.legacyPointsMultiplier.toFixed(2)} legacy</span>`;
+      html += '</div>';
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  private renderSkillCard(skill: Skill, skillLevels: Map<string, number>): string {
+    const currentLevel = getSkillLevel(skill.id, skillLevels);
+    const isMaxed = currentLevel >= skill.maxLevel;
+    const cost = getSkillCost(skill, currentLevel);
+    const canUnlock = canUnlockSkill(skill, skillLevels);
+    const hasPoints = this.game.state.skillTree.legacyPoints >= cost;
+    const canUpgrade = canUnlock && hasPoints && !isMaxed;
+
+    // Calculate effect display
+    let effectDisplay = '';
+    const currentEffect = getSkillEffect(skill, currentLevel);
+    const nextEffect = getSkillEffect(skill, currentLevel + 1);
+    
+    if (skill.effects.type === 'multiplier') {
+      if (currentLevel > 0) {
+        effectDisplay = `×${currentEffect.toFixed(2)}`;
+        if (!isMaxed) effectDisplay += ` → ×${nextEffect.toFixed(2)}`;
+      } else {
+        effectDisplay = `→ ×${nextEffect.toFixed(2)}`;
+      }
+    } else {
+      if (currentLevel > 0) {
+        effectDisplay = `+${currentEffect.toFixed(1)}`;
+        if (!isMaxed) effectDisplay += ` → +${nextEffect.toFixed(1)}`;
+      } else {
+        effectDisplay = `→ +${nextEffect.toFixed(1)}`;
+      }
+    }
+
+    // Check prerequisites display
+    let prereqDisplay = '';
+    if (skill.prerequisites.length > 0 && !canUnlock) {
+      const prereqNames = skill.prerequisites.map(id => {
+        const prereqSkill = getSkillById(id);
+        return prereqSkill ? prereqSkill.name : id;
+      }).join(', ');
+      prereqDisplay = `<span class="skill-prereq">Requires: ${prereqNames}</span>`;
+    }
+
+    let statusClass = 'locked';
+    if (isMaxed) statusClass = 'maxed';
+    else if (canUpgrade) statusClass = 'available';
+    else if (canUnlock) statusClass = 'affordable';
+
+    return `
+      <div class="skill-card ${statusClass}">
+        <div class="skill-header">
+          <span class="skill-icon">${skill.icon}</span>
+          <h5>${skill.name}</h5>
+          <span class="skill-level">${currentLevel}/${skill.maxLevel}</span>
+        </div>
+        <p class="skill-desc">${skill.description}</p>
+        <div class="skill-effect">
+          <span class="effect-label">Effect:</span>
+          <span class="effect-value">${effectDisplay}</span>
+        </div>
+        ${prereqDisplay}
+        ${!isMaxed ? `
+          <div class="skill-cost">
+            <span>Cost: ✨ ${cost}</span>
+          </div>
+          <button class="skill-btn" data-skill="${skill.id}" ${!canUpgrade ? 'disabled' : ''}>
+            ${canUnlock ? (hasPoints ? 'Upgrade' : 'Need Points') : 'Locked'}
+          </button>
+        ` : `
+          <div class="skill-maxed">
+            <span>✓ Maxed</span>
+          </div>
+        `}
+      </div>
+    `;
+  }
+
+  private renderLegacyMilestones(): string {
+    const { skillTree } = this.game.state;
+    let html = `
+      <div class="legacy-milestones">
+        <h3>🏆 Legacy Milestones</h3>
+        <p>Complete milestones to earn legacy points!</p>
+        <div class="milestone-grid">
+    `;
+
+    for (const milestone of LEGACY_MILESTONES) {
+      const isCompleted = skillTree.completedMilestones.has(milestone.id);
+      const completionCount = skillTree.milestoneCompletionCounts.get(milestone.id) || 0;
+      const canComplete = this.checkMilestoneCondition(milestone);
+
+      html += `
+        <div class="milestone-card ${isCompleted ? 'completed' : ''} ${canComplete && !isCompleted ? 'available' : ''}">
+          <div class="milestone-header">
+            <span class="milestone-icon">${milestone.icon}</span>
+            <h5>${milestone.name}</h5>
+          </div>
+          <p class="milestone-desc">${milestone.description}</p>
+          <div class="milestone-reward">
+            <span>Reward: ✨ ${milestone.legacyPoints} Legacy Points</span>
+          </div>
+          ${milestone.repeatable ? `<span class="milestone-repeatable">Repeatable (Completed: ${completionCount}×)</span>` : ''}
+          ${isCompleted && !milestone.repeatable ? '<span class="milestone-complete-badge">✓ Completed</span>' : ''}
+        </div>
+      `;
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  private checkMilestoneCondition(milestone: { condition: { type: string; target: string | number; amount: number } }): boolean {
+    const condition = milestone.condition;
+    const stats = this.game.state.statistics;
+    
+    switch (condition.type) {
+      case 'era_reached':
+        return this.hasReachedEra(condition.target as string);
+      case 'battles_won':
+        return stats.battlesWon >= condition.amount;
+      case 'territories_conquered':
+        return (stats.territoriesConquered || 0) >= condition.amount;
+      case 'techs_researched':
+        return this.game.state.researchedTechs.size >= condition.amount;
+      case 'buildings_built':
+        return (stats.totalBuildingsConstructed || 0) >= condition.amount;
+      default:
+        return false;
+    }
+  }
+
+  private hasReachedEra(eraId: string): boolean {
+    const currentIndex = ERAS.findIndex(e => e.id === this.game.state.currentEra);
+    const targetIndex = ERAS.findIndex(e => e.id === eraId);
+    return currentIndex >= targetIndex;
+  }
+
+  private updateSkillsTab(): void {
+    const container = document.getElementById('skills-content');
+    if (!container) {
+      this.renderSkillsTab();
+      return;
+    }
+
+    // Check if skill state changed
+    const { skillTree } = this.game.state;
+    let totalLevels = 0;
+    skillTree.skillLevels.forEach(level => { totalLevels += level; });
+    const versionKey = `${skillTree.legacyPoints}-${totalLevels}-${skillTree.completedMilestones.size}`;
+    const lastVersion = this.tabContentVersions.get('skills');
+
+    if (lastVersion === undefined || lastVersion !== versionKey) {
+      this.tabContentVersions.set('skills', versionKey);
+      this.renderSkillsTab();
+      return;
+    }
+
+    // Update legacy points display
+    const legacyValue = container.querySelector('.legacy-value');
+    if (legacyValue) {
+      legacyValue.textContent = skillTree.legacyPoints.toString();
+    }
+
+    // Update skill button states
+    const skillButtons = container.querySelectorAll('.skill-btn') as NodeListOf<HTMLButtonElement>;
+    skillButtons.forEach(btn => {
+      const skillId = btn.dataset.skill;
+      if (skillId) {
+        const skill = getSkillById(skillId);
+        if (skill) {
+          const currentLevel = getSkillLevel(skill.id, skillTree.skillLevels);
+          const isMaxed = currentLevel >= skill.maxLevel;
+          const cost = getSkillCost(skill, currentLevel);
+          const canUnlock = canUnlockSkill(skill, skillTree.skillLevels);
+          const hasPoints = skillTree.legacyPoints >= cost;
+          const canUpgrade = canUnlock && hasPoints && !isMaxed;
+          btn.disabled = !canUpgrade;
+        }
       }
     });
   }
