@@ -243,12 +243,7 @@ body {
 
 .tech-card.current {
   border-color: var(--accent-primary);
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 5px rgba(233, 69, 96, 0.5); }
-  50% { box-shadow: 0 0 20px rgba(233, 69, 96, 0.8); }
+  box-shadow: 0 0 10px rgba(233, 69, 96, 0.6);
 }
 
 .tech-card h4 {
@@ -862,17 +857,12 @@ body {
 }
 
 .army-icon.victorious {
-  animation: victoryBounce 0.5s ease infinite;
+  transform: scale(1.1);
 }
 
 .army-icon.defeated {
   opacity: 0.5;
   filter: grayscale(100%);
-}
-
-@keyframes victoryBounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
 }
 
 .battle-side h4 {
@@ -920,18 +910,10 @@ body {
 
 .battle-clash {
   font-size: 3rem;
-  animation: none;
 }
 
 .battle-clash.animating {
-  animation: clashAnimation 0.8s ease infinite;
-}
-
-@keyframes clashAnimation {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.2) rotate(-10deg); }
-  50% { transform: scale(1) rotate(0deg); }
-  75% { transform: scale(1.2) rotate(10deg); }
+  transform: scale(1.1);
 }
 
 .round-counter {
