@@ -2077,7 +2077,7 @@ export class GameUI {
     
     switch (condition.type) {
       case 'era_reached':
-        return this.hasReachedEra(condition.target as string);
+        return this.game.hasReachedEra(condition.target as string);
       case 'battles_won':
         return stats.battlesWon >= condition.amount;
       case 'territories_conquered':
@@ -2089,12 +2089,6 @@ export class GameUI {
       default:
         return false;
     }
-  }
-
-  private hasReachedEra(eraId: string): boolean {
-    const currentIndex = ERAS.findIndex(e => e.id === this.game.state.currentEra);
-    const targetIndex = ERAS.findIndex(e => e.id === eraId);
-    return currentIndex >= targetIndex;
   }
 
   private updateSkillsTab(): void {

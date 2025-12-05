@@ -849,7 +849,7 @@ export class Game {
     return this.state.army.reduce((sum, troop) => sum + troop.count, 0);
   }
 
-  private hasReachedEra(eraId: string): boolean {
+  hasReachedEra(eraId: string): boolean {
     const currentIndex = ERAS.findIndex(e => e.id === this.state.currentEra);
     const targetIndex = ERAS.findIndex(e => e.id === eraId);
     return currentIndex >= targetIndex;
