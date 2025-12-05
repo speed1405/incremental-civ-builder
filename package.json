@@ -5,8 +5,9 @@
   "main": "dist/main.js",
   "type": "module",
   "scripts": {
-    "build": "tsc && npm run bundle",
+    "build": "tsc && npm run bundle && npm run build:offline",
     "bundle": "esbuild dist/main.js --bundle --outfile=dist/bundle.js --format=iife",
+    "build:offline": "node scripts/build-offline.js",
     "watch": "tsc --watch",
     "start": "npx http-server . -p 8080 -o",
     "test": "echo \"No tests configured\" && exit 0"
