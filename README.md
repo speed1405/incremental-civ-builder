@@ -184,6 +184,17 @@ Here are some ideas to enhance the game:
 - **Challenges Mode**: Special restrictions for bonus rewards
 - **Time Attack**: Speed-run mode with timers
 
+## Mobile Version
+
+A dedicated mobile version branch is available with enhanced touch support and mobile-optimized UI. See [MOBILE_README.md](MOBILE_README.md) for more details.
+
+Key mobile features:
+- Touch-optimized UI with larger tap targets
+- Responsive layouts for all screen sizes
+- Mobile-specific CSS optimizations
+- Support for notched devices (safe area insets)
+- Reduced motion support for accessibility
+
 ## License
 
 ISC

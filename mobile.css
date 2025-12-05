@@ -1,0 +1,491 @@
+/* Mobile-Specific Styles for Incremental Civ Builder */
+/* This file contains additional mobile optimizations beyond the base responsive styles */
+
+/* ===== Mobile Touch Support ===== */
+
+/* Disable text selection during touch interactions */
+.game-container {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection for specific elements that need it */
+.resource-amount,
+.stat-value,
+.power-value {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Improve touch responsiveness */
+button,
+.tab-btn,
+.gather-btn,
+.research-btn,
+.train-btn,
+.build-btn,
+.mission-btn,
+.skill-btn,
+.territory-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== Mobile-First Enhancements ===== */
+
+@media (max-width: 768px) {
+  /* Larger touch targets - minimum 44px as per accessibility guidelines */
+  .tab-btn {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px 8px;
+    font-size: 0.85rem;
+  }
+
+  .gather-btn {
+    min-height: 56px;
+    padding: 16px 20px;
+    font-size: 1rem;
+  }
+
+  .research-btn,
+  .train-btn,
+  .build-btn,
+  .mission-btn,
+  .skill-btn,
+  .territory-btn {
+    min-height: 48px;
+    padding: 14px;
+  }
+
+  .footer-btn {
+    min-height: 48px;
+    padding: 14px 20px;
+  }
+
+  /* More compact header for mobile */
+  .game-header {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .game-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .era-info h2 {
+    font-size: 1.3rem;
+  }
+
+  /* Compact resource bar */
+  .resources-bar {
+    padding: 12px;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .resource {
+    min-width: 60px;
+    padding: 8px;
+  }
+
+  .resource-icon {
+    font-size: 1.4rem;
+  }
+
+  .resource-name {
+    font-size: 0.75rem;
+  }
+
+  .resource-amount {
+    font-size: 1.1rem;
+  }
+
+  .resource-rate {
+    font-size: 0.7rem;
+  }
+
+  /* Scrollable tab navigation */
+  .tab-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+  }
+
+  .tab-nav::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+
+  .tab-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  /* More compact tab container */
+  .tab-container {
+    padding: 15px;
+    min-height: 350px;
+  }
+
+  /* Full-width cards on mobile */
+  .tech-grid,
+  .troop-grid,
+  .army-grid,
+  .mission-grid,
+  .territory-grid,
+  .building-grid,
+  .skill-grid,
+  .milestone-grid,
+  .achievement-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Improve card touch targets */
+  .tech-card,
+  .troop-card,
+  .army-unit,
+  .mission-card,
+  .territory-card,
+  .building-card,
+  .skill-card,
+  .achievement-card {
+    padding: 16px;
+  }
+
+  /* Mobile footer */
+  .game-footer {
+    padding: 15px;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+  }
+
+  .footer-btn {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  /* Battle arena mobile layout */
+  .battle-field {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .battle-side {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .army-icon {
+    font-size: 2.5rem;
+  }
+
+  /* Mobile notifications */
+  .notification {
+    bottom: 20px;
+    left: 10px;
+    right: 10px;
+    transform: none;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+
+  .notification.fade-out {
+    opacity: 0;
+  }
+
+  /* Achievement popup mobile */
+  .achievement-popup {
+    width: calc(100% - 20px);
+    right: -100%;
+    top: 10px;
+    padding: 15px;
+  }
+
+  .achievement-popup.show {
+    right: 10px;
+  }
+
+  .achievement-popup-icon {
+    font-size: 2rem;
+  }
+
+  /* Offline popup mobile */
+  .offline-popup {
+    margin: 10px;
+    padding: 20px;
+    max-width: calc(100% - 20px);
+  }
+
+  .offline-popup h3 {
+    font-size: 1.4rem;
+  }
+
+  /* Statistics grid mobile */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 10px 8px;
+  }
+
+  .stat-icon {
+    font-size: 1.4rem;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+}
+
+/* ===== Small Mobile Devices ===== */
+
+@media (max-width: 480px) {
+  .game-container {
+    padding: 10px;
+  }
+
+  .game-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .era-info h2 {
+    font-size: 1.1rem;
+  }
+
+  .era-info p {
+    font-size: 0.85rem;
+  }
+
+  /* Even more compact resources for small screens */
+  .resources-bar {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .resource {
+    min-width: 55px;
+    padding: 6px;
+  }
+
+  .resource-icon {
+    font-size: 1.2rem;
+    margin-bottom: 2px;
+  }
+
+  .resource-name {
+    font-size: 0.65rem;
+  }
+
+  .resource-amount {
+    font-size: 0.95rem;
+  }
+
+  .resource-rate {
+    font-size: 0.6rem;
+  }
+
+  /* Smaller tab buttons */
+  .tab-btn {
+    padding: 10px 6px;
+    font-size: 0.75rem;
+    min-height: 44px;
+  }
+
+  .tab-container {
+    padding: 12px;
+    min-height: 300px;
+  }
+
+  /* Single column stats */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Smaller power stats in army view */
+  .power-stats {
+    gap: 15px;
+  }
+
+  .power-icon {
+    font-size: 1.5rem;
+  }
+
+  .power-value {
+    font-size: 1.3rem;
+  }
+
+  .power-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* ===== Landscape Mode Optimizations ===== */
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .game-header {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .game-header h1 {
+    margin-bottom: 0;
+    font-size: 1.3rem;
+  }
+
+  .era-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .era-info h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+
+  .era-info p {
+    display: none;
+  }
+
+  #era-progress {
+    margin-top: 0;
+  }
+
+  /* Horizontal resource bar in landscape */
+  .resources-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px;
+  }
+
+  .resource {
+    flex: 0 0 auto;
+  }
+
+  .tab-container {
+    min-height: 250px;
+  }
+}
+
+/* ===== Touch Feedback Effects ===== */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Mobile devices - use active states instead of hover */
+  .tab-btn:active {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-secondary);
+    transform: scale(0.98);
+  }
+
+  .tab-btn.active:active {
+    background: var(--accent-primary);
+  }
+
+  .gather-btn:active {
+    background: var(--accent-secondary);
+    color: var(--bg-primary);
+    transform: scale(0.95);
+  }
+
+  .research-btn:active,
+  .train-btn:active,
+  .build-btn:active,
+  .skill-btn:active {
+    transform: scale(0.98);
+    filter: brightness(0.9);
+  }
+
+  .footer-btn:active {
+    background: var(--accent-secondary);
+    color: var(--bg-primary);
+    transform: scale(0.98);
+  }
+
+  .footer-btn.danger:active {
+    background: var(--danger);
+  }
+
+  .mission-btn:active:not(:disabled),
+  .territory-btn:active:not(:disabled) {
+    transform: scale(0.98);
+    filter: brightness(0.9);
+  }
+
+  /* Remove hover effects that don't work well on touch */
+  .tech-card:hover,
+  .mission-card:hover,
+  .territory-card:hover,
+  .skill-card:hover,
+  .achievement-card:hover,
+  .stat-card:hover {
+    transform: none;
+  }
+
+  /* Add active states instead */
+  .tech-card:active,
+  .mission-card:active,
+  .territory-card:active,
+  .skill-card:active {
+    transform: scale(0.99);
+    filter: brightness(0.95);
+  }
+}
+
+/* ===== Safe Area Support for Notched Devices ===== */
+
+@supports (padding: max(0px)) {
+  .game-container {
+    padding-left: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .game-footer {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .notification {
+    bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+/* ===== Reduced Motion for Accessibility ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .tech-card.current {
+    animation: none;
+    box-shadow: 0 0 15px rgba(233, 69, 96, 0.6);
+  }
+
+  .battle-clash.animating {
+    animation: none;
+  }
+
+  .army-icon.victorious {
+    animation: none;
+  }
+}
