@@ -6,6 +6,9 @@ import { getTroopTypeById } from './barracks.js';
 import { getMissionById, getMissionsByEra, isMissionAvailable } from './combat.js';
 import { getAchievementsByCategory } from './achievements.js';
 import { getBuildingTypeById } from './buildings.js';
+// UI timing constants
+const RENDER_DEBOUNCE_MS = 50;
+const INTERACTION_PAUSE_MS = 100;
 export class GameUI {
     constructor(game) {
         this.currentTab = 'resources';
@@ -33,7 +36,7 @@ export class GameUI {
         this.renderTimeout = window.setTimeout(() => {
             this.renderTimeout = null;
             this.render();
-        }, 50);
+        }, RENDER_DEBOUNCE_MS);
     }
     // Mark interaction start - prevents re-renders during click processing
     startInteraction() {
@@ -43,7 +46,7 @@ export class GameUI {
             this.isUserInteracting = false;
             // Trigger a render after interaction completes
             this.scheduleRender();
-        }, 100);
+        }, INTERACTION_PAUSE_MS);
     }
     setupEventListeners() {
         // Tab switching

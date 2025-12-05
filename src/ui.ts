@@ -7,6 +7,10 @@ import { getMissionById, getMissionsByEra, isMissionAvailable } from './combat.j
 import { getAchievementsByCategory } from './achievements.js';
 import { getBuildingTypeById, calculateBuildingProduction } from './buildings.js';
 
+// UI timing constants
+const RENDER_DEBOUNCE_MS = 50;
+const INTERACTION_PAUSE_MS = 100;
+
 export class GameUI {
   private game: Game;
   private currentTab: string = 'resources';
@@ -39,7 +43,7 @@ export class GameUI {
     this.renderTimeout = window.setTimeout(() => {
       this.renderTimeout = null;
       this.render();
-    }, 50);
+    }, RENDER_DEBOUNCE_MS);
   }
 
   // Mark interaction start - prevents re-renders during click processing
@@ -50,7 +54,7 @@ export class GameUI {
       this.isUserInteracting = false;
       // Trigger a render after interaction completes
       this.scheduleRender();
-    }, 100);
+    }, INTERACTION_PAUSE_MS);
   }
 
   private setupEventListeners(): void {

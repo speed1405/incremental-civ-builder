@@ -18,6 +18,12 @@ export interface Technology {
         specialUnlock?: string;
     };
 }
+export declare const SPECIAL_UNLOCKS: {
+    readonly OFFLINE_PROGRESS: "offline_progress";
+};
+export declare const TECH_IDS: {
+    readonly CLOUD_COMPUTING: "cloud_computing";
+};
 export declare const TECHNOLOGIES: Technology[];
 export declare function getTechById(id: string): Technology | undefined;
 export declare function getTechsByEra(era: string): Technology[];

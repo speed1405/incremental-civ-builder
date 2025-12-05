@@ -20,6 +20,15 @@ export interface Technology {
   };
 }
 
+// Constants for special unlocks and technology IDs
+export const SPECIAL_UNLOCKS = {
+  OFFLINE_PROGRESS: 'offline_progress',
+} as const;
+
+export const TECH_IDS = {
+  CLOUD_COMPUTING: 'cloud_computing',
+} as const;
+
 export const TECHNOLOGIES: Technology[] = [
   // Stone Age
   {
@@ -392,13 +401,13 @@ export const TECHNOLOGIES: Technology[] = [
     effects: { unitUnlock: 'mech_infantry' },
   },
   {
-    id: 'cloud_computing',
+    id: TECH_IDS.CLOUD_COMPUTING,
     name: 'Cloud Computing',
     description: 'Earn resources even while offline. Your civilization continues to grow while you are away!',
     era: 'information_age',
     cost: { science: 16000 },
     prerequisites: ['internet'],
-    effects: { specialUnlock: 'offline_progress' },
+    effects: { specialUnlock: SPECIAL_UNLOCKS.OFFLINE_PROGRESS },
   },
   {
     id: 'nanotechnology',

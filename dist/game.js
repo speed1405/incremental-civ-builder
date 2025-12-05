@@ -1,6 +1,6 @@
 // Main game engine
 import { ERAS, getEraById, getNextEra } from './eras.js';
-import { TECHNOLOGIES, getTechById, canResearch } from './research.js';
+import { TECHNOLOGIES, getTechById, canResearch, TECH_IDS } from './research.js';
 import { TROOP_TYPES, getTroopTypeById, canTrainTroop, calculateArmyPower } from './barracks.js';
 import { generateMissions, getMissionById, getMissionsByEra, simulateCombat, canStartMission, isMissionAvailable, } from './combat.js';
 import { ACHIEVEMENTS, getAchievementById, createInitialStatistics, createInitialAchievementProgress, } from './achievements.js';
@@ -536,7 +536,7 @@ export class Game {
     // Offline progress
     calculateOfflineProgress(lastSaveTime) {
         // Check if offline progress is unlocked (requires 'cloud_computing' research)
-        if (!this.state.researchedTechs.has('cloud_computing')) {
+        if (!this.state.researchedTechs.has(TECH_IDS.CLOUD_COMPUTING)) {
             this.offlineProgress = null;
             return;
         }

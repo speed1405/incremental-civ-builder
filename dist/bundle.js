@@ -158,6 +158,12 @@
   }
 
   // dist/research.js
+  var SPECIAL_UNLOCKS = {
+    OFFLINE_PROGRESS: "offline_progress"
+  };
+  var TECH_IDS = {
+    CLOUD_COMPUTING: "cloud_computing"
+  };
   var TECHNOLOGIES = [
     // Stone Age
     {
@@ -521,13 +527,13 @@
       effects: { unitUnlock: "mech_infantry" }
     },
     {
-      id: "cloud_computing",
+      id: TECH_IDS.CLOUD_COMPUTING,
       name: "Cloud Computing",
       description: "Earn resources even while offline. Your civilization continues to grow while you are away!",
       era: "information_age",
       cost: { science: 16e3 },
       prerequisites: ["internet"],
-      effects: { specialUnlock: "offline_progress" }
+      effects: { specialUnlock: SPECIAL_UNLOCKS.OFFLINE_PROGRESS }
     },
     {
       id: "nanotechnology",
@@ -2554,7 +2560,7 @@
     }
     // Offline progress
     calculateOfflineProgress(lastSaveTime) {
-      if (!this.state.researchedTechs.has("cloud_computing")) {
+      if (!this.state.researchedTechs.has(TECH_IDS.CLOUD_COMPUTING)) {
         this.offlineProgress = null;
         return;
       }
@@ -2678,6 +2684,8 @@
   };
 
   // dist/ui.js
+  var RENDER_DEBOUNCE_MS = 50;
+  var INTERACTION_PAUSE_MS = 100;
   var GameUI = class {
     constructor(game) {
       this.currentTab = "resources";
@@ -2702,7 +2710,7 @@
       this.renderTimeout = window.setTimeout(() => {
         this.renderTimeout = null;
         this.render();
-      }, 50);
+      }, RENDER_DEBOUNCE_MS);
     }
     // Mark interaction start - prevents re-renders during click processing
     startInteraction() {
@@ -2710,7 +2718,7 @@
       window.setTimeout(() => {
         this.isUserInteracting = false;
         this.scheduleRender();
-      }, 100);
+      }, INTERACTION_PAUSE_MS);
     }
     setupEventListeners() {
       document.querySelectorAll(".tab-btn").forEach((btn) => {

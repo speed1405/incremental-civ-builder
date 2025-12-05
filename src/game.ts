@@ -1,6 +1,6 @@
 // Main game engine
 import { Era, ERAS, getEraById, getNextEra } from './eras.js';
-import { Technology, TECHNOLOGIES, getTechById, canResearch } from './research.js';
+import { Technology, TECHNOLOGIES, getTechById, canResearch, TECH_IDS } from './research.js';
 import { 
   TroopType, 
   TROOP_TYPES, 
@@ -693,7 +693,7 @@ export class Game {
   // Offline progress
   calculateOfflineProgress(lastSaveTime: number): void {
     // Check if offline progress is unlocked (requires 'cloud_computing' research)
-    if (!this.state.researchedTechs.has('cloud_computing')) {
+    if (!this.state.researchedTechs.has(TECH_IDS.CLOUD_COMPUTING)) {
       this.offlineProgress = null;
       return;
     }
