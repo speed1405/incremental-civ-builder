@@ -48,9 +48,11 @@ export class GameUI {
             }
         });
         // Research tab - research buttons
+        // Note: Research buttons are only rendered when available, but we check disabled
+        // for consistency with other button handlers and as a safety net for race conditions
         document.getElementById('research-tree')?.addEventListener('click', (e) => {
             const target = e.target;
-            if (target.classList.contains('research-btn')) {
+            if (target.classList.contains('research-btn') && !target.hasAttribute('disabled')) {
                 const techId = target.dataset.tech;
                 if (techId) {
                     this.game.startResearch(techId);
@@ -81,7 +83,9 @@ export class GameUI {
                 this.game.dismissBattle();
             }
         });
-        // Combat tab - battle speed control (uses 'input' event)
+        // Combat tab - battle speed control
+        // Uses 'input' event instead of 'click' because range sliders fire input events
+        // when the value changes, separate from the click handler above
         document.getElementById('combat-content')?.addEventListener('input', (e) => {
             const target = e.target;
             if (target.id === 'battle-speed') {

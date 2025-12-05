@@ -2703,7 +2703,7 @@
       });
       document.getElementById("research-tree")?.addEventListener("click", (e) => {
         const target = e.target;
-        if (target.classList.contains("research-btn")) {
+        if (target.classList.contains("research-btn") && !target.hasAttribute("disabled")) {
           const techId = target.dataset.tech;
           if (techId) {
             this.game.startResearch(techId);
