@@ -1,3 +1,10 @@
+// Constants for special unlocks and technology IDs
+export const SPECIAL_UNLOCKS = {
+    OFFLINE_PROGRESS: 'offline_progress',
+};
+export const TECH_IDS = {
+    CLOUD_COMPUTING: 'cloud_computing',
+};
 export const TECHNOLOGIES = [
     // Stone Age
     {
@@ -359,6 +366,15 @@ export const TECHNOLOGIES = [
         cost: { science: 18000 },
         prerequisites: ['computing'],
         effects: { unitUnlock: 'mech_infantry' },
+    },
+    {
+        id: TECH_IDS.CLOUD_COMPUTING,
+        name: 'Cloud Computing',
+        description: 'Earn resources even while offline. Your civilization continues to grow while you are away!',
+        era: 'information_age',
+        cost: { science: 16000 },
+        prerequisites: ['internet'],
+        effects: { specialUnlock: SPECIAL_UNLOCKS.OFFLINE_PROGRESS },
     },
     {
         id: 'nanotechnology',
