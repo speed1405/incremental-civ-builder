@@ -2692,6 +2692,58 @@
       document.getElementById("save-game")?.addEventListener("click", () => this.saveGame());
       document.getElementById("load-game")?.addEventListener("click", () => this.loadGame());
       document.getElementById("reset-game")?.addEventListener("click", () => this.resetGame());
+      document.getElementById("buildings-content")?.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("build-btn") && !target.hasAttribute("disabled")) {
+          const buildingId = target.dataset.building;
+          if (buildingId) {
+            this.game.constructBuilding(buildingId);
+          }
+        }
+      });
+      document.getElementById("research-tree")?.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("research-btn")) {
+          const techId = target.dataset.tech;
+          if (techId) {
+            this.game.startResearch(techId);
+          }
+        }
+      });
+      document.getElementById("barracks-content")?.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("train-btn") && !target.hasAttribute("disabled")) {
+          const troopId = target.dataset.troop;
+          if (troopId) {
+            this.game.trainTroop(troopId);
+          }
+        }
+      });
+      document.getElementById("combat-content")?.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("mission-btn") && !target.hasAttribute("disabled")) {
+          const missionId = target.dataset.mission;
+          if (missionId) {
+            this.startMission(missionId);
+          }
+        }
+        if (target.id === "dismiss-battle") {
+          this.game.dismissBattle();
+        }
+      });
+      document.getElementById("combat-content")?.addEventListener("input", (e) => {
+        const target = e.target;
+        if (target.id === "battle-speed") {
+          const speed = parseInt(target.value);
+          this.game.setBattleSpeed(speed);
+          const speedDisplay = document.getElementById("speed-display");
+          if (speedDisplay)
+            speedDisplay.textContent = `${speed}ms`;
+          if (!this.game.state.activeBattle?.isComplete) {
+            this.startBattleAnimation();
+          }
+        }
+      });
     }
     switchTab(tab) {
       this.currentTab = tab;
@@ -2894,14 +2946,6 @@
         html += "</div></div>";
       }
       container.innerHTML = html;
-      container.querySelectorAll(".build-btn").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          const buildingId = e.target.dataset.building;
-          if (buildingId) {
-            this.game.constructBuilding(buildingId);
-          }
-        });
-      });
     }
     canBuildBuilding(building) {
       const { resources } = this.game.state;
@@ -2976,14 +3020,6 @@
         html += "</div></div>";
       }
       container.innerHTML = html;
-      container.querySelectorAll(".research-btn").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          const techId = e.target.dataset.tech;
-          if (techId) {
-            this.game.startResearch(techId);
-          }
-        });
-      });
     }
     canResearchTech(tech) {
       if (this.game.state.researchedTechs.has(tech.id))
@@ -3057,14 +3093,6 @@
         html += "</div>";
       }
       container.innerHTML = html;
-      container.querySelectorAll(".train-btn").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          const troopId = e.target.dataset.troop;
-          if (troopId) {
-            this.game.trainTroop(troopId);
-          }
-        });
-      });
     }
     canTrainTroop(troop) {
       const { resources } = this.game.state;
@@ -3204,14 +3232,6 @@
         html += "</div></div>";
       }
       container.innerHTML = html;
-      container.querySelectorAll(".mission-btn").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          const missionId = e.target.dataset.mission;
-          if (missionId) {
-            this.startMission(missionId);
-          }
-        });
-      });
     }
     getDifficultyRating(playerPower, mission) {
       const playerTotal = playerPower.attack + playerPower.defense + playerPower.health;
@@ -3364,19 +3384,6 @@
       if (battleLog) {
         battleLog.scrollTop = battleLog.scrollHeight;
       }
-      document.getElementById("dismiss-battle")?.addEventListener("click", () => {
-        this.game.dismissBattle();
-      });
-      document.getElementById("battle-speed")?.addEventListener("input", (e) => {
-        const speed = parseInt(e.target.value);
-        this.game.setBattleSpeed(speed);
-        const speedDisplay = document.getElementById("speed-display");
-        if (speedDisplay)
-          speedDisplay.textContent = `${speed}ms`;
-        if (!this.game.state.activeBattle?.isComplete) {
-          this.startBattleAnimation();
-        }
-      });
     }
     saveGame() {
       const saveString = this.game.saveGame();
