@@ -605,7 +605,7 @@ export class GameUI {
         const canAfford = this.game.state.resources.science >= tech.cost.science;
         const isAvailable = this.canResearchTech(tech);
         const isCurrent = this.game.state.currentResearch === tech.id;
-        const isResearchInProgress = this.game.state.currentResearch !== null;
+        const isAnyResearchInProgress = this.game.state.currentResearch !== null;
         
         let statusClass = 'locked';
         if (isResearched) statusClass = 'researched';
@@ -616,7 +616,7 @@ export class GameUI {
         // Show button if: prerequisites are met, not researched, and not currently being researched
         const showButton = hasPrereqs && !isResearched && !isCurrent;
         // Button is disabled if: can't afford OR another research is in progress
-        const buttonDisabled = !canAfford || isResearchInProgress;
+        const buttonDisabled = !canAfford || isAnyResearchInProgress;
 
         html += `
           <div class="tech-card ${statusClass}" data-tech-id="${tech.id}">
@@ -697,8 +697,8 @@ export class GameUI {
         const tech = getTechById(techId);
         if (tech) {
           const canAfford = this.game.state.resources.science >= tech.cost.science;
-          const isResearchInProgress = this.game.state.currentResearch !== null;
-          btn.disabled = !canAfford || isResearchInProgress;
+          const isAnyResearchInProgress = this.game.state.currentResearch !== null;
+          btn.disabled = !canAfford || isAnyResearchInProgress;
         }
       }
     });
