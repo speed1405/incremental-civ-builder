@@ -1694,3 +1694,247 @@ body {
     gap: 8px;
   }
 }
+
+/* ===== Conquest Mode Styles ===== */
+
+/* Mode Toggle */
+.combat-mode-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.mode-toggle-btn {
+  padding: 12px 25px;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-toggle-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-secondary);
+}
+
+.mode-toggle-btn.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+/* Conquest Overview */
+.conquest-overview {
+  background: var(--bg-tertiary);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.conquest-progress {
+  margin-bottom: 15px;
+}
+
+.conquest-progress span {
+  display: block;
+  color: var(--accent-gold);
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.conquest-bonuses h4 {
+  color: var(--accent-secondary);
+  margin-bottom: 10px;
+}
+
+.bonuses-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bonus-item {
+  padding: 6px 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  color: var(--success);
+  font-weight: bold;
+}
+
+.bonus-item.multiplier {
+  color: var(--accent-gold);
+  background: rgba(255, 217, 61, 0.15);
+}
+
+.no-bonuses {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Territory Cards */
+.territory-era-section {
+  margin-bottom: 30px;
+}
+
+.territory-era-section.locked {
+  opacity: 0.6;
+}
+
+.territory-era-title {
+  color: var(--accent-secondary);
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--bg-tertiary);
+  margin-bottom: 15px;
+}
+
+.territory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.territory-card {
+  padding: 18px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.territory-card:hover {
+  border-color: var(--accent-secondary);
+}
+
+.territory-card.conquered {
+  border-color: var(--success);
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(107, 203, 119, 0.15) 100%);
+}
+
+.territory-card.locked {
+  opacity: 0.5;
+  border-color: #444;
+}
+
+.territory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.territory-header h5 {
+  color: var(--accent-gold);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.conquered-badge {
+  background: var(--success);
+  color: var(--bg-primary);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.territory-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.territory-bonus {
+  background: rgba(255, 217, 61, 0.1);
+  border: 1px solid rgba(255, 217, 61, 0.3);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.territory-bonus .bonus-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.territory-bonus .bonus-value {
+  color: var(--accent-gold);
+  font-weight: bold;
+}
+
+.territory-rewards {
+  margin-bottom: 12px;
+}
+
+.territory-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 8px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.territory-btn:hover:not(:disabled) {
+  background: #3dbdb5;
+  transform: scale(1.02);
+}
+
+.territory-btn:disabled, .territory-btn.disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Conquest Battle Specific */
+.conquest-battle {
+  border-color: var(--accent-secondary);
+}
+
+.conquest-reward {
+  background: rgba(255, 217, 61, 0.15);
+  border: 2px solid var(--accent-gold);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.conquest-reward h4 {
+  color: var(--accent-gold);
+  margin-bottom: 8px;
+}
+
+.bonus-unlocked {
+  font-size: 1.3rem;
+  color: var(--success);
+  font-weight: bold;
+}
+
+/* Responsive adjustments for conquest mode */
+@media (max-width: 768px) {
+  .territory-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .combat-mode-toggle {
+    flex-direction: column;
+  }
+  
+  .mode-toggle-btn {
+    width: 100%;
+  }
+  
+  .bonuses-list {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

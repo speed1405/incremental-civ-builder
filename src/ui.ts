@@ -1,9 +1,9 @@
 // UI management for the game
-import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES, Mission, ActiveBattle, Achievement, BuildingType } from './game.js';
+import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES, Mission, ActiveBattle, Achievement, BuildingType, Territory } from './game.js';
 import { getEraById } from './eras.js';
 import { getTechById } from './research.js';
 import { getTroopTypeById, calculateArmyPower } from './barracks.js';
-import { getMissionById, getMissionsByEra, isMissionAvailable } from './combat.js';
+import { getMissionById, getMissionsByEra, isMissionAvailable, getTerritoryById, getTerritoriesByEra, isTerritoryAvailable } from './combat.js';
 import { getAchievementsByCategory } from './achievements.js';
 import { getBuildingTypeById, calculateBuildingProduction } from './buildings.js';
 
@@ -15,6 +15,7 @@ export class GameUI {
   private game: Game;
   private currentTab: string = 'resources';
   private battleAnimationInterval: number | null = null;
+  private conquestAnimationInterval: number | null = null;
   private achievementNotificationQueue: Achievement[] = [];
   private isShowingAchievement: boolean = false;
   private renderTimeout: number | null = null;
@@ -140,10 +141,28 @@ export class GameUI {
           this.startMission(missionId);
         }
       }
+      // Territory conquest buttons
+      if (target.classList.contains('territory-btn') && !target.hasAttribute('disabled')) {
+        const territoryId = target.dataset.territory;
+        if (territoryId) {
+          this.startInteraction();
+          this.startConquest(territoryId);
+        }
+      }
+      // Toggle conquest mode
+      if (target.id === 'toggle-conquest-mode' || target.id === 'toggle-missions-mode') {
+        this.startInteraction();
+        this.game.toggleConquestMode();
+      }
       // Dismiss battle button
       if (target.id === 'dismiss-battle') {
         this.startInteraction();
         this.game.dismissBattle();
+      }
+      // Dismiss conquest battle button
+      if (target.id === 'dismiss-conquest-battle') {
+        this.startInteraction();
+        this.game.dismissConquestBattle();
       }
     });
     
@@ -162,6 +181,10 @@ export class GameUI {
         if (!this.game.state.activeBattle?.isComplete) {
           this.startBattleAnimation();
         }
+        // Restart conquest animation with new speed
+        if (!this.game.state.activeConquestBattle?.isComplete) {
+          this.startConquestAnimation();
+        }
       }
     });
   }
@@ -173,6 +196,12 @@ export class GameUI {
     if (tab !== 'combat' && this.battleAnimationInterval) {
       clearInterval(this.battleAnimationInterval);
       this.battleAnimationInterval = null;
+    }
+    
+    // Clean up conquest animation when switching away from combat tab
+    if (tab !== 'combat' && this.conquestAnimationInterval) {
+      clearInterval(this.conquestAnimationInterval);
+      this.conquestAnimationInterval = null;
     }
     
     // Update tab buttons
@@ -837,11 +866,27 @@ export class GameUI {
       return;
     }
 
-    // Show missions
-    let html = '<h3>⚔️ Combat Missions</h3>';
-    html += '<p class="combat-intro">Choose a mission to test your army against enemy forces. Missions are organized by era - higher eras have tougher enemies but better rewards!</p>';
-    
+    // Check if there's an active conquest battle
+    if (this.game.state.activeConquestBattle) {
+      this.renderActiveConquestBattle(container);
+      return;
+    }
+
+    const isConquestMode = this.game.state.conquestMode;
     const playerPower = this.game.getArmyPower();
+
+    // Mode toggle header
+    let html = `
+      <div class="combat-mode-toggle">
+        <button class="mode-toggle-btn ${!isConquestMode ? 'active' : ''}" id="toggle-missions-mode">
+          ⚔️ Missions
+        </button>
+        <button class="mode-toggle-btn ${isConquestMode ? 'active' : ''}" id="toggle-conquest-mode">
+          🏰 Conquest
+        </button>
+      </div>
+    `;
+
     html += `
       <div class="army-power-summary">
         <span>Your Army: ⚔️ ${playerPower.attack} | 🛡️ ${playerPower.defense} | ❤️ ${playerPower.health}</span>
@@ -849,8 +894,24 @@ export class GameUI {
     `;
 
     if (playerPower.health === 0) {
-      html += '<div class="warning-message">⚠️ You need troops to start missions! Train some in the Barracks first.</div>';
+      html += '<div class="warning-message">⚠️ You need troops to start battles! Train some in the Barracks first.</div>';
     }
+
+    if (isConquestMode) {
+      // Render Conquest Mode
+      html += this.renderConquestMode(playerPower);
+    } else {
+      // Render Missions Mode
+      html += this.renderMissionsMode(playerPower);
+    }
+
+    container.innerHTML = html;
+    // Event listeners are handled by event delegation in setupEventListeners()
+  }
+
+  private renderMissionsMode(playerPower: { attack: number; defense: number; health: number }): string {
+    let html = '<h3>⚔️ Combat Missions</h3>';
+    html += '<p class="combat-intro">Choose a mission to test your army against enemy forces. Missions are organized by era - higher eras have tougher enemies but better rewards! Missions feature armies of varying sizes: Small 🔹, Medium 🔸, Large 💎, and Boss 👑.</p>';
 
     // Group missions by era
     for (const era of ERAS) {
@@ -873,10 +934,13 @@ export class GameUI {
         // Calculate difficulty rating
         const difficultyRating = this.getDifficultyRating(playerPower, mission);
         
+        // Get army size indicator
+        const sizeIndicator = this.getArmySizeIndicator(mission.enemyArmy.size);
+        
         html += `
           <div class="mission-card ${isCompleted ? 'completed' : ''} ${!isAvailable ? 'locked' : ''}">
             <div class="mission-header">
-              <h5>${mission.name}</h5>
+              <h5>${sizeIndicator} ${mission.name}</h5>
               ${isCompleted ? '<span class="completed-badge">✓ Completed</span>' : ''}
             </div>
             <p class="mission-desc">${mission.description}</p>
@@ -913,7 +977,286 @@ export class GameUI {
       html += '</div></div>';
     }
 
+    return html;
+  }
+
+  private renderConquestMode(playerPower: { attack: number; defense: number; health: number }): string {
+    let html = '<h3>🏰 Conquest Mode</h3>';
+    html += '<p class="combat-intro">Conquer territories to gain permanent bonuses! Each territory provides ongoing resource bonuses once conquered. Territories are organized by era - higher eras have stronger defenders but better rewards!</p>';
+
+    // Show conquest bonuses
+    const conquestBonuses = this.game.getConquestBonuses();
+    const conquestMultipliers = this.game.getConquestMultipliers();
+    const conqueredCount = this.game.getConqueredTerritoryCount();
+    const totalCount = this.game.getTotalTerritoryCount();
+
+    html += `
+      <div class="conquest-overview">
+        <div class="conquest-progress">
+          <span>Territories Conquered: ${conqueredCount} / ${totalCount}</span>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${(conqueredCount / totalCount) * 100}%"></div>
+          </div>
+        </div>
+        <div class="conquest-bonuses">
+          <h4>Active Bonuses:</h4>
+          <div class="bonuses-list">
+            ${conquestBonuses.food > 0 ? `<span class="bonus-item">🍖 +${conquestBonuses.food.toFixed(1)}/s</span>` : ''}
+            ${conquestBonuses.wood > 0 ? `<span class="bonus-item">🪵 +${conquestBonuses.wood.toFixed(1)}/s</span>` : ''}
+            ${conquestBonuses.stone > 0 ? `<span class="bonus-item">🪨 +${conquestBonuses.stone.toFixed(1)}/s</span>` : ''}
+            ${conquestBonuses.gold > 0 ? `<span class="bonus-item">💰 +${conquestBonuses.gold.toFixed(1)}/s</span>` : ''}
+            ${conquestBonuses.science > 0 ? `<span class="bonus-item">🔬 +${conquestBonuses.science.toFixed(1)}/s</span>` : ''}
+            ${conquestMultipliers.food > 1 ? `<span class="bonus-item multiplier">🍖 ×${conquestMultipliers.food.toFixed(2)}</span>` : ''}
+            ${conquestMultipliers.wood > 1 ? `<span class="bonus-item multiplier">🪵 ×${conquestMultipliers.wood.toFixed(2)}</span>` : ''}
+            ${conquestMultipliers.stone > 1 ? `<span class="bonus-item multiplier">🪨 ×${conquestMultipliers.stone.toFixed(2)}</span>` : ''}
+            ${conquestMultipliers.gold > 1 ? `<span class="bonus-item multiplier">💰 ×${conquestMultipliers.gold.toFixed(2)}</span>` : ''}
+            ${conquestMultipliers.science > 1 ? `<span class="bonus-item multiplier">🔬 ×${conquestMultipliers.science.toFixed(2)}</span>` : ''}
+            ${conqueredCount === 0 ? '<span class="no-bonuses">No territories conquered yet!</span>' : ''}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Group territories by era
+    for (const era of ERAS) {
+      const eraTerritories = getTerritoriesByEra(this.game.state.territories, era.id);
+      if (eraTerritories.length === 0) continue;
+      
+      const isEraAvailable = isTerritoryAvailable(eraTerritories[0], this.game.state.currentEra);
+      
+      html += `
+        <div class="territory-era-section ${!isEraAvailable ? 'locked' : ''}">
+          <h4 class="territory-era-title">${era.name} Territories ${!isEraAvailable ? '🔒' : ''}</h4>
+          <div class="territory-grid">
+      `;
+      
+      for (const territory of eraTerritories) {
+        const isAvailable = isTerritoryAvailable(territory, this.game.state.currentEra);
+        const isConquered = this.game.isTerritoryConquered(territory.id);
+        const canStart = isAvailable && playerPower.health > 0 && !isConquered;
+        
+        // Calculate difficulty rating using a mission-like object
+        const territoryAsMission = { enemyArmy: territory.enemyArmy } as Mission;
+        const difficultyRating = this.getDifficultyRating(playerPower, territoryAsMission);
+        
+        // Get army size indicator
+        const sizeIndicator = this.getArmySizeIndicator(territory.enemyArmy.size);
+        
+        // Format bonus display
+        let bonusText = '';
+        if (territory.bonuses.flatBonus) {
+          bonusText = `+${territory.bonuses.flatBonus.amount} ${this.getResourceEmoji(territory.bonuses.flatBonus.resource)}/s`;
+        } else if (territory.bonuses.resourceMultiplier) {
+          bonusText = `×${territory.bonuses.resourceMultiplier.multiplier.toFixed(2)} ${this.getResourceEmoji(territory.bonuses.resourceMultiplier.resource)}`;
+        }
+        
+        html += `
+          <div class="territory-card ${isConquered ? 'conquered' : ''} ${!isAvailable ? 'locked' : ''}">
+            <div class="territory-header">
+              <h5>${sizeIndicator} ${territory.name}</h5>
+              ${isConquered ? '<span class="conquered-badge">🏴 Conquered</span>' : ''}
+            </div>
+            <p class="territory-desc">${territory.description}</p>
+            <div class="territory-bonus">
+              <span class="bonus-label">Permanent Bonus:</span>
+              <span class="bonus-value">${bonusText}</span>
+            </div>
+            <div class="enemy-stats">
+              <span class="enemy-label">Defenders: ${territory.enemyArmy.name}</span>
+              <div class="enemy-power">
+                <span>⚔️ ${territory.enemyArmy.attack}</span>
+                <span>🛡️ ${territory.enemyArmy.defense}</span>
+                <span>❤️ ${territory.enemyArmy.health}</span>
+              </div>
+            </div>
+            <div class="difficulty-indicator ${difficultyRating.class}">
+              Difficulty: ${difficultyRating.label}
+            </div>
+            <div class="territory-rewards">
+              <span class="rewards-label">One-time Rewards:</span>
+              <div class="rewards-list">
+                ${territory.rewards.food > 0 ? `<span>🍖 ${territory.rewards.food}</span>` : ''}
+                ${territory.rewards.wood > 0 ? `<span>🪵 ${territory.rewards.wood}</span>` : ''}
+                ${territory.rewards.stone > 0 ? `<span>🪨 ${territory.rewards.stone}</span>` : ''}
+                ${territory.rewards.gold > 0 ? `<span>💰 ${territory.rewards.gold}</span>` : ''}
+                ${territory.rewards.science > 0 ? `<span>🔬 ${territory.rewards.science}</span>` : ''}
+              </div>
+            </div>
+            <button class="territory-btn ${!canStart ? 'disabled' : ''}" 
+                    data-territory="${territory.id}" 
+                    ${!canStart ? 'disabled' : ''}>
+              ${!isAvailable ? '🔒 Locked' : isConquered ? '🏴 Conquered' : '⚔️ Attack Territory'}
+            </button>
+          </div>
+        `;
+      }
+      
+      html += '</div></div>';
+    }
+
+    return html;
+  }
+
+  private getArmySizeIndicator(size?: string): string {
+    switch (size) {
+      case 'small': return '🔹';
+      case 'medium': return '🔸';
+      case 'large': return '💎';
+      case 'boss': return '👑';
+      default: return '🔸';
+    }
+  }
+
+  private getResourceEmoji(resource: string): string {
+    switch (resource) {
+      case 'food': return '🍖';
+      case 'wood': return '🪵';
+      case 'stone': return '🪨';
+      case 'gold': return '💰';
+      case 'science': return '🔬';
+      default: return '📦';
+    }
+  }
+
+  private renderActiveConquestBattle(container: HTMLElement): void {
+    const battle = this.game.state.activeConquestBattle;
+    if (!battle) return;
+
+    const territory = getTerritoryById(this.game.state.territories, battle.missionId);
+    if (!territory) return;
+
+    const currentLog = battle.logs[battle.currentRound - 1];
+    const playerHealth = currentLog ? currentLog.playerHealth : battle.playerStartHealth;
+    const enemyHealth = currentLog ? currentLog.enemyHealth : battle.enemyStartHealth;
+    
+    const playerHealthPercent = (playerHealth / battle.playerStartHealth) * 100;
+    const enemyHealthPercent = (enemyHealth / battle.enemyStartHealth) * 100;
+
+    let html = `
+      <div class="battle-arena conquest-battle">
+        <h3 class="battle-title">🏰 Conquest: ${territory.name}</h3>
+        <p class="battle-vs">Your Army vs ${territory.enemyArmy.name}</p>
+        
+        <div class="battle-field">
+          <!-- Player Side -->
+          <div class="battle-side player-side">
+            <div class="army-icon ${battle.isComplete && battle.result?.victory ? 'victorious' : ''} ${battle.isComplete && !battle.result?.victory ? 'defeated' : ''}">
+              🏰
+            </div>
+            <h4>Your Army</h4>
+            <div class="health-bar-container">
+              <div class="health-bar">
+                <div class="health-fill player-health" style="width: ${playerHealthPercent}%"></div>
+              </div>
+              <span class="health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
+            </div>
+          </div>
+          
+          <!-- Battle Animation -->
+          <div class="battle-center">
+            <div class="battle-clash ${!battle.isComplete ? 'animating' : ''}">
+              ⚔️
+            </div>
+            <div class="round-counter">
+              Round ${battle.currentRound} / ${battle.logs.length}
+            </div>
+          </div>
+          
+          <!-- Enemy Side -->
+          <div class="battle-side enemy-side">
+            <div class="army-icon ${battle.isComplete && !battle.result?.victory ? 'victorious' : ''} ${battle.isComplete && battle.result?.victory ? 'defeated' : ''}">
+              🛡️
+            </div>
+            <h4>${territory.enemyArmy.name}</h4>
+            <div class="health-bar-container">
+              <div class="health-bar">
+                <div class="health-fill enemy-health" style="width: ${enemyHealthPercent}%"></div>
+              </div>
+              <span class="health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Battle Log -->
+        <div class="battle-log-container">
+          <h4>Battle Log</h4>
+          <div class="battle-log" id="conquest-battle-log">
+    `;
+    
+    // Show logs up to current round
+    for (let i = 0; i < battle.currentRound; i++) {
+      const log = battle.logs[i];
+      html += `
+        <div class="log-entry ${i === battle.currentRound - 1 ? 'latest' : ''}">
+          <span class="log-round">Round ${log.round}:</span>
+          <span class="log-damage player-damage">You deal ${log.playerDamage} dmg</span>
+          <span class="log-separator">|</span>
+          <span class="log-damage enemy-damage">Enemy deals ${log.enemyDamage} dmg</span>
+        </div>
+      `;
+    }
+    
+    html += `
+          </div>
+        </div>
+    `;
+    
+    // Show result if battle is complete
+    if (battle.isComplete && battle.result) {
+      const result = battle.result;
+      
+      // Format bonus display
+      let bonusText = '';
+      if (territory.bonuses.flatBonus) {
+        bonusText = `+${territory.bonuses.flatBonus.amount} ${this.getResourceEmoji(territory.bonuses.flatBonus.resource)}/s`;
+      } else if (territory.bonuses.resourceMultiplier) {
+        bonusText = `×${territory.bonuses.resourceMultiplier.multiplier.toFixed(2)} ${this.getResourceEmoji(territory.bonuses.resourceMultiplier.resource)}`;
+      }
+      
+      html += `
+        <div class="battle-result ${result.victory ? 'victory' : 'defeat'}">
+          <h3>${result.victory ? '🎉 Territory Conquered!' : '💀 Conquest Failed!'}</h3>
+          <p class="casualty-report">Casualties: ${result.casualtyPercent}% of your army</p>
+          ${result.victory ? `
+            <div class="conquest-reward">
+              <h4>Territory Bonus Unlocked:</h4>
+              <span class="bonus-unlocked">${bonusText}</span>
+            </div>
+            <div class="battle-rewards">
+              <h4>Rewards Earned:</h4>
+              <div class="rewards-list">
+                ${result.rewards && result.rewards.food > 0 ? `<span>🍖 +${result.rewards.food}</span>` : ''}
+                ${result.rewards && result.rewards.wood > 0 ? `<span>🪵 +${result.rewards.wood}</span>` : ''}
+                ${result.rewards && result.rewards.stone > 0 ? `<span>🪨 +${result.rewards.stone}</span>` : ''}
+                ${result.rewards && result.rewards.gold > 0 ? `<span>💰 +${result.rewards.gold}</span>` : ''}
+                ${result.rewards && result.rewards.science > 0 ? `<span>🔬 +${result.rewards.science}</span>` : ''}
+              </div>
+            </div>
+          ` : ''}
+          <button class="dismiss-battle-btn" id="dismiss-conquest-battle">Return to Conquest</button>
+        </div>
+      `;
+    }
+    
+    // Speed control
+    html += `
+      <div class="battle-controls">
+        <label>Battle Speed:</label>
+        <input type="range" id="battle-speed" min="100" max="2000" step="100" 
+               value="${this.game.state.battleAnimationSpeed}">
+        <span id="speed-display">${this.game.state.battleAnimationSpeed}ms</span>
+      </div>
+    `;
+    
+    html += '</div>';
+    
     container.innerHTML = html;
+    
+    // Auto-scroll battle log to bottom
+    const battleLog = document.getElementById('conquest-battle-log');
+    if (battleLog) {
+      battleLog.scrollTop = battleLog.scrollHeight;
+    }
     // Event listeners are handled by event delegation in setupEventListeners()
   }
 
@@ -947,11 +1290,19 @@ export class GameUI {
       this.renderActiveBattle(container);
       return;
     }
+
+    // If there's an active conquest battle, render conquest battle view
+    if (this.game.state.activeConquestBattle) {
+      this.renderActiveConquestBattle(container);
+      return;
+    }
     
-    // Check if mission state changed
+    // Check if mission/conquest state changed
     const completedCount = this.game.state.completedMissions.size;
+    const conqueredCount = this.game.state.conqueredTerritories.size;
     const armyHealth = this.game.getArmyPower().health;
-    const versionKey = `${completedCount}-${armyHealth}`;
+    const isConquestMode = this.game.state.conquestMode;
+    const versionKey = `${completedCount}-${conqueredCount}-${armyHealth}-${isConquestMode}`;
     const lastVersion = this.tabContentVersions.get('combat');
     
     if (lastVersion === undefined || lastVersion.toString() !== versionKey) {
@@ -975,6 +1326,21 @@ export class GameUI {
         }
       }
     });
+
+    // Update territory buttons enabled/disabled state
+    const territoryButtons = container.querySelectorAll('.territory-btn') as NodeListOf<HTMLButtonElement>;
+    territoryButtons.forEach(btn => {
+      const territoryId = btn.dataset.territory;
+      if (territoryId) {
+        const territory = getTerritoryById(this.game.state.territories, territoryId);
+        if (territory) {
+          const isAvailable = isTerritoryAvailable(territory, this.game.state.currentEra);
+          const isConquered = this.game.isTerritoryConquered(territory.id);
+          const canStart = isAvailable && playerPower.health > 0 && !isConquered;
+          btn.disabled = !canStart;
+        }
+      }
+    });
   }
 
   private startMission(missionId: string): void {
@@ -982,6 +1348,32 @@ export class GameUI {
       // Start battle animation
       this.startBattleAnimation();
     }
+  }
+
+  private startConquest(territoryId: string): void {
+    if (this.game.startConquest(territoryId)) {
+      // Start conquest animation
+      this.startConquestAnimation();
+    }
+  }
+
+  private startConquestAnimation(): void {
+    // Clear any existing animation
+    if (this.conquestAnimationInterval) {
+      clearInterval(this.conquestAnimationInterval);
+    }
+    
+    // Start animating battle rounds
+    this.conquestAnimationInterval = window.setInterval(() => {
+      if (!this.game.state.activeConquestBattle || this.game.state.activeConquestBattle.isComplete) {
+        if (this.conquestAnimationInterval) {
+          clearInterval(this.conquestAnimationInterval);
+          this.conquestAnimationInterval = null;
+        }
+        return;
+      }
+      this.game.advanceConquestRound();
+    }, this.game.state.battleAnimationSpeed);
   }
 
   private startBattleAnimation(): void {
