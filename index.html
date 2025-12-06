@@ -3745,6 +3745,353 @@ body {
   }
 }
 
+/* ===== Help & Tutorial Styles ===== */
+
+/* Help Section */
+.help-content {
+  padding: 10px 0;
+}
+
+.help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.tutorial-start-btn {
+  padding: 12px 25px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutorial-start-btn:hover {
+  background: #d63850;
+  transform: scale(1.02);
+}
+
+.tutorial-start-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Help Topics Grid */
+.help-topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.help-topic-card {
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.help-topic-card:hover {
+  border-color: var(--accent-secondary);
+  transform: translateY(-2px);
+}
+
+.help-topic-card.expanded {
+  border-color: var(--accent-gold);
+}
+
+.help-topic-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.help-topic-icon {
+  font-size: 2rem;
+}
+
+.help-topic-title {
+  color: var(--accent-gold);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.help-topic-content {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  white-space: pre-line;
+  margin-bottom: 15px;
+}
+
+.help-topic-tips {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid var(--bg-secondary);
+}
+
+.help-topic-tips h5 {
+  color: var(--accent-secondary);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.help-tip-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.help-tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.help-tip-item::before {
+  content: '💡';
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* Tutorial Modal */
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.tutorial-modal {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border: 2px solid var(--accent-gold);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  animation: popupBounce 0.3s ease;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.tutorial-step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tutorial-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  transition: all 0.3s ease;
+}
+
+.tutorial-step-dot.active {
+  background: var(--accent-gold);
+  transform: scale(1.2);
+}
+
+.tutorial-step-dot.completed {
+  background: var(--success);
+}
+
+.tutorial-title {
+  color: var(--accent-gold);
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.tutorial-description {
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.tutorial-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.tutorial-btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tutorial-btn.primary {
+  background: var(--accent-secondary);
+  color: var(--bg-primary);
+}
+
+.tutorial-btn.primary:hover {
+  background: #3dbdb5;
+  transform: scale(1.02);
+}
+
+.tutorial-btn.secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 2px solid var(--bg-tertiary);
+}
+
+.tutorial-btn.secondary:hover {
+  border-color: var(--accent-secondary);
+}
+
+.tutorial-btn.danger {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--text-secondary);
+}
+
+.tutorial-btn.danger:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Tutorial highlight effect */
+.tutorial-highlight {
+  position: relative;
+  z-index: 4001;
+  animation: tutorialPulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 0 4px var(--accent-gold), 0 0 20px var(--accent-gold);
+  border-radius: 10px;
+}
+
+@keyframes tutorialPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 4px var(--accent-gold), 0 0 20px var(--accent-gold);
+  }
+  50% {
+    box-shadow: 0 0 0 8px var(--accent-gold), 0 0 30px var(--accent-gold);
+  }
+}
+
+/* Quick Tips Section */
+.quick-tips-section {
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 25px;
+}
+
+.quick-tips-section h3 {
+  color: var(--accent-gold);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quick-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.quick-tip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.quick-tip-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* Search box for help topics */
+.help-search-container {
+  margin-bottom: 20px;
+}
+
+.help-search-input {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: 2px solid var(--bg-tertiary);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.help-search-input:focus {
+  outline: none;
+  border-color: var(--accent-secondary);
+}
+
+.help-search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Responsive Help Styles */
+@media (max-width: 768px) {
+  .help-topics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tutorial-modal {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .tutorial-title {
+    font-size: 1.3rem;
+  }
+  
+  .tutorial-buttons {
+    flex-direction: column;
+  }
+  
+  .tutorial-btn {
+    width: 100%;
+  }
+  
+  .quick-tips-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3805,6 +4152,7 @@ body {
       <button class="tab-btn" data-tab="skills">🌟 Skills</button>
       <button class="tab-btn" data-tab="military">🎖️ Military</button>
       <button class="tab-btn" data-tab="achievements">🏆 Achievements</button>
+      <button class="tab-btn" data-tab="help">❓ Help</button>
     </nav>
 
     <!-- Tab Content -->
@@ -3897,6 +4245,15 @@ body {
         <h2>🌍 World & Lore</h2>
         <p>Shape your civilization's identity through choices of culture, religion, and leaders!</p>
         <div id="world-content" class="world-content">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <!-- Help Tab -->
+      <div id="help-tab" class="tab-content">
+        <h2>❓ Help & Tutorial</h2>
+        <p>Learn how to play and find answers to common questions!</p>
+        <div id="help-content" class="help-content">
           <!-- Filled dynamically -->
         </div>
       </div>
@@ -11552,6 +11909,281 @@ body {
     }
   };
 
+  // dist/tutorial.js
+  var TUTORIAL_STEPS = [
+    {
+      id: "welcome",
+      title: "Welcome to Incremental Civ Builder!",
+      description: 'Build your civilization from the Stone Age to the Future! This tutorial will guide you through the basics. Click "Next" to continue.',
+      action: "info",
+      nextCondition: "manual"
+    },
+    {
+      id: "resources_intro",
+      title: "Understanding Resources",
+      description: "Your civilization needs resources to grow. Look at the resource bar above - you have Food \u{1F356}, Wood \u{1FAB5}, Stone \u{1FAA8}, Gold \u{1F4B0}, and Science \u{1F52C}. These are essential for everything!",
+      targetElement: ".resources-bar",
+      action: "info",
+      nextCondition: "manual"
+    },
+    {
+      id: "gather_resources",
+      title: "Gathering Resources",
+      description: 'Click the "Gather Food", "Gather Wood", or "Gather Stone" buttons to manually collect resources. Try gathering some food now!',
+      targetElement: ".gather-buttons",
+      action: "click",
+      nextCondition: "resource",
+      conditionValue: "food"
+    },
+    {
+      id: "buildings_intro",
+      title: "Building Your First Structure",
+      description: "Buildings produce resources automatically over time. Go to the Buildings tab to construct your first Hut, which produces food passively.",
+      targetElement: '[data-tab="buildings"]',
+      action: "click",
+      nextCondition: "manual"
+    },
+    {
+      id: "research_intro",
+      title: "Research Technologies",
+      description: "Research new technologies to unlock buildings, troops, and advance through eras. Visit the Research tab to see available technologies.",
+      targetElement: '[data-tab="research"]',
+      action: "click",
+      nextCondition: "manual"
+    },
+    {
+      id: "barracks_intro",
+      title: "Training Troops",
+      description: "The Barracks allows you to train troops for combat. Research military technologies to unlock different unit types.",
+      targetElement: '[data-tab="barracks"]',
+      action: "info",
+      nextCondition: "manual"
+    },
+    {
+      id: "combat_intro",
+      title: "Combat & Conquest",
+      description: "Use your army to complete missions and conquer territories. Conquering territories gives you permanent bonuses!",
+      targetElement: '[data-tab="combat"]',
+      action: "info",
+      nextCondition: "manual"
+    },
+    {
+      id: "world_intro",
+      title: "World & Civilization",
+      description: "Choose a civilization and leader for unique bonuses. Found a religion and adopt cultural policies to customize your playstyle.",
+      targetElement: '[data-tab="world"]',
+      action: "info",
+      nextCondition: "manual"
+    },
+    {
+      id: "save_game",
+      title: "Save Your Progress",
+      description: "Don't forget to save your game! Use the Save button at the bottom of the screen. The game also auto-saves every 30 seconds.",
+      targetElement: "#save-game",
+      action: "info",
+      nextCondition: "manual"
+    },
+    {
+      id: "tutorial_complete",
+      title: "Tutorial Complete!",
+      description: "You now know the basics! Explore all the tabs and features to discover more. Good luck building your civilization! Visit the Help tab anytime if you need more information.",
+      action: "info",
+      nextCondition: "manual"
+    }
+  ];
+  var HELP_TOPICS = [
+    {
+      id: "getting_started",
+      icon: "\u{1F680}",
+      title: "Getting Started",
+      content: "Welcome to Incremental Civ Builder! Your goal is to advance your civilization from the Stone Age to the Future by gathering resources, building structures, researching technologies, and conquering territories.",
+      tips: [
+        "Start by gathering resources manually using the gather buttons",
+        "Build structures to generate resources automatically",
+        "Research technologies to unlock new features and advance eras",
+        "Save your game regularly to preserve your progress"
+      ]
+    },
+    {
+      id: "resources",
+      icon: "\u{1F4E6}",
+      title: "Resources",
+      content: "There are 5 main resources in the game:\n\n\u{1F356} Food - Used for training troops and sustaining your population\n\u{1FAB5} Wood - Essential for construction and some units\n\u{1FAA8} Stone - Required for advanced buildings and defenses\n\u{1F4B0} Gold - Universal currency for various purchases\n\u{1F52C} Science - Used to research new technologies",
+      tips: [
+        "Each era increases your base resource generation rate",
+        "Buildings provide passive resource income",
+        "Conquered territories give permanent resource bonuses",
+        "Some civilizations and policies boost specific resources"
+      ]
+    },
+    {
+      id: "buildings",
+      icon: "\u{1F3D7}\uFE0F",
+      title: "Buildings",
+      content: "Buildings automatically generate resources over time. Each building type has:\n\u2022 A production rate (resources per second)\n\u2022 A construction cost\n\u2022 A build time\n\u2022 A maximum count\n\nResearch technologies to unlock new building types.",
+      tips: [
+        "Focus on food production early to train troops",
+        "Libraries and Universities boost science generation",
+        "Each building can be built multiple times up to its max limit",
+        "Higher era buildings are more efficient but cost more"
+      ]
+    },
+    {
+      id: "research",
+      icon: "\u{1F52C}",
+      title: "Research & Technology",
+      content: "Technologies unlock new features, buildings, and troops. Research requires science points and takes time to complete. Only one technology can be researched at a time.\n\nAdvancing to new eras unlocks more powerful technologies.",
+      tips: [
+        "Prioritize technologies that unlock troops for combat",
+        "Building-unlocking techs help passive resource generation",
+        "Some technologies provide direct resource multipliers",
+        "Complete all era requirements to advance to the next age"
+      ]
+    },
+    {
+      id: "military",
+      icon: "\u2694\uFE0F",
+      title: "Military & Combat",
+      content: "Train troops in the Barracks to build your army. Each troop type has Attack, Defense, and Health stats.\n\nUse your army in two modes:\n\u2022 Missions - Fight enemies for rewards\n\u2022 Conquest - Capture territories for permanent bonuses",
+      tips: [
+        "Balance different troop types for a versatile army",
+        "Check difficulty ratings before starting battles",
+        "Winning battles may cause casualties - rebuild your army",
+        "Formations and Heroes boost your army's effectiveness"
+      ]
+    },
+    {
+      id: "conquest",
+      icon: "\u{1F3F0}",
+      title: "Conquest & Territories",
+      content: "Conquer territories to gain permanent bonuses. Each territory provides:\n\u2022 Flat resource bonuses (e.g., +2 food/s)\n\u2022 Resource multipliers (e.g., \xD71.1 gold)\n\nTerritories remain conquered even after refreshing the page.",
+      tips: [
+        "Easier territories have smaller armies but lower rewards",
+        "Multiplier bonuses stack with all other bonuses",
+        "Plan your conquests based on resources you need most",
+        "Build up a strong army before tackling harder territories"
+      ]
+    },
+    {
+      id: "civilizations",
+      icon: "\u{1F30D}",
+      title: "Civilizations & Leaders",
+      content: "Choose a civilization for unique bonuses and playstyles. Each civilization has:\n\u2022 Resource multipliers\n\u2022 Military bonuses\n\u2022 Special abilities\n\nLeaders provide additional bonuses and unlock as you progress.",
+      tips: [
+        "Egyptians excel at building and resource production",
+        "Romans have strong military bonuses",
+        "Greeks boost science and research",
+        "Choose a leader that complements your strategy"
+      ]
+    },
+    {
+      id: "religion_culture",
+      icon: "\u{1F64F}",
+      title: "Religion & Culture",
+      content: "Found a religion for permanent bonuses. Only one religion can be founded per game.\n\nCultural policies are purchased with culture points (earned passively). Policies provide various bonuses but cannot be un-adopted.",
+      tips: [
+        "Different religions suit different playstyles",
+        "Culture points accumulate over time automatically",
+        "Some policies have prerequisites",
+        "Plan your policy path for maximum benefit"
+      ]
+    },
+    {
+      id: "skills",
+      icon: "\u{1F31F}",
+      title: "Skills & Legacy",
+      content: "Legacy points are earned through achievements and milestones. Spend them on permanent skills that persist across games.\n\nSkills provide:\n\u2022 Resource multipliers\n\u2022 Military bonuses\n\u2022 Starting resources\n\u2022 Special abilities",
+      tips: [
+        "Complete milestones to earn legacy points",
+        "Some skills have prerequisites",
+        "Skills are permanent and don't reset",
+        "Plan your skill tree based on your playstyle"
+      ]
+    },
+    {
+      id: "advanced_military",
+      icon: "\u{1F396}\uFE0F",
+      title: "Advanced Military",
+      content: "The Military tab offers advanced combat features:\n\n\u2694\uFE0F Formations - Change how your army fights\n\u{1F451} Heroes - Recruit leaders with special abilities\n\u{1F3F0} Defense - Build fortifications\n\u2693 Naval Forces - Build a fleet\n\u{1F4A3} Siege Weapons - Breach enemy defenses\n\u{1F575}\uFE0F Espionage - Send spies on missions",
+      tips: [
+        "Formations can turn the tide of difficult battles",
+        "Only one hero can be active at a time",
+        "Defense structures help in territory defense",
+        "Unlock advanced features through research"
+      ]
+    },
+    {
+      id: "achievements",
+      icon: "\u{1F3C6}",
+      title: "Achievements",
+      content: "Complete achievements by reaching various milestones. Achievements track:\n\u2022 Resources gathered\n\u2022 Technologies researched\n\u2022 Battles won\n\u2022 Territories conquered\n\u2022 Buildings constructed\n\nSome achievements provide bonus rewards!",
+      tips: [
+        "Check the Achievements tab to see your progress",
+        "Achievement rewards include resource multipliers",
+        "Some achievements are hidden until completed",
+        "Achievements are saved with your game"
+      ]
+    },
+    {
+      id: "tips_tricks",
+      icon: "\u{1F4A1}",
+      title: "Tips & Tricks",
+      content: "Here are some advanced strategies to maximize your progress:",
+      tips: [
+        "Leave the game running to accumulate offline resources (requires Cloud Computing tech)",
+        "The game auto-saves every 30 seconds",
+        "Use keyboard shortcuts: dark/light theme toggle is in top-right corner",
+        "Hover over elements for detailed tooltips",
+        "Balance between military power and economic growth",
+        "Prioritize science early to unlock more options",
+        "Complete easier missions before harder ones",
+        "Check territory bonuses to plan conquests strategically"
+      ]
+    }
+  ];
+  function createInitialTutorialState() {
+    return {
+      isActive: false,
+      currentStep: 0,
+      completed: false,
+      skipped: false
+    };
+  }
+  function getCurrentTutorialStep(state) {
+    if (!state.isActive || state.completed || state.skipped) {
+      return null;
+    }
+    return TUTORIAL_STEPS[state.currentStep] || null;
+  }
+  function advanceTutorialStep(state) {
+    if (state.currentStep >= TUTORIAL_STEPS.length - 1) {
+      return {
+        ...state,
+        isActive: false,
+        completed: true
+      };
+    }
+    return {
+      ...state,
+      currentStep: state.currentStep + 1
+    };
+  }
+  function skipTutorial(state) {
+    return {
+      ...state,
+      isActive: false,
+      skipped: true
+    };
+  }
+  function startTutorial(state) {
+    return {
+      isActive: true,
+      currentStep: 0,
+      completed: false,
+      skipped: false
+    };
+  }
+
   // dist/ui.js
   var RENDER_DEBOUNCE_MS = 100;
   var INTERACTION_PAUSE_MS = 300;
@@ -11569,6 +12201,7 @@ body {
       this.battleResultRendered = false;
       this.conquestResultRendered = false;
       this.previousResources = null;
+      this.tutorialState = createInitialTutorialState();
       this.game = game;
       this.game.setOnStateChange(() => this.scheduleRender());
       this.game.setOnAchievementUnlocked((achievement) => this.queueAchievementNotification(achievement));
@@ -11876,7 +12509,8 @@ body {
         "world": "Choose civilization, leaders, and cultural policies",
         "skills": "Upgrade permanent skills using legacy points",
         "military": "Manage formations, heroes, naval forces, and espionage",
-        "achievements": "View your accomplishments and statistics"
+        "achievements": "View your accomplishments and statistics",
+        "help": "Tutorial and help information for new and experienced players"
       };
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         const tab = btn.dataset.tab;
@@ -11974,9 +12608,15 @@ body {
             this.updateMilitaryTab();
           }
           break;
+        case "help":
+          if (tabChanged) {
+            this.renderHelpTab();
+          }
+          break;
       }
       this.checkOfflineProgress();
       this.processAchievementNotifications();
+      this.renderTutorial();
     }
     renderHeader() {
       const era = getEraById(this.game.state.currentEra);
@@ -14731,6 +15371,216 @@ body {
         return;
       }
     }
+    // ===== Help & Tutorial Tab =====
+    renderHelpTab() {
+      const container = document.getElementById("help-content");
+      if (!container)
+        return;
+      let html = "";
+      html += `
+      <div class="help-header">
+        <div>
+          <h3>\u{1F4DA} Game Guide</h3>
+          <p>Everything you need to know about building your civilization!</p>
+        </div>
+        <button class="tutorial-start-btn" id="start-tutorial-btn">
+          \u{1F393} Start Tutorial
+        </button>
+      </div>
+    `;
+      html += `
+      <div class="quick-tips-section">
+        <h3>\u26A1 Quick Tips</h3>
+        <div class="quick-tips-grid">
+          <div class="quick-tip">
+            <span class="quick-tip-icon">\u{1F356}</span>
+            <span>Click gather buttons to collect resources manually</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">\u{1F3D7}\uFE0F</span>
+            <span>Buildings produce resources automatically over time</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">\u{1F52C}</span>
+            <span>Research unlocks new buildings, troops, and eras</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">\u2694\uFE0F</span>
+            <span>Train troops in the Barracks to fight battles</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">\u{1F3F0}</span>
+            <span>Conquer territories for permanent bonuses</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">\u{1F4BE}</span>
+            <span>Game auto-saves every 30 seconds</span>
+          </div>
+        </div>
+      </div>
+    `;
+      html += '<h3 style="margin: 25px 0 15px 0; color: var(--accent-gold);">\u{1F4D6} Help Topics</h3>';
+      html += '<div class="help-topics-grid">';
+      for (const topic of HELP_TOPICS) {
+        html += `
+        <div class="help-topic-card" data-topic="${topic.id}">
+          <div class="help-topic-header">
+            <span class="help-topic-icon">${topic.icon}</span>
+            <h4 class="help-topic-title">${topic.title}</h4>
+          </div>
+          <div class="help-topic-content">${topic.content}</div>
+          ${topic.tips && topic.tips.length > 0 ? `
+            <div class="help-topic-tips">
+              <h5>\u{1F4A1} Tips</h5>
+              <ul class="help-tip-list">
+                ${topic.tips.map((tip) => `<li class="help-tip-item">${tip}</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+        </div>
+      `;
+      }
+      html += "</div>";
+      container.innerHTML = html;
+      this.setupHelpEventListeners();
+    }
+    setupHelpEventListeners() {
+      document.getElementById("start-tutorial-btn")?.addEventListener("click", () => {
+        this.startTutorialMode();
+      });
+    }
+    // ===== Tutorial System =====
+    startTutorialMode() {
+      this.tutorialState = startTutorial(this.tutorialState);
+      this.saveTutorialState();
+      this.renderTutorial();
+    }
+    advanceTutorial() {
+      this.tutorialState = advanceTutorialStep(this.tutorialState);
+      this.saveTutorialState();
+      if (this.tutorialState.completed) {
+        this.showNotification("\u{1F389} Tutorial completed! You're ready to build your civilization!");
+        this.removeTutorialHighlight();
+      }
+      this.renderTutorial();
+    }
+    skipTutorialMode() {
+      this.tutorialState = skipTutorial(this.tutorialState);
+      this.saveTutorialState();
+      this.removeTutorialOverlay();
+      this.removeTutorialHighlight();
+      this.showNotification("Tutorial skipped. Visit the Help tab anytime!");
+    }
+    renderTutorial() {
+      this.removeTutorialOverlay();
+      this.removeTutorialHighlight();
+      const currentStep = getCurrentTutorialStep(this.tutorialState);
+      if (!currentStep)
+        return;
+      const overlay = document.createElement("div");
+      overlay.className = "tutorial-overlay";
+      overlay.id = "tutorial-overlay";
+      const modal = document.createElement("div");
+      modal.className = "tutorial-modal";
+      let stepIndicator = '<div class="tutorial-step-indicator">';
+      for (let i = 0; i < TUTORIAL_STEPS.length; i++) {
+        const stepClass = i < this.tutorialState.currentStep ? "completed" : i === this.tutorialState.currentStep ? "active" : "";
+        stepIndicator += `<div class="tutorial-step-dot ${stepClass}"></div>`;
+      }
+      stepIndicator += "</div>";
+      modal.innerHTML = `
+      ${stepIndicator}
+      <h3 class="tutorial-title">${currentStep.title}</h3>
+      <p class="tutorial-description">${currentStep.description}</p>
+      <div class="tutorial-buttons">
+        ${this.tutorialState.currentStep > 0 ? "" : ""}
+        <button class="tutorial-btn primary" id="tutorial-next-btn">
+          ${this.tutorialState.currentStep === TUTORIAL_STEPS.length - 1 ? "Finish" : "Next"}
+        </button>
+        <button class="tutorial-btn danger" id="tutorial-skip-btn">Skip Tutorial</button>
+      </div>
+    `;
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+      document.getElementById("tutorial-next-btn")?.addEventListener("click", () => {
+        this.advanceTutorial();
+      });
+      document.getElementById("tutorial-skip-btn")?.addEventListener("click", () => {
+        this.skipTutorialMode();
+      });
+      if (currentStep.targetElement) {
+        const targetEl = document.querySelector(currentStep.targetElement);
+        if (targetEl) {
+          targetEl.classList.add("tutorial-highlight");
+        }
+      }
+    }
+    removeTutorialOverlay() {
+      const overlay = document.getElementById("tutorial-overlay");
+      if (overlay) {
+        overlay.remove();
+      }
+    }
+    removeTutorialHighlight() {
+      document.querySelectorAll(".tutorial-highlight").forEach((el) => {
+        el.classList.remove("tutorial-highlight");
+      });
+    }
+    saveTutorialState() {
+      localStorage.setItem("civGameTutorial", JSON.stringify(this.tutorialState));
+    }
+    loadTutorialState() {
+      const saved = localStorage.getItem("civGameTutorial");
+      if (saved) {
+        try {
+          this.tutorialState = JSON.parse(saved);
+        } catch {
+          this.tutorialState = createInitialTutorialState();
+        }
+      }
+    }
+    // Check and show tutorial for new players
+    checkNewPlayerTutorial() {
+      this.loadTutorialState();
+      if (!this.tutorialState.completed && !this.tutorialState.skipped) {
+        const stats = this.game.state.statistics;
+        const isNewPlayer = stats.totalFoodGathered === 0 && stats.totalWoodGathered === 0 && stats.totalStoneGathered === 0;
+        if (isNewPlayer) {
+          setTimeout(() => {
+            this.showTutorialPrompt();
+          }, 1e3);
+        }
+      }
+    }
+    showTutorialPrompt() {
+      const overlay = document.createElement("div");
+      overlay.className = "tutorial-overlay";
+      overlay.id = "tutorial-prompt-overlay";
+      const modal = document.createElement("div");
+      modal.className = "tutorial-modal";
+      modal.innerHTML = `
+      <h3 class="tutorial-title">\u{1F393} Welcome, New Player!</h3>
+      <p class="tutorial-description">
+        Would you like a quick tutorial to learn the basics of Incremental Civ Builder?
+      </p>
+      <div class="tutorial-buttons">
+        <button class="tutorial-btn primary" id="tutorial-prompt-yes">Yes, Start Tutorial</button>
+        <button class="tutorial-btn secondary" id="tutorial-prompt-no">No, I'll Explore</button>
+      </div>
+    `;
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+      document.getElementById("tutorial-prompt-yes")?.addEventListener("click", () => {
+        overlay.remove();
+        this.startTutorialMode();
+      });
+      document.getElementById("tutorial-prompt-no")?.addEventListener("click", () => {
+        overlay.remove();
+        this.tutorialState.skipped = true;
+        this.saveTutorialState();
+        this.showNotification("Visit the Help tab anytime for guidance!");
+      });
+    }
   };
 
   // dist/main.js
@@ -14743,6 +15593,7 @@ body {
     }
     game.start();
     ui.render();
+    ui.checkNewPlayerTutorial();
     setInterval(() => {
       const saveData = game.saveGame();
       localStorage.setItem("civGameSave", saveData);
