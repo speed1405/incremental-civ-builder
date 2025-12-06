@@ -15,6 +15,14 @@ import { TUTORIAL_STEPS, HELP_TOPICS, TutorialState, createInitialTutorialState,
 const RENDER_DEBOUNCE_MS = 100;
 const INTERACTION_PAUSE_MS = 300;
 
+// Notification history item interface
+interface NotificationItem {
+  id: number;
+  message: string;
+  timestamp: Date;
+  type: 'info' | 'success' | 'warning' | 'error';
+}
+
 export class GameUI {
   private game: Game;
   private currentTab: string = 'resources';
@@ -34,6 +42,12 @@ export class GameUI {
   private previousResources: { food: number; wood: number; stone: number; gold: number; science: number } | null = null;
   // Tutorial state
   private tutorialState: TutorialState = createInitialTutorialState();
+  // Notification Center
+  private notificationHistory: NotificationItem[] = [];
+  private notificationIdCounter: number = 0;
+  private isNotificationCenterOpen: boolean = false;
+  // Unit comparison
+  private comparisonUnits: string[] = [];
 
   constructor(game: Game) {
     this.game = game;
@@ -41,6 +55,7 @@ export class GameUI {
     this.game.setOnAchievementUnlocked((achievement) => this.queueAchievementNotification(achievement));
     this.setupEventListeners();
     this.initThemeToggle();
+    this.initNotificationCenter();
     this.addTooltips();
   }
 
@@ -685,6 +700,73 @@ export class GameUI {
     if (stoneBtn) {
       stoneBtn.textContent = `🪨 Gather Stone (+${resourceMultipliers.stone.toFixed(1)})`;
     }
+
+    // Update resource forecast
+    this.renderResourceForecast();
+  }
+
+  // Resource Forecast feature - shows predicted resource levels
+  private renderResourceForecast(): void {
+    const container = document.getElementById('resource-forecast');
+    if (!container) {
+      // Create the forecast container if it doesn't exist
+      const resourcesContent = document.getElementById('resources-content');
+      if (resourcesContent) {
+        const forecastDiv = document.createElement('div');
+        forecastDiv.id = 'resource-forecast';
+        forecastDiv.className = 'resource-forecast';
+        resourcesContent.appendChild(forecastDiv);
+      }
+      return;
+    }
+
+    const { resources } = this.game.state;
+    const era = getEraById(this.game.state.currentEra);
+    if (!era) return;
+
+    // Get building production
+    const buildingProduction = this.game.getBuildingProduction();
+    
+    // Calculate total rates (base + buildings)
+    const { resourceMultipliers } = this.game.state;
+    const rates = {
+      food: era.resources.food.baseRate * resourceMultipliers.food + buildingProduction.food,
+      wood: era.resources.wood.baseRate * resourceMultipliers.wood + buildingProduction.wood,
+      stone: era.resources.stone.baseRate * resourceMultipliers.stone + buildingProduction.stone,
+      gold: era.resources.gold.baseRate * resourceMultipliers.gold + buildingProduction.gold,
+      science: era.resources.science.baseRate * resourceMultipliers.science + buildingProduction.science
+    };
+
+    // Forecast for different time periods
+    const forecasts = [
+      { label: '1 min', seconds: 60 },
+      { label: '5 min', seconds: 300 },
+      { label: '1 hour', seconds: 3600 }
+    ];
+
+    let html = `
+      <h3>📈 Resource Forecast</h3>
+      <p class="forecast-description">Estimated resources at future times (based on current production rates)</p>
+      <div class="forecast-grid">
+    `;
+
+    for (const forecast of forecasts) {
+      html += `
+        <div class="forecast-column">
+          <h4>In ${forecast.label}</h4>
+          <div class="forecast-resources">
+            <span class="forecast-resource">🍖 ${Math.floor(resources.food + rates.food * forecast.seconds)}</span>
+            <span class="forecast-resource">🪵 ${Math.floor(resources.wood + rates.wood * forecast.seconds)}</span>
+            <span class="forecast-resource">🪨 ${Math.floor(resources.stone + rates.stone * forecast.seconds)}</span>
+            <span class="forecast-resource">💰 ${Math.floor(resources.gold + rates.gold * forecast.seconds)}</span>
+            <span class="forecast-resource">🔬 ${Math.floor(resources.science + rates.science * forecast.seconds)}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
   }
 
   private renderBuildingsTab(): void {
@@ -1059,8 +1141,12 @@ export class GameUI {
       html += '<p class="empty-message">No troops in training</p>';
     }
 
+    // Unit Comparison Tool
+    html += this.renderUnitComparison();
+
     // Available troops to train
     html += '<h3>Available Units</h3>';
+    html += '<p class="comparison-hint">💡 Select units to compare using checkboxes</p>';
     
     const availableTroops = this.game.getAvailableTroops();
     if (availableTroops.length === 0) {
@@ -1069,8 +1155,13 @@ export class GameUI {
       html += '<div class="troop-grid">';
       for (const troop of availableTroops) {
         const canTrain = this.canTrainTroop(troop);
+        const isInComparison = this.comparisonUnits.includes(troop.id);
         html += `
-          <div class="troop-card ${canTrain ? 'available' : 'unavailable'}">
+          <div class="troop-card ${canTrain ? 'available' : 'unavailable'} ${isInComparison ? 'in-comparison' : ''}">
+            <label class="compare-checkbox-label">
+              <input type="checkbox" class="compare-checkbox" data-compare-unit="${troop.id}" ${isInComparison ? 'checked' : ''}>
+              Compare
+            </label>
             <h4>${troop.name}</h4>
             <p class="troop-desc">${troop.description}</p>
             <div class="troop-stats">
@@ -1095,7 +1186,136 @@ export class GameUI {
     }
 
     container.innerHTML = html;
-    // Event listeners are handled by event delegation in setupEventListeners()
+    
+    // Setup comparison checkbox listeners
+    this.setupComparisonListeners();
+  }
+
+  // Setup event listeners for unit comparison checkboxes
+  private setupComparisonListeners(): void {
+    const checkboxes = document.querySelectorAll('.compare-checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        const unitId = target.dataset.compareUnit;
+        if (!unitId) return;
+        
+        if (target.checked) {
+          if (this.comparisonUnits.length < 3) {
+            this.comparisonUnits.push(unitId);
+          } else {
+            target.checked = false;
+            this.showNotification('Maximum 3 units for comparison', 'warning');
+            return;
+          }
+        } else {
+          this.comparisonUnits = this.comparisonUnits.filter(id => id !== unitId);
+        }
+        
+        // Re-render comparison section only
+        this.updateComparisonDisplay();
+      });
+    });
+  }
+
+  // Update comparison display without full re-render
+  private updateComparisonDisplay(): void {
+    const comparisonSection = document.getElementById('unit-comparison-section');
+    if (comparisonSection) {
+      comparisonSection.innerHTML = this.renderUnitComparisonContent();
+    }
+    
+    // Update card highlighting
+    document.querySelectorAll('.troop-card').forEach(card => {
+      const checkbox = card.querySelector('.compare-checkbox') as HTMLInputElement;
+      if (checkbox) {
+        const unitId = checkbox.dataset.compareUnit;
+        if (unitId && this.comparisonUnits.includes(unitId)) {
+          card.classList.add('in-comparison');
+        } else {
+          card.classList.remove('in-comparison');
+        }
+      }
+    });
+  }
+
+  // Render unit comparison section
+  private renderUnitComparison(): string {
+    return `
+      <div class="unit-comparison-wrapper">
+        <h3>⚖️ Unit Comparison</h3>
+        <div id="unit-comparison-section" class="unit-comparison-section">
+          ${this.renderUnitComparisonContent()}
+        </div>
+      </div>
+    `;
+  }
+
+  // Render the content of unit comparison
+  private renderUnitComparisonContent(): string {
+    if (this.comparisonUnits.length === 0) {
+      return '<p class="empty-message">Select units above to compare their stats side-by-side</p>';
+    }
+
+    const units = this.comparisonUnits
+      .map(id => getTroopTypeById(id))
+      .filter(u => u !== undefined);
+
+    if (units.length === 0) {
+      return '<p class="empty-message">Select units above to compare their stats side-by-side</p>';
+    }
+
+    // Find max values for highlighting
+    const maxAttack = Math.max(...units.map(u => u!.stats.attack));
+    const maxDefense = Math.max(...units.map(u => u!.stats.defense));
+    const maxHealth = Math.max(...units.map(u => u!.stats.health));
+    const minCostFood = Math.min(...units.map(u => u!.cost.food));
+    const minCostGold = Math.min(...units.map(u => u!.cost.gold));
+    const minTrainTime = Math.min(...units.map(u => u!.trainTime));
+
+    let html = `
+      <div class="comparison-grid">
+        <div class="comparison-header">
+          <div class="comparison-cell label">Stat</div>
+          ${units.map(u => `<div class="comparison-cell unit-name">${u!.name}</div>`).join('')}
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell label">⚔️ Attack</div>
+          ${units.map(u => `<div class="comparison-cell ${u!.stats.attack === maxAttack ? 'best' : ''}">${u!.stats.attack}</div>`).join('')}
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell label">🛡️ Defense</div>
+          ${units.map(u => `<div class="comparison-cell ${u!.stats.defense === maxDefense ? 'best' : ''}">${u!.stats.defense}</div>`).join('')}
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell label">❤️ Health</div>
+          ${units.map(u => `<div class="comparison-cell ${u!.stats.health === maxHealth ? 'best' : ''}">${u!.stats.health}</div>`).join('')}
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell label">🍖 Food Cost</div>
+          ${units.map(u => `<div class="comparison-cell ${u!.cost.food === minCostFood ? 'best' : ''}">${u!.cost.food}</div>`).join('')}
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell label">💰 Gold Cost</div>
+          ${units.map(u => `<div class="comparison-cell ${u!.cost.gold === minCostGold ? 'best' : ''}">${u!.cost.gold}</div>`).join('')}
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell label">⏱️ Train Time</div>
+          ${units.map(u => `<div class="comparison-cell ${u!.trainTime === minTrainTime ? 'best' : ''}">${u!.trainTime}s</div>`).join('')}
+        </div>
+      </div>
+      <button class="clear-comparison-btn" id="clear-comparison-btn">Clear Comparison</button>
+    `;
+
+    // Add clear button listener after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      document.getElementById('clear-comparison-btn')?.addEventListener('click', () => {
+        this.comparisonUnits = [];
+        this.renderBarracksTab();
+      });
+    }, 0);
+
+    return html;
   }
 
   private canTrainTroop(troop: typeof TROOP_TYPES[0]): boolean {
@@ -2123,9 +2343,27 @@ export class GameUI {
     }
   }
 
-  private showNotification(message: string): void {
+  private showNotification(message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info'): void {
+    // Add to notification history
+    const notificationItem: NotificationItem = {
+      id: this.notificationIdCounter++,
+      message,
+      timestamp: new Date(),
+      type
+    };
+    this.notificationHistory.unshift(notificationItem);
+    
+    // Keep only the last 50 notifications
+    if (this.notificationHistory.length > 50) {
+      this.notificationHistory = this.notificationHistory.slice(0, 50);
+    }
+    
+    // Update notification center badge
+    this.updateNotificationBadge();
+    
+    // Show toast notification
     const notification = document.createElement('div');
-    notification.className = 'notification';
+    notification.className = `notification notification-${type}`;
     notification.textContent = message;
     document.body.appendChild(notification);
     
@@ -2133,6 +2371,113 @@ export class GameUI {
       notification.classList.add('fade-out');
       setTimeout(() => notification.remove(), 500);
     }, 2000);
+  }
+
+  // Initialize notification center UI
+  private initNotificationCenter(): void {
+    const centerContainer = document.createElement('div');
+    centerContainer.className = 'notification-center-container';
+    centerContainer.id = 'notification-center-container';
+    centerContainer.innerHTML = `
+      <button class="notification-center-btn" id="notification-center-btn" data-tooltip="Notification Center">
+        🔔
+        <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
+      </button>
+      <div class="notification-center-panel" id="notification-center-panel" style="display: none;">
+        <div class="notification-center-header">
+          <h4>📋 Notifications</h4>
+          <button class="notification-clear-btn" id="notification-clear-btn">Clear All</button>
+        </div>
+        <div class="notification-center-list" id="notification-center-list">
+          <p class="notification-empty">No notifications yet</p>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(centerContainer);
+    
+    // Event listeners
+    document.getElementById('notification-center-btn')?.addEventListener('click', () => {
+      this.toggleNotificationCenter();
+    });
+    
+    document.getElementById('notification-clear-btn')?.addEventListener('click', () => {
+      this.clearNotifications();
+    });
+    
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const container = document.getElementById('notification-center-container');
+      if (container && !container.contains(target) && this.isNotificationCenterOpen) {
+        this.closeNotificationCenter();
+      }
+    });
+  }
+
+  private toggleNotificationCenter(): void {
+    this.isNotificationCenterOpen = !this.isNotificationCenterOpen;
+    const panel = document.getElementById('notification-center-panel');
+    if (panel) {
+      panel.style.display = this.isNotificationCenterOpen ? 'flex' : 'none';
+      if (this.isNotificationCenterOpen) {
+        this.renderNotificationList();
+      }
+    }
+  }
+
+  private closeNotificationCenter(): void {
+    this.isNotificationCenterOpen = false;
+    const panel = document.getElementById('notification-center-panel');
+    if (panel) {
+      panel.style.display = 'none';
+    }
+  }
+
+  private updateNotificationBadge(): void {
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+      const count = this.notificationHistory.length;
+      badge.textContent = count > 99 ? '99+' : count.toString();
+      badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+  }
+
+  private renderNotificationList(): void {
+    const list = document.getElementById('notification-center-list');
+    if (!list) return;
+    
+    if (this.notificationHistory.length === 0) {
+      list.innerHTML = '<p class="notification-empty">No notifications yet</p>';
+      return;
+    }
+    
+    let html = '';
+    for (const item of this.notificationHistory) {
+      const timeAgo = this.getTimeAgo(item.timestamp);
+      html += `
+        <div class="notification-item notification-item-${item.type}">
+          <span class="notification-message">${item.message}</span>
+          <span class="notification-time">${timeAgo}</span>
+        </div>
+      `;
+    }
+    list.innerHTML = html;
+  }
+
+  private clearNotifications(): void {
+    this.notificationHistory = [];
+    this.updateNotificationBadge();
+    this.renderNotificationList();
+  }
+
+  private getTimeAgo(date: Date): string {
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours / 24)}d ago`;
   }
 
   // Achievements tab
