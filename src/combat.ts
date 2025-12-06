@@ -1467,6 +1467,577 @@ export function generateTerritories(): Territory[] {
     rewards: { food: 200000, wood: 150000, stone: 100000, gold: 350000, science: 250000 },
   });
 
+  // ===== Additional Territories =====
+
+  // Stone Age - Additional Territories
+  territories.push({
+    id: 'territory_hunting_grounds',
+    name: 'Hunting Grounds',
+    description: 'Vast plains teeming with wild game.',
+    era: 'stone_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Nomadic Hunters',
+      troops: [],
+      attack: 10,
+      defense: 5,
+      health: 60,
+      size: 'small',
+    },
+    bonuses: { flatBonus: { resource: 'food', amount: 2 } },
+    rewards: { food: 100, wood: 30, stone: 20, gold: 0, science: 10 },
+  });
+
+  territories.push({
+    id: 'territory_sacred_cave',
+    name: 'Sacred Cave',
+    description: 'An ancient cave with mysterious paintings and spiritual significance.',
+    era: 'stone_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Cave Shamans',
+      troops: [],
+      attack: 15,
+      defense: 10,
+      health: 90,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'science', amount: 1 } },
+    rewards: { food: 70, wood: 50, stone: 80, gold: 0, science: 30 },
+  });
+
+  // Bronze Age - Additional Territories
+  territories.push({
+    id: 'territory_fertile_delta',
+    name: 'Fertile Delta',
+    description: 'Rich farmland where a great river meets the sea.',
+    era: 'bronze_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Delta Farmers',
+      troops: [],
+      attack: 25,
+      defense: 15,
+      health: 130,
+      size: 'medium',
+    },
+    bonuses: { resourceMultiplier: { resource: 'food', multiplier: 1.15 } },
+    rewards: { food: 250, wood: 100, stone: 80, gold: 100, science: 40 },
+  });
+
+  territories.push({
+    id: 'territory_tin_deposits',
+    name: 'Tin Deposits',
+    description: 'Essential tin for bronze alloy production.',
+    era: 'bronze_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Tin Miners',
+      troops: [],
+      attack: 35,
+      defense: 25,
+      health: 180,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'stone', amount: 3 } },
+    rewards: { food: 150, wood: 120, stone: 280, gold: 120, science: 60 },
+  });
+
+  // Iron Age - Additional Territories
+  territories.push({
+    id: 'territory_mountain_pass',
+    name: 'Mountain Pass',
+    description: 'A strategic mountain passage controlling trade routes.',
+    era: 'iron_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Pass Wardens',
+      troops: [],
+      attack: 80,
+      defense: 60,
+      health: 400,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'gold', amount: 5 } },
+    rewards: { food: 400, wood: 300, stone: 350, gold: 400, science: 150 },
+  });
+
+  territories.push({
+    id: 'territory_salt_flats',
+    name: 'Salt Flats',
+    description: 'Valuable salt deposits worth their weight in gold.',
+    era: 'iron_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Salt Traders',
+      troops: [],
+      attack: 60,
+      defense: 40,
+      health: 320,
+      size: 'small',
+    },
+    bonuses: { resourceMultiplier: { resource: 'gold', multiplier: 1.1 } },
+    rewards: { food: 350, wood: 200, stone: 250, gold: 500, science: 120 },
+  });
+
+  // Classical Age - Additional Territories
+  territories.push({
+    id: 'territory_marble_quarry',
+    name: 'Marble Quarry',
+    description: 'Source of fine marble for monuments and temples.',
+    era: 'classical_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Quarry Masters',
+      troops: [],
+      attack: 130,
+      defense: 100,
+      health: 650,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'stone', amount: 8 } },
+    rewards: { food: 800, wood: 500, stone: 900, gold: 600, science: 300 },
+  });
+
+  territories.push({
+    id: 'territory_wine_region',
+    name: 'Wine Region',
+    description: 'Famous vineyards producing the finest wines.',
+    era: 'classical_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Vineyard Defenders',
+      troops: [],
+      attack: 120,
+      defense: 80,
+      health: 600,
+      size: 'small',
+    },
+    bonuses: { flatBonus: { resource: 'gold', amount: 8 } },
+    rewards: { food: 700, wood: 400, stone: 300, gold: 800, science: 250 },
+  });
+
+  territories.push({
+    id: 'territory_philosophers_grove',
+    name: "Philosophers' Grove",
+    description: 'A sacred grove where great minds gather to debate.',
+    era: 'classical_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Academic Guards',
+      troops: [],
+      attack: 100,
+      defense: 70,
+      health: 500,
+      size: 'small',
+    },
+    bonuses: { resourceMultiplier: { resource: 'science', multiplier: 1.15 } },
+    rewards: { food: 600, wood: 400, stone: 300, gold: 500, science: 600 },
+  });
+
+  // Medieval Age - Additional Territories
+  territories.push({
+    id: 'territory_silver_mines',
+    name: 'Silver Mines',
+    description: 'Rich veins of silver hidden in the mountains.',
+    era: 'medieval_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Mining Guild',
+      troops: [],
+      attack: 220,
+      defense: 160,
+      health: 1100,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'gold', amount: 12 } },
+    rewards: { food: 1500, wood: 1000, stone: 1200, gold: 2000, science: 600 },
+  });
+
+  territories.push({
+    id: 'territory_monastery',
+    name: 'Grand Monastery',
+    description: 'A center of learning and religious devotion.',
+    era: 'medieval_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Monk Warriors',
+      troops: [],
+      attack: 180,
+      defense: 200,
+      health: 1000,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'science', amount: 8 } },
+    rewards: { food: 1200, wood: 800, stone: 900, gold: 1200, science: 1000 },
+  });
+
+  territories.push({
+    id: 'territory_wheat_fields',
+    name: 'Golden Wheat Fields',
+    description: 'Endless fields of golden wheat to feed empires.',
+    era: 'medieval_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Peasant Militia',
+      troops: [],
+      attack: 150,
+      defense: 120,
+      health: 800,
+      size: 'small',
+    },
+    bonuses: { resourceMultiplier: { resource: 'food', multiplier: 1.2 } },
+    rewards: { food: 2000, wood: 700, stone: 500, gold: 800, science: 400 },
+  });
+
+  // Renaissance - Additional Territories
+  territories.push({
+    id: 'territory_spice_islands',
+    name: 'Spice Islands',
+    description: 'Exotic islands with rare and valuable spices.',
+    era: 'renaissance',
+    conquered: false,
+    enemyArmy: {
+      name: 'Island Defenders',
+      troops: [],
+      attack: 380,
+      defense: 220,
+      health: 1900,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'gold', amount: 15 } },
+    rewards: { food: 3200, wood: 2200, stone: 1600, gold: 4500, science: 1200 },
+  });
+
+  territories.push({
+    id: 'territory_university_city',
+    name: 'University City',
+    description: 'A renowned center of Renaissance learning.',
+    era: 'renaissance',
+    conquered: false,
+    enemyArmy: {
+      name: 'Scholar Militia',
+      troops: [],
+      attack: 320,
+      defense: 280,
+      health: 1700,
+      size: 'medium',
+    },
+    bonuses: { resourceMultiplier: { resource: 'science', multiplier: 1.2 } },
+    rewards: { food: 2800, wood: 2000, stone: 1800, gold: 3000, science: 2500 },
+  });
+
+  territories.push({
+    id: 'territory_banking_center',
+    name: 'Banking Center',
+    description: 'The financial heart of the known world.',
+    era: 'renaissance',
+    conquered: false,
+    enemyArmy: {
+      name: 'Mercenary Guards',
+      troops: [],
+      attack: 450,
+      defense: 300,
+      health: 2400,
+      size: 'large',
+    },
+    bonuses: { resourceMultiplier: { resource: 'gold', multiplier: 1.25 } },
+    rewards: { food: 3500, wood: 2500, stone: 2000, gold: 6000, science: 1500 },
+  });
+
+  // Industrial Age - Additional Territories
+  territories.push({
+    id: 'territory_steel_mills',
+    name: 'Steel Mills',
+    description: 'Massive industrial complexes producing steel.',
+    era: 'industrial_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Factory Workers',
+      troops: [],
+      attack: 600,
+      defense: 400,
+      health: 3000,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'stone', amount: 20 } },
+    rewards: { food: 6500, wood: 5000, stone: 7000, gold: 5500, science: 2800 },
+  });
+
+  territories.push({
+    id: 'territory_railroad_hub',
+    name: 'Railroad Hub',
+    description: 'A major junction connecting all rail lines.',
+    era: 'industrial_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Railway Guard',
+      troops: [],
+      attack: 700,
+      defense: 450,
+      health: 3500,
+      size: 'large',
+    },
+    bonuses: { resourceMultiplier: { resource: 'wood', multiplier: 1.25 } },
+    rewards: { food: 7500, wood: 8000, stone: 5000, gold: 7000, science: 3500 },
+  });
+
+  territories.push({
+    id: 'territory_textile_district',
+    name: 'Textile District',
+    description: 'Factories producing cloth for the world.',
+    era: 'industrial_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Guild Masters',
+      troops: [],
+      attack: 550,
+      defense: 350,
+      health: 2800,
+      size: 'small',
+    },
+    bonuses: { flatBonus: { resource: 'gold', amount: 25 } },
+    rewards: { food: 5500, wood: 4000, stone: 3000, gold: 9000, science: 2500 },
+  });
+
+  // Modern Age - Additional Territories
+  territories.push({
+    id: 'territory_silicon_valley',
+    name: 'Tech Valley',
+    description: 'The birthplace of modern computing.',
+    era: 'modern_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Tech Security',
+      troops: [],
+      attack: 1200,
+      defense: 800,
+      health: 6000,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'science', amount: 40 } },
+    rewards: { food: 14000, wood: 10000, stone: 8000, gold: 18000, science: 20000 },
+  });
+
+  territories.push({
+    id: 'territory_financial_district',
+    name: 'Financial District',
+    description: 'The economic powerhouse of the modern world.',
+    era: 'modern_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Corporate Security',
+      troops: [],
+      attack: 1100,
+      defense: 700,
+      health: 5500,
+      size: 'medium',
+    },
+    bonuses: { resourceMultiplier: { resource: 'gold', multiplier: 1.3 } },
+    rewards: { food: 12000, wood: 8000, stone: 6000, gold: 25000, science: 10000 },
+  });
+
+  territories.push({
+    id: 'territory_military_base',
+    name: 'Military Base',
+    description: 'A heavily fortified military installation.',
+    era: 'modern_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Base Garrison',
+      troops: [],
+      attack: 1400,
+      defense: 1100,
+      health: 7000,
+      size: 'large',
+    },
+    bonuses: { flatBonus: { resource: 'stone', amount: 25 } },
+    rewards: { food: 15000, wood: 12000, stone: 15000, gold: 15000, science: 8000 },
+  });
+
+  // Atomic Age - Additional Territories
+  territories.push({
+    id: 'territory_uranium_mines',
+    name: 'Uranium Mines',
+    description: 'Strategic deposits of nuclear fuel.',
+    era: 'atomic_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Nuclear Security',
+      troops: [],
+      attack: 2400,
+      defense: 1500,
+      health: 12000,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'science', amount: 60 } },
+    rewards: { food: 28000, wood: 20000, stone: 25000, gold: 40000, science: 30000 },
+  });
+
+  territories.push({
+    id: 'territory_missile_silo',
+    name: 'Missile Silo Complex',
+    description: 'Underground facilities housing nuclear missiles.',
+    era: 'atomic_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Silo Guards',
+      troops: [],
+      attack: 3000,
+      defense: 2200,
+      health: 15000,
+      size: 'large',
+    },
+    bonuses: { resourceMultiplier: { resource: 'stone', multiplier: 1.35 } },
+    rewards: { food: 32000, wood: 25000, stone: 35000, gold: 45000, science: 25000 },
+  });
+
+  territories.push({
+    id: 'territory_research_campus',
+    name: 'Research Campus',
+    description: 'A sprawling complex dedicated to scientific advancement.',
+    era: 'atomic_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Research Security',
+      troops: [],
+      attack: 2000,
+      defense: 1200,
+      health: 10000,
+      size: 'small',
+    },
+    bonuses: { resourceMultiplier: { resource: 'science', multiplier: 1.3 } },
+    rewards: { food: 22000, wood: 16000, stone: 14000, gold: 30000, science: 40000 },
+  });
+
+  // Information Age - Additional Territories
+  territories.push({
+    id: 'territory_server_farm',
+    name: 'Global Server Farm',
+    description: 'Massive data centers powering the digital world.',
+    era: 'information_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Digital Defense',
+      troops: [],
+      attack: 4800,
+      defense: 3000,
+      health: 24000,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'science', amount: 100 } },
+    rewards: { food: 55000, wood: 40000, stone: 35000, gold: 80000, science: 70000 },
+  });
+
+  territories.push({
+    id: 'territory_smart_city',
+    name: 'Smart City',
+    description: 'A fully automated city of the future.',
+    era: 'information_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Automated Defense',
+      troops: [],
+      attack: 5500,
+      defense: 3500,
+      health: 28000,
+      size: 'large',
+    },
+    bonuses: { resourceMultiplier: { resource: 'food', multiplier: 1.4 } },
+    rewards: { food: 80000, wood: 55000, stone: 45000, gold: 100000, science: 60000 },
+  });
+
+  territories.push({
+    id: 'territory_quantum_lab',
+    name: 'Quantum Research Lab',
+    description: 'Where the boundaries of physics are pushed.',
+    era: 'information_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Lab Security',
+      troops: [],
+      attack: 4200,
+      defense: 2600,
+      health: 21000,
+      size: 'small',
+    },
+    bonuses: { resourceMultiplier: { resource: 'science', multiplier: 1.45 } },
+    rewards: { food: 45000, wood: 32000, stone: 28000, gold: 60000, science: 90000 },
+  });
+
+  // Future Age - Additional Territories
+  territories.push({
+    id: 'territory_mars_colony',
+    name: 'Mars Colony',
+    description: 'Humanity\'s first permanent settlement on Mars.',
+    era: 'future_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Colonial Defense',
+      troops: [],
+      attack: 10000,
+      defense: 6500,
+      health: 50000,
+      size: 'large',
+    },
+    bonuses: { flatBonus: { resource: 'science', amount: 200 } },
+    rewards: { food: 150000, wood: 100000, stone: 80000, gold: 220000, science: 200000 },
+  });
+
+  territories.push({
+    id: 'territory_asteroid_belt',
+    name: 'Asteroid Mining Belt',
+    description: 'Unlimited resources floating in space.',
+    era: 'future_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Mining Drones',
+      troops: [],
+      attack: 8500,
+      defense: 5000,
+      health: 42000,
+      size: 'medium',
+    },
+    bonuses: { flatBonus: { resource: 'gold', amount: 200 } },
+    rewards: { food: 100000, wood: 80000, stone: 150000, gold: 300000, science: 120000 },
+  });
+
+  territories.push({
+    id: 'territory_antimatter_plant',
+    name: 'Antimatter Power Plant',
+    description: 'Harnessing the most powerful energy source known.',
+    era: 'future_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Energy Sentinels',
+      troops: [],
+      attack: 11000,
+      defense: 7500,
+      health: 55000,
+      size: 'large',
+    },
+    bonuses: { resourceMultiplier: { resource: 'science', multiplier: 1.8 } },
+    rewards: { food: 180000, wood: 130000, stone: 100000, gold: 280000, science: 300000 },
+  });
+
+  territories.push({
+    id: 'territory_galactic_gateway',
+    name: 'Galactic Gateway',
+    description: 'A portal to the stars. The ultimate prize.',
+    era: 'future_age',
+    conquered: false,
+    enemyArmy: {
+      name: 'Dimensional Guardians',
+      troops: [],
+      attack: 15000,
+      defense: 10000,
+      health: 75000,
+      size: 'boss',
+    },
+    bonuses: { resourceMultiplier: { resource: 'gold', multiplier: 2.5 } },
+    rewards: { food: 300000, wood: 250000, stone: 200000, gold: 500000, science: 400000 },
+  });
+
   return territories;
 }
 

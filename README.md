@@ -165,12 +165,12 @@ Here are some ideas to enhance the game:
 - **Auto-Save Frequency**: Customize how often the game saves
 
 ### 🌍 World & Lore
-- **Civilization Choices**: Different starting civilizations with unique bonuses
-- **Historical Leaders**: Choose leaders with special abilities
-- **World Map**: Geographic territories to explore and conquer
-- **Natural Wonders**: Discoverable landmarks with unique effects
-- **Religion System**: Found and spread religions for cultural bonuses
-- **Cultural Influence**: Spread your culture to neighboring territories
+- **Civilization Choices**: Different starting civilizations with unique bonuses ✅ (Implemented!)
+- **Historical Leaders**: Choose leaders with special abilities ✅ (Implemented!)
+- **World Map**: Geographic territories to explore and conquer ✅ (Via Conquest Mode)
+- **Natural Wonders**: Discoverable landmarks with unique effects ✅ (Implemented!)
+- **Religion System**: Found and spread religions for cultural bonuses ✅ (Implemented!)
+- **Cultural Influence**: Spread your culture to neighboring territories ✅ (Via Cultural Policies)
 
 ### 📈 Progression Systems
 - **Skill Trees**: Unlock permanent bonuses through gameplay
