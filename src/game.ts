@@ -65,6 +65,34 @@ import {
   createInitialSkillTreeState,
   calculateSkillBonuses,
 } from './skills.js';
+import {
+  Civilization,
+  Leader,
+  NaturalWonder,
+  Religion,
+  CulturalPolicy,
+  LoreState,
+  CIVILIZATIONS,
+  LEADERS,
+  NATURAL_WONDERS,
+  RELIGION_TEMPLATES,
+  CULTURAL_POLICIES,
+  getCivilizationById,
+  getLeaderById,
+  getAvailableLeaders,
+  getNaturalWonderById,
+  getReligionTemplateById,
+  getPolicyById,
+  calculateCivilizationBonuses,
+  calculateReligionBonuses,
+  calculateNaturalWonderBonuses,
+  calculatePolicyBonuses,
+  createInitialLoreState,
+  tryDiscoverWonder,
+  foundReligion,
+  calculateCultureGain,
+  canAdoptPolicy,
+} from './lore.js';
 
 export interface GameState {
   currentEra: string;
@@ -110,6 +138,8 @@ export interface GameState {
   unlockedBuildings: Set<string>;
   // Skill tree and legacy system
   skillTree: SkillTreeState;
+  // World and Lore system
+  lore: LoreState;
 }
 
 export class Game {
@@ -168,6 +198,8 @@ export class Game {
       conquestMode: false,
       // Skill tree and legacy system
       skillTree: createInitialSkillTreeState(),
+      // World and Lore system
+      lore: createInitialLoreState(),
     };
   }
 
@@ -214,19 +246,22 @@ export class Game {
     const conquestBonuses = this.getConquestBonuses();
     const conquestMultipliers = this.getConquestMultipliers();
 
-    // Calculate total multipliers (base + conquest)
-    const totalFoodMultiplier = this.state.resourceMultipliers.food * conquestMultipliers.food;
-    const totalWoodMultiplier = this.state.resourceMultipliers.wood * conquestMultipliers.wood;
-    const totalStoneMultiplier = this.state.resourceMultipliers.stone * conquestMultipliers.stone;
-    const totalGoldMultiplier = this.state.resourceMultipliers.gold * conquestMultipliers.gold;
-    const totalScienceMultiplier = this.state.resourceMultipliers.science * conquestMultipliers.science;
+    // Calculate lore bonuses (civilizations, leaders, wonders, religion, policies)
+    const loreBonuses = this.getLoreBonuses();
 
-    // Calculate resource gains (era base rate + building production + conquest flat) * multipliers
-    const foodGain = (era.resources.food.baseRate + buildingProduction.food + conquestBonuses.food) * totalFoodMultiplier * delta;
-    const woodGain = (era.resources.wood.baseRate + buildingProduction.wood + conquestBonuses.wood) * totalWoodMultiplier * delta;
-    const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone + conquestBonuses.stone) * totalStoneMultiplier * delta;
-    const goldGain = (era.resources.gold.baseRate + buildingProduction.gold + conquestBonuses.gold) * totalGoldMultiplier * delta;
-    const scienceGain = (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science) * totalScienceMultiplier * delta;
+    // Calculate total multipliers (base + conquest + lore)
+    const totalFoodMultiplier = this.state.resourceMultipliers.food * conquestMultipliers.food * loreBonuses.multipliers.food;
+    const totalWoodMultiplier = this.state.resourceMultipliers.wood * conquestMultipliers.wood * loreBonuses.multipliers.wood;
+    const totalStoneMultiplier = this.state.resourceMultipliers.stone * conquestMultipliers.stone * loreBonuses.multipliers.stone;
+    const totalGoldMultiplier = this.state.resourceMultipliers.gold * conquestMultipliers.gold * loreBonuses.multipliers.gold;
+    const totalScienceMultiplier = this.state.resourceMultipliers.science * conquestMultipliers.science * loreBonuses.multipliers.science;
+
+    // Calculate resource gains (era base rate + building production + conquest flat + lore flat) * multipliers
+    const foodGain = (era.resources.food.baseRate + buildingProduction.food + conquestBonuses.food + loreBonuses.flatBonuses.food) * totalFoodMultiplier * delta;
+    const woodGain = (era.resources.wood.baseRate + buildingProduction.wood + conquestBonuses.wood + loreBonuses.flatBonuses.wood) * totalWoodMultiplier * delta;
+    const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone + conquestBonuses.stone + loreBonuses.flatBonuses.stone) * totalStoneMultiplier * delta;
+    const goldGain = (era.resources.gold.baseRate + buildingProduction.gold + conquestBonuses.gold + loreBonuses.flatBonuses.gold) * totalGoldMultiplier * delta;
+    const scienceGain = (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science + loreBonuses.flatBonuses.science) * totalScienceMultiplier * delta;
 
     // Update resources based on era rates and multipliers
     this.state.resources.food += foodGain;
@@ -242,12 +277,16 @@ export class Game {
     this.state.statistics.totalGoldEarned += goldGain;
     this.state.statistics.totalScienceGenerated += scienceGain;
 
+    // Add culture points (based on science and activities)
+    const cultureGain = calculateCultureGain(delta * 0.1, this.state.lore.adoptedPolicies, this.state.lore.discoveredWonders.size);
+    this.state.lore.culturePoints += cultureGain;
+
     // Update research progress
     if (this.state.currentResearch) {
       const tech = getTechById(this.state.currentResearch);
       if (tech) {
         // Research progresses based on science generation
-        this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science) * totalScienceMultiplier * delta;
+        this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science + loreBonuses.flatBonuses.science) * totalScienceMultiplier * delta;
         
         if (this.state.researchProgress >= tech.cost.science) {
           this.completeResearch();
@@ -982,6 +1021,17 @@ export class Game {
       milestoneCompletionCounts: Array.from(this.state.skillTree.milestoneCompletionCounts.entries()),
       prestigeCount: this.state.skillTree.prestigeCount,
     };
+
+    // Convert lore Sets to arrays for JSON serialization
+    const loreSave = {
+      selectedCivilization: this.state.lore.selectedCivilization,
+      selectedLeader: this.state.lore.selectedLeader,
+      discoveredWonders: Array.from(this.state.lore.discoveredWonders),
+      foundedReligion: this.state.lore.foundedReligion,
+      culturePoints: this.state.lore.culturePoints,
+      cultureLevel: this.state.lore.cultureLevel,
+      adoptedPolicies: Array.from(this.state.lore.adoptedPolicies),
+    };
     
     const saveData = {
       ...this.state,
@@ -992,6 +1042,7 @@ export class Game {
       conqueredTerritories: Array.from(this.state.conqueredTerritories),
       achievements: achievementsArray,
       skillTree: skillTreeSave,
+      lore: loreSave,
       activeBattle: null, // Don't save active battles
       activeConquestBattle: null, // Don't save active conquest battles
       saveTime: Date.now(), // Save timestamp for offline progress
@@ -1066,6 +1117,20 @@ export class Game {
           prestigeCount: saveData.skillTree.prestigeCount || 0,
         };
       }
+
+      // Handle lore state (may not exist in old saves)
+      let loreState = createInitialLoreState();
+      if (saveData.lore) {
+        loreState = {
+          selectedCivilization: saveData.lore.selectedCivilization || 'default',
+          selectedLeader: saveData.lore.selectedLeader || null,
+          discoveredWonders: new Set(saveData.lore.discoveredWonders || []),
+          foundedReligion: saveData.lore.foundedReligion || null,
+          culturePoints: saveData.lore.culturePoints || 0,
+          cultureLevel: saveData.lore.cultureLevel || 0,
+          adoptedPolicies: new Set(saveData.lore.adoptedPolicies || []),
+        };
+      }
       
       this.state = {
         ...saveData,
@@ -1089,6 +1154,8 @@ export class Game {
         conquestMode: saveData.conquestMode || false,
         // Skill tree
         skillTree: skillTreeState,
+        // World and Lore
+        lore: loreState,
       };
       
       // Calculate offline progress if save time is available
@@ -1107,10 +1174,202 @@ export class Game {
     this.offlineProgress = null;
     this.notifyStateChange();
   }
+
+  // ===== Lore System Methods =====
+
+  getLoreBonuses(): {
+    flatBonuses: { food: number; wood: number; stone: number; gold: number; science: number };
+    multipliers: { food: number; wood: number; stone: number; gold: number; science: number };
+    militaryBonuses: { attack: number; defense: number; health: number };
+  } {
+    const flatBonuses = { food: 0, wood: 0, stone: 0, gold: 0, science: 0 };
+    const multipliers = { food: 1, wood: 1, stone: 1, gold: 1, science: 1 };
+    const militaryBonuses = { attack: 1, defense: 1, health: 1 };
+
+    // Get civilization and leader
+    const civilization = getCivilizationById(this.state.lore.selectedCivilization);
+    const leader = this.state.lore.selectedLeader ? getLeaderById(this.state.lore.selectedLeader) : null;
+
+    // Apply civilization and leader bonuses
+    if (civilization) {
+      const civBonuses = calculateCivilizationBonuses(civilization, leader);
+      multipliers.food *= civBonuses.resourceMultipliers.food;
+      multipliers.wood *= civBonuses.resourceMultipliers.wood;
+      multipliers.stone *= civBonuses.resourceMultipliers.stone;
+      multipliers.gold *= civBonuses.resourceMultipliers.gold;
+      multipliers.science *= civBonuses.resourceMultipliers.science;
+      militaryBonuses.attack *= civBonuses.militaryBonuses.attack;
+      militaryBonuses.defense *= civBonuses.militaryBonuses.defense;
+      militaryBonuses.health *= civBonuses.militaryBonuses.health;
+    }
+
+    // Apply religion bonuses
+    const religionBonuses = calculateReligionBonuses(this.state.lore.foundedReligion);
+    multipliers.food *= religionBonuses.resourceMultipliers.food;
+    multipliers.wood *= religionBonuses.resourceMultipliers.wood;
+    multipliers.stone *= religionBonuses.resourceMultipliers.stone;
+    multipliers.gold *= religionBonuses.resourceMultipliers.gold;
+    multipliers.science *= religionBonuses.resourceMultipliers.science;
+
+    // Apply natural wonder bonuses
+    const wonderBonuses = calculateNaturalWonderBonuses(Array.from(this.state.lore.discoveredWonders));
+    flatBonuses.food += wonderBonuses.flatBonuses.food;
+    flatBonuses.wood += wonderBonuses.flatBonuses.wood;
+    flatBonuses.stone += wonderBonuses.flatBonuses.stone;
+    flatBonuses.gold += wonderBonuses.flatBonuses.gold;
+    flatBonuses.science += wonderBonuses.flatBonuses.science;
+    multipliers.food *= wonderBonuses.multipliers.food;
+    multipliers.wood *= wonderBonuses.multipliers.wood;
+    multipliers.stone *= wonderBonuses.multipliers.stone;
+    multipliers.gold *= wonderBonuses.multipliers.gold;
+    multipliers.science *= wonderBonuses.multipliers.science;
+
+    // Apply cultural policy bonuses
+    const policyBonuses = calculatePolicyBonuses(Array.from(this.state.lore.adoptedPolicies));
+    flatBonuses.food += policyBonuses.flatBonuses.food;
+    flatBonuses.wood += policyBonuses.flatBonuses.wood;
+    flatBonuses.stone += policyBonuses.flatBonuses.stone;
+    flatBonuses.gold += policyBonuses.flatBonuses.gold;
+    flatBonuses.science += policyBonuses.flatBonuses.science;
+    militaryBonuses.attack += policyBonuses.militaryBonuses.attack / 100; // Convert percentage to multiplier
+    militaryBonuses.defense += policyBonuses.militaryBonuses.defense / 100;
+
+    return { flatBonuses, multipliers, militaryBonuses };
+  }
+
+  selectCivilization(civilizationId: string): boolean {
+    const civilization = getCivilizationById(civilizationId);
+    if (!civilization) return false;
+
+    this.state.lore.selectedCivilization = civilizationId;
+    this.state.lore.selectedLeader = null; // Reset leader when changing civilization
+
+    // Apply starting resources
+    if (civilization.startingResources) {
+      this.state.resources.food += civilization.startingResources.food || 0;
+      this.state.resources.wood += civilization.startingResources.wood || 0;
+      this.state.resources.stone += civilization.startingResources.stone || 0;
+      this.state.resources.gold += civilization.startingResources.gold || 0;
+      this.state.resources.science += civilization.startingResources.science || 0;
+    }
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  selectLeader(leaderId: string): boolean {
+    const leader = getLeaderById(leaderId);
+    if (!leader) return false;
+
+    // Check if leader is available for current civilization and era
+    const availableLeaders = getAvailableLeaders(
+      this.state.lore.selectedCivilization,
+      this.state.currentEra,
+      ERAS
+    );
+
+    if (!availableLeaders.find(l => l.id === leaderId)) {
+      return false;
+    }
+
+    this.state.lore.selectedLeader = leaderId;
+    this.notifyStateChange();
+    return true;
+  }
+
+  getAvailableLeaders(): Leader[] {
+    return getAvailableLeaders(
+      this.state.lore.selectedCivilization,
+      this.state.currentEra,
+      ERAS
+    );
+  }
+
+  discoverNaturalWonder(): NaturalWonder | null {
+    const wonder = tryDiscoverWonder(
+      this.state.currentEra,
+      this.state.lore.discoveredWonders,
+      ERAS
+    );
+
+    if (wonder) {
+      this.state.lore.discoveredWonders.add(wonder.id);
+      
+      // Handle special one-time bonuses (like El Dorado)
+      if (wonder.id === 'el_dorado') {
+        this.state.resources.gold += 5000;
+      }
+
+      this.notifyStateChange();
+    }
+
+    return wonder;
+  }
+
+  getDiscoveredWonders(): NaturalWonder[] {
+    return Array.from(this.state.lore.discoveredWonders)
+      .map(id => getNaturalWonderById(id))
+      .filter((w): w is NaturalWonder => w !== undefined);
+  }
+
+  foundNewReligion(templateId: string): boolean {
+    if (this.state.lore.foundedReligion) {
+      return false; // Can only have one religion
+    }
+
+    const religion = foundReligion(templateId);
+    if (!religion) return false;
+
+    this.state.lore.foundedReligion = religion;
+    this.notifyStateChange();
+    return true;
+  }
+
+  getReligionTemplates(): typeof RELIGION_TEMPLATES {
+    return RELIGION_TEMPLATES;
+  }
+
+  adoptCulturalPolicy(policyId: string): boolean {
+    if (!canAdoptPolicy(policyId, this.state.lore.culturePoints, this.state.lore.adoptedPolicies)) {
+      return false;
+    }
+
+    const policy = getPolicyById(policyId);
+    if (!policy) return false;
+
+    this.state.lore.culturePoints -= policy.cost;
+    this.state.lore.adoptedPolicies.add(policyId);
+
+    // Update culture level
+    this.state.lore.cultureLevel = Math.floor(this.state.lore.adoptedPolicies.size / 2);
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  getAvailablePolicies(): CulturalPolicy[] {
+    return CULTURAL_POLICIES.filter(policy => !this.state.lore.adoptedPolicies.has(policy.id));
+  }
+
+  getAdoptedPolicies(): CulturalPolicy[] {
+    return Array.from(this.state.lore.adoptedPolicies)
+      .map(id => getPolicyById(id))
+      .filter((p): p is CulturalPolicy => p !== undefined);
+  }
+
+  getCivilization(): Civilization | undefined {
+    return getCivilizationById(this.state.lore.selectedCivilization);
+  }
+
+  getLeader(): Leader | undefined {
+    return this.state.lore.selectedLeader ? getLeaderById(this.state.lore.selectedLeader) : undefined;
+  }
 }
 
 // Export for global use
 export { ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES };
+export { CIVILIZATIONS, LEADERS, NATURAL_WONDERS, RELIGION_TEMPLATES, CULTURAL_POLICIES } from './lore.js';
+export type { Civilization, Leader, NaturalWonder, Religion, CulturalPolicy, LoreState } from './lore.js';
 export type { Mission, ActiveBattle, BattleResult, BattleLog, Territory, ArmySize } from './combat.js';
 export type { Achievement, AchievementProgress, Statistics } from './achievements.js';
 export type { BuildingType, Building, ConstructingBuilding } from './buildings.js';

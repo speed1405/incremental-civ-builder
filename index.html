@@ -2335,6 +2335,7 @@ body {
       <button class="tab-btn" data-tab="barracks">⚔️ Barracks</button>
       <button class="tab-btn" data-tab="army">🛡️ Army</button>
       <button class="tab-btn" data-tab="combat">🎯 Combat</button>
+      <button class="tab-btn" data-tab="world">🌍 World</button>
       <button class="tab-btn" data-tab="skills">🌟 Skills</button>
       <button class="tab-btn" data-tab="achievements">🏆 Achievements</button>
     </nav>
@@ -2411,6 +2412,15 @@ body {
         <h2>🌟 Skill Tree</h2>
         <p>Spend legacy points to unlock permanent upgrades that persist across prestiges!</p>
         <div id="skills-content" class="skills-content">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <!-- World & Lore Tab -->
+      <div id="world-tab" class="tab-content">
+        <h2>🌍 World & Lore</h2>
+        <p>Shape your civilization's identity through choices of culture, religion, and leaders!</p>
+        <div id="world-content" class="world-content">
           <!-- Filled dynamically -->
         </div>
       </div>
@@ -4416,6 +4426,533 @@ body {
       bonuses: { resourceMultiplier: { resource: "gold", multiplier: 2 } },
       rewards: { food: 2e5, wood: 15e4, stone: 1e5, gold: 35e4, science: 25e4 }
     });
+    territories.push({
+      id: "territory_hunting_grounds",
+      name: "Hunting Grounds",
+      description: "Vast plains teeming with wild game.",
+      era: "stone_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Nomadic Hunters",
+        troops: [],
+        attack: 10,
+        defense: 5,
+        health: 60,
+        size: "small"
+      },
+      bonuses: { flatBonus: { resource: "food", amount: 2 } },
+      rewards: { food: 100, wood: 30, stone: 20, gold: 0, science: 10 }
+    });
+    territories.push({
+      id: "territory_sacred_cave",
+      name: "Sacred Cave",
+      description: "An ancient cave with mysterious paintings and spiritual significance.",
+      era: "stone_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Cave Shamans",
+        troops: [],
+        attack: 15,
+        defense: 10,
+        health: 90,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 1 } },
+      rewards: { food: 70, wood: 50, stone: 80, gold: 0, science: 30 }
+    });
+    territories.push({
+      id: "territory_fertile_delta",
+      name: "Fertile Delta",
+      description: "Rich farmland where a great river meets the sea.",
+      era: "bronze_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Delta Farmers",
+        troops: [],
+        attack: 25,
+        defense: 15,
+        health: 130,
+        size: "medium"
+      },
+      bonuses: { resourceMultiplier: { resource: "food", multiplier: 1.15 } },
+      rewards: { food: 250, wood: 100, stone: 80, gold: 100, science: 40 }
+    });
+    territories.push({
+      id: "territory_tin_deposits",
+      name: "Tin Deposits",
+      description: "Essential tin for bronze alloy production.",
+      era: "bronze_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Tin Miners",
+        troops: [],
+        attack: 35,
+        defense: 25,
+        health: 180,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "stone", amount: 3 } },
+      rewards: { food: 150, wood: 120, stone: 280, gold: 120, science: 60 }
+    });
+    territories.push({
+      id: "territory_mountain_pass",
+      name: "Mountain Pass",
+      description: "A strategic mountain passage controlling trade routes.",
+      era: "iron_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Pass Wardens",
+        troops: [],
+        attack: 80,
+        defense: 60,
+        health: 400,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 5 } },
+      rewards: { food: 400, wood: 300, stone: 350, gold: 400, science: 150 }
+    });
+    territories.push({
+      id: "territory_salt_flats",
+      name: "Salt Flats",
+      description: "Valuable salt deposits worth their weight in gold.",
+      era: "iron_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Salt Traders",
+        troops: [],
+        attack: 60,
+        defense: 40,
+        health: 320,
+        size: "small"
+      },
+      bonuses: { resourceMultiplier: { resource: "gold", multiplier: 1.1 } },
+      rewards: { food: 350, wood: 200, stone: 250, gold: 500, science: 120 }
+    });
+    territories.push({
+      id: "territory_marble_quarry",
+      name: "Marble Quarry",
+      description: "Source of fine marble for monuments and temples.",
+      era: "classical_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Quarry Masters",
+        troops: [],
+        attack: 130,
+        defense: 100,
+        health: 650,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "stone", amount: 8 } },
+      rewards: { food: 800, wood: 500, stone: 900, gold: 600, science: 300 }
+    });
+    territories.push({
+      id: "territory_wine_region",
+      name: "Wine Region",
+      description: "Famous vineyards producing the finest wines.",
+      era: "classical_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Vineyard Defenders",
+        troops: [],
+        attack: 120,
+        defense: 80,
+        health: 600,
+        size: "small"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 8 } },
+      rewards: { food: 700, wood: 400, stone: 300, gold: 800, science: 250 }
+    });
+    territories.push({
+      id: "territory_philosophers_grove",
+      name: "Philosophers' Grove",
+      description: "A sacred grove where great minds gather to debate.",
+      era: "classical_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Academic Guards",
+        troops: [],
+        attack: 100,
+        defense: 70,
+        health: 500,
+        size: "small"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.15 } },
+      rewards: { food: 600, wood: 400, stone: 300, gold: 500, science: 600 }
+    });
+    territories.push({
+      id: "territory_silver_mines",
+      name: "Silver Mines",
+      description: "Rich veins of silver hidden in the mountains.",
+      era: "medieval_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Mining Guild",
+        troops: [],
+        attack: 220,
+        defense: 160,
+        health: 1100,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 12 } },
+      rewards: { food: 1500, wood: 1e3, stone: 1200, gold: 2e3, science: 600 }
+    });
+    territories.push({
+      id: "territory_monastery",
+      name: "Grand Monastery",
+      description: "A center of learning and religious devotion.",
+      era: "medieval_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Monk Warriors",
+        troops: [],
+        attack: 180,
+        defense: 200,
+        health: 1e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 8 } },
+      rewards: { food: 1200, wood: 800, stone: 900, gold: 1200, science: 1e3 }
+    });
+    territories.push({
+      id: "territory_wheat_fields",
+      name: "Golden Wheat Fields",
+      description: "Endless fields of golden wheat to feed empires.",
+      era: "medieval_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Peasant Militia",
+        troops: [],
+        attack: 150,
+        defense: 120,
+        health: 800,
+        size: "small"
+      },
+      bonuses: { resourceMultiplier: { resource: "food", multiplier: 1.2 } },
+      rewards: { food: 2e3, wood: 700, stone: 500, gold: 800, science: 400 }
+    });
+    territories.push({
+      id: "territory_spice_islands",
+      name: "Spice Islands",
+      description: "Exotic islands with rare and valuable spices.",
+      era: "renaissance",
+      conquered: false,
+      enemyArmy: {
+        name: "Island Defenders",
+        troops: [],
+        attack: 380,
+        defense: 220,
+        health: 1900,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 15 } },
+      rewards: { food: 3200, wood: 2200, stone: 1600, gold: 4500, science: 1200 }
+    });
+    territories.push({
+      id: "territory_university_city",
+      name: "University City",
+      description: "A renowned center of Renaissance learning.",
+      era: "renaissance",
+      conquered: false,
+      enemyArmy: {
+        name: "Scholar Militia",
+        troops: [],
+        attack: 320,
+        defense: 280,
+        health: 1700,
+        size: "medium"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.2 } },
+      rewards: { food: 2800, wood: 2e3, stone: 1800, gold: 3e3, science: 2500 }
+    });
+    territories.push({
+      id: "territory_banking_center",
+      name: "Banking Center",
+      description: "The financial heart of the known world.",
+      era: "renaissance",
+      conquered: false,
+      enemyArmy: {
+        name: "Mercenary Guards",
+        troops: [],
+        attack: 450,
+        defense: 300,
+        health: 2400,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "gold", multiplier: 1.25 } },
+      rewards: { food: 3500, wood: 2500, stone: 2e3, gold: 6e3, science: 1500 }
+    });
+    territories.push({
+      id: "territory_steel_mills",
+      name: "Steel Mills",
+      description: "Massive industrial complexes producing steel.",
+      era: "industrial_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Factory Workers",
+        troops: [],
+        attack: 600,
+        defense: 400,
+        health: 3e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "stone", amount: 20 } },
+      rewards: { food: 6500, wood: 5e3, stone: 7e3, gold: 5500, science: 2800 }
+    });
+    territories.push({
+      id: "territory_railroad_hub",
+      name: "Railroad Hub",
+      description: "A major junction connecting all rail lines.",
+      era: "industrial_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Railway Guard",
+        troops: [],
+        attack: 700,
+        defense: 450,
+        health: 3500,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "wood", multiplier: 1.25 } },
+      rewards: { food: 7500, wood: 8e3, stone: 5e3, gold: 7e3, science: 3500 }
+    });
+    territories.push({
+      id: "territory_textile_district",
+      name: "Textile District",
+      description: "Factories producing cloth for the world.",
+      era: "industrial_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Guild Masters",
+        troops: [],
+        attack: 550,
+        defense: 350,
+        health: 2800,
+        size: "small"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 25 } },
+      rewards: { food: 5500, wood: 4e3, stone: 3e3, gold: 9e3, science: 2500 }
+    });
+    territories.push({
+      id: "territory_silicon_valley",
+      name: "Tech Valley",
+      description: "The birthplace of modern computing.",
+      era: "modern_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Tech Security",
+        troops: [],
+        attack: 1200,
+        defense: 800,
+        health: 6e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 40 } },
+      rewards: { food: 14e3, wood: 1e4, stone: 8e3, gold: 18e3, science: 2e4 }
+    });
+    territories.push({
+      id: "territory_financial_district",
+      name: "Financial District",
+      description: "The economic powerhouse of the modern world.",
+      era: "modern_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Corporate Security",
+        troops: [],
+        attack: 1100,
+        defense: 700,
+        health: 5500,
+        size: "medium"
+      },
+      bonuses: { resourceMultiplier: { resource: "gold", multiplier: 1.3 } },
+      rewards: { food: 12e3, wood: 8e3, stone: 6e3, gold: 25e3, science: 1e4 }
+    });
+    territories.push({
+      id: "territory_military_base",
+      name: "Military Base",
+      description: "A heavily fortified military installation.",
+      era: "modern_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Base Garrison",
+        troops: [],
+        attack: 1400,
+        defense: 1100,
+        health: 7e3,
+        size: "large"
+      },
+      bonuses: { flatBonus: { resource: "stone", amount: 25 } },
+      rewards: { food: 15e3, wood: 12e3, stone: 15e3, gold: 15e3, science: 8e3 }
+    });
+    territories.push({
+      id: "territory_uranium_mines",
+      name: "Uranium Mines",
+      description: "Strategic deposits of nuclear fuel.",
+      era: "atomic_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Nuclear Security",
+        troops: [],
+        attack: 2400,
+        defense: 1500,
+        health: 12e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 60 } },
+      rewards: { food: 28e3, wood: 2e4, stone: 25e3, gold: 4e4, science: 3e4 }
+    });
+    territories.push({
+      id: "territory_missile_silo",
+      name: "Missile Silo Complex",
+      description: "Underground facilities housing nuclear missiles.",
+      era: "atomic_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Silo Guards",
+        troops: [],
+        attack: 3e3,
+        defense: 2200,
+        health: 15e3,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "stone", multiplier: 1.35 } },
+      rewards: { food: 32e3, wood: 25e3, stone: 35e3, gold: 45e3, science: 25e3 }
+    });
+    territories.push({
+      id: "territory_research_campus",
+      name: "Research Campus",
+      description: "A sprawling complex dedicated to scientific advancement.",
+      era: "atomic_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Research Security",
+        troops: [],
+        attack: 2e3,
+        defense: 1200,
+        health: 1e4,
+        size: "small"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.3 } },
+      rewards: { food: 22e3, wood: 16e3, stone: 14e3, gold: 3e4, science: 4e4 }
+    });
+    territories.push({
+      id: "territory_server_farm",
+      name: "Global Server Farm",
+      description: "Massive data centers powering the digital world.",
+      era: "information_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Digital Defense",
+        troops: [],
+        attack: 4800,
+        defense: 3e3,
+        health: 24e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 100 } },
+      rewards: { food: 55e3, wood: 4e4, stone: 35e3, gold: 8e4, science: 7e4 }
+    });
+    territories.push({
+      id: "territory_smart_city",
+      name: "Smart City",
+      description: "A fully automated city of the future.",
+      era: "information_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Automated Defense",
+        troops: [],
+        attack: 5500,
+        defense: 3500,
+        health: 28e3,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "food", multiplier: 1.4 } },
+      rewards: { food: 8e4, wood: 55e3, stone: 45e3, gold: 1e5, science: 6e4 }
+    });
+    territories.push({
+      id: "territory_quantum_lab",
+      name: "Quantum Research Lab",
+      description: "Where the boundaries of physics are pushed.",
+      era: "information_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Lab Security",
+        troops: [],
+        attack: 4200,
+        defense: 2600,
+        health: 21e3,
+        size: "small"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.45 } },
+      rewards: { food: 45e3, wood: 32e3, stone: 28e3, gold: 6e4, science: 9e4 }
+    });
+    territories.push({
+      id: "territory_mars_colony",
+      name: "Mars Colony",
+      description: "Humanity's first permanent settlement on Mars.",
+      era: "future_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Colonial Defense",
+        troops: [],
+        attack: 1e4,
+        defense: 6500,
+        health: 5e4,
+        size: "large"
+      },
+      bonuses: { flatBonus: { resource: "science", amount: 200 } },
+      rewards: { food: 15e4, wood: 1e5, stone: 8e4, gold: 22e4, science: 2e5 }
+    });
+    territories.push({
+      id: "territory_asteroid_belt",
+      name: "Asteroid Mining Belt",
+      description: "Unlimited resources floating in space.",
+      era: "future_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Mining Drones",
+        troops: [],
+        attack: 8500,
+        defense: 5e3,
+        health: 42e3,
+        size: "medium"
+      },
+      bonuses: { flatBonus: { resource: "gold", amount: 200 } },
+      rewards: { food: 1e5, wood: 8e4, stone: 15e4, gold: 3e5, science: 12e4 }
+    });
+    territories.push({
+      id: "territory_antimatter_plant",
+      name: "Antimatter Power Plant",
+      description: "Harnessing the most powerful energy source known.",
+      era: "future_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Energy Sentinels",
+        troops: [],
+        attack: 11e3,
+        defense: 7500,
+        health: 55e3,
+        size: "large"
+      },
+      bonuses: { resourceMultiplier: { resource: "science", multiplier: 1.8 } },
+      rewards: { food: 18e4, wood: 13e4, stone: 1e5, gold: 28e4, science: 3e5 }
+    });
+    territories.push({
+      id: "territory_galactic_gateway",
+      name: "Galactic Gateway",
+      description: "A portal to the stars. The ultimate prize.",
+      era: "future_age",
+      conquered: false,
+      enemyArmy: {
+        name: "Dimensional Guardians",
+        troops: [],
+        attack: 15e3,
+        defense: 1e4,
+        health: 75e3,
+        size: "boss"
+      },
+      bonuses: { resourceMultiplier: { resource: "gold", multiplier: 2.5 } },
+      rewards: { food: 3e5, wood: 25e4, stone: 2e5, gold: 5e5, science: 4e5 }
+    });
     return territories;
   }
   function getTerritoryById(territories, id) {
@@ -5902,6 +6439,801 @@ body {
     };
   }
 
+  // dist/lore.js
+  var CIVILIZATIONS = [
+    {
+      id: "default",
+      name: "Settlers",
+      description: "A balanced civilization with no special bonuses. Perfect for learning the game.",
+      icon: "\u{1F3E0}",
+      bonuses: {},
+      startingResources: { food: 0, wood: 0, stone: 0, gold: 0, science: 0 }
+    },
+    {
+      id: "roman",
+      name: "Roman Empire",
+      description: "Master builders and soldiers. Bonus to stone and military defense.",
+      icon: "\u{1F3DB}\uFE0F",
+      bonuses: {
+        resourceMultipliers: { stone: 1.25 },
+        militaryBonuses: { defense: 1.15 },
+        specialAbility: "Roads: Buildings complete 20% faster"
+      },
+      startingResources: { food: 50, wood: 30, stone: 100, gold: 50, science: 20 },
+      uniqueUnit: "legionary"
+    },
+    {
+      id: "egyptian",
+      name: "Egyptian Kingdom",
+      description: "Ancient wisdom and monumental builders. Bonus to science and gold.",
+      icon: "\u{1F53A}",
+      bonuses: {
+        resourceMultipliers: { gold: 1.2, science: 1.15 },
+        specialAbility: "Nile Flooding: +50% food from conquered territories"
+      },
+      startingResources: { food: 80, wood: 20, stone: 50, gold: 100, science: 50 }
+    },
+    {
+      id: "chinese",
+      name: "Chinese Dynasty",
+      description: "Ancient and wise civilization. Bonus to science and food production.",
+      icon: "\u{1F409}",
+      bonuses: {
+        resourceMultipliers: { food: 1.2, science: 1.2 },
+        specialAbility: "Paper Money: Research costs reduced by 10%"
+      },
+      startingResources: { food: 100, wood: 40, stone: 30, gold: 60, science: 100 }
+    },
+    {
+      id: "viking",
+      name: "Viking Clans",
+      description: "Fierce warriors and explorers. Bonus to military attack and wood.",
+      icon: "\u2694\uFE0F",
+      bonuses: {
+        resourceMultipliers: { wood: 1.3 },
+        militaryBonuses: { attack: 1.2 },
+        specialAbility: "Berserker: +25% damage when health below 50%"
+      },
+      startingResources: { food: 60, wood: 150, stone: 30, gold: 30, science: 20 }
+    },
+    {
+      id: "greek",
+      name: "Greek City-States",
+      description: "Birthplace of democracy and philosophy. Major bonus to science.",
+      icon: "\u{1F3FA}",
+      bonuses: {
+        resourceMultipliers: { science: 1.35 },
+        specialAbility: "Philosophy: +1 free technology at game start"
+      },
+      startingResources: { food: 40, wood: 30, stone: 60, gold: 80, science: 150 }
+    },
+    {
+      id: "persian",
+      name: "Persian Empire",
+      description: "Vast empire of wealth and trade. Bonus to gold and all resources.",
+      icon: "\u{1F451}",
+      bonuses: {
+        resourceMultipliers: { food: 1.1, wood: 1.1, stone: 1.1, gold: 1.3, science: 1.1 },
+        specialAbility: "Satrapies: Conquered territories give 50% more bonuses"
+      },
+      startingResources: { food: 70, wood: 70, stone: 70, gold: 200, science: 70 }
+    },
+    {
+      id: "japanese",
+      name: "Japanese Shogunate",
+      description: "Honor-bound warriors with refined culture. Balanced military bonuses.",
+      icon: "\u{1F5FE}",
+      bonuses: {
+        militaryBonuses: { attack: 1.1, defense: 1.1, health: 1.1 },
+        specialAbility: "Bushido: Troops deal 30% more damage on first combat round"
+      },
+      startingResources: { food: 60, wood: 80, stone: 40, gold: 70, science: 50 }
+    }
+  ];
+  var LEADERS = [
+    // Universal Leaders (any civilization)
+    {
+      id: "tribal_chief",
+      name: "Tribal Chief",
+      title: "Chieftain",
+      description: "A wise leader who guides their people through the earliest times.",
+      icon: "\u{1F464}",
+      civilizationId: "any",
+      era: "stone_age",
+      bonuses: {
+        resourceMultipliers: { food: 1.1 },
+        specialAbility: "Unity: +10% to all resource gathering"
+      }
+    },
+    {
+      id: "julius_caesar",
+      name: "Julius Caesar",
+      title: "Dictator",
+      description: "The legendary Roman leader who conquered Gaul and transformed the Republic.",
+      icon: "\u{1F985}",
+      civilizationId: "roman",
+      era: "iron_age",
+      bonuses: {
+        militaryBonuses: { attack: 1.25, defense: 1.15 },
+        specialAbility: "Veni Vidi Vici: Conquests grant 50% more rewards"
+      }
+    },
+    {
+      id: "cleopatra",
+      name: "Cleopatra VII",
+      title: "Pharaoh",
+      description: "The last active ruler of the Ptolemaic Kingdom of Egypt.",
+      icon: "\u{1F40D}",
+      civilizationId: "egyptian",
+      era: "classical_age",
+      bonuses: {
+        resourceMultipliers: { gold: 1.3, science: 1.2 },
+        specialAbility: "Diplomatic Charm: Trade routes generate 30% more gold"
+      }
+    },
+    {
+      id: "qin_shi_huang",
+      name: "Qin Shi Huang",
+      title: "First Emperor",
+      description: "The founder of the Qin dynasty and first emperor of unified China.",
+      icon: "\u{1F3EF}",
+      civilizationId: "chinese",
+      era: "iron_age",
+      bonuses: {
+        resourceMultipliers: { stone: 1.3, science: 1.15 },
+        specialAbility: "Great Wall: Defensive buildings cost 25% less"
+      }
+    },
+    {
+      id: "ragnar_lothbrok",
+      name: "Ragnar Lothbrok",
+      title: "King",
+      description: "Legendary Norse hero and Viking king.",
+      icon: "\u{1FA93}",
+      civilizationId: "viking",
+      era: "medieval_age",
+      bonuses: {
+        militaryBonuses: { attack: 1.35, health: 1.1 },
+        specialAbility: "Raid: Combat victories grant bonus resources"
+      }
+    },
+    {
+      id: "alexander",
+      name: "Alexander the Great",
+      title: "King of Macedon",
+      description: "One of history's greatest military commanders who created one of the largest empires.",
+      icon: "\u{1F434}",
+      civilizationId: "greek",
+      era: "classical_age",
+      bonuses: {
+        militaryBonuses: { attack: 1.3, defense: 1.1 },
+        resourceMultipliers: { science: 1.15 },
+        specialAbility: "Conquest: Conquered territories provide double bonuses for 5 minutes"
+      }
+    },
+    {
+      id: "cyrus",
+      name: "Cyrus the Great",
+      title: "King of Kings",
+      description: "Founder of the Achaemenid Empire, the first Persian Empire.",
+      icon: "\u{1F981}",
+      civilizationId: "persian",
+      era: "iron_age",
+      bonuses: {
+        resourceMultipliers: { gold: 1.25, food: 1.15 },
+        specialAbility: "Tolerance: Conquered territories take 50% less time to pacify"
+      }
+    },
+    {
+      id: "oda_nobunaga",
+      name: "Oda Nobunaga",
+      title: "Daimyo",
+      description: "The great unifier who initiated the unification of Japan.",
+      icon: "\u2694\uFE0F",
+      civilizationId: "japanese",
+      era: "medieval_age",
+      bonuses: {
+        militaryBonuses: { attack: 1.2, defense: 1.15 },
+        resourceMultipliers: { gold: 1.15 },
+        specialAbility: "Innovation: Gunpowder units cost 20% less"
+      }
+    },
+    // More universal leaders for later eras
+    {
+      id: "industrial_tycoon",
+      name: "Industrial Tycoon",
+      title: "Magnate",
+      description: "A captain of industry who revolutionizes production.",
+      icon: "\u{1F3ED}",
+      civilizationId: "any",
+      era: "industrial_age",
+      bonuses: {
+        resourceMultipliers: { gold: 1.4, wood: 1.2, stone: 1.2 },
+        specialAbility: "Mass Production: Buildings produce 25% more resources"
+      }
+    },
+    {
+      id: "tech_visionary",
+      name: "Tech Visionary",
+      title: "CEO",
+      description: "A forward-thinking leader who embraces technological advancement.",
+      icon: "\u{1F4A1}",
+      civilizationId: "any",
+      era: "information_age",
+      bonuses: {
+        resourceMultipliers: { science: 1.5 },
+        specialAbility: "Innovation: Research completes 20% faster"
+      }
+    }
+  ];
+  var NATURAL_WONDERS = [
+    {
+      id: "grand_canyon",
+      name: "Grand Canyon",
+      description: "A steep-sided canyon carved by the Colorado River. Its grandeur inspires your people.",
+      icon: "\u{1F3DC}\uFE0F",
+      era: "stone_age",
+      discoveryChance: 0.15,
+      discovered: false,
+      bonuses: {
+        flatBonuses: [{ resource: "science", amount: 2 }],
+        specialEffect: "Inspires exploration and discovery"
+      }
+    },
+    {
+      id: "mount_everest",
+      name: "Mount Everest",
+      description: "The highest mountain in the world. Its presence strengthens your people's resolve.",
+      icon: "\u{1F3D4}\uFE0F",
+      era: "stone_age",
+      discoveryChance: 0.1,
+      discovered: false,
+      bonuses: {
+        resourceMultiplier: { resource: "stone", multiplier: 1.2 },
+        specialEffect: "Military units gain +10% health"
+      }
+    },
+    {
+      id: "great_barrier_reef",
+      name: "Great Barrier Reef",
+      description: "The world's largest coral reef system. Its bounty feeds your people.",
+      icon: "\u{1F420}",
+      era: "bronze_age",
+      discoveryChance: 0.12,
+      discovered: false,
+      bonuses: {
+        flatBonuses: [{ resource: "food", amount: 5 }],
+        specialEffect: "Coastal buildings produce 20% more"
+      }
+    },
+    {
+      id: "amazon_rainforest",
+      name: "Amazon Rainforest",
+      description: "The largest tropical rainforest. An endless source of wood and discovery.",
+      icon: "\u{1F333}",
+      era: "bronze_age",
+      discoveryChance: 0.15,
+      discovered: false,
+      bonuses: {
+        flatBonuses: [{ resource: "wood", amount: 5 }],
+        resourceMultiplier: { resource: "science", multiplier: 1.1 }
+      }
+    },
+    {
+      id: "sahara_oasis",
+      name: "Sahara Oasis",
+      description: "A hidden paradise in the desert. Trading caravans gather here.",
+      icon: "\u{1F3DD}\uFE0F",
+      era: "iron_age",
+      discoveryChance: 0.1,
+      discovered: false,
+      bonuses: {
+        flatBonuses: [{ resource: "gold", amount: 8 }],
+        specialEffect: "Trade income increased by 15%"
+      }
+    },
+    {
+      id: "victoria_falls",
+      name: "Victoria Falls",
+      description: "One of the largest waterfalls in the world. Its power is awe-inspiring.",
+      icon: "\u{1F4A7}",
+      era: "classical_age",
+      discoveryChance: 0.12,
+      discovered: false,
+      bonuses: {
+        flatBonuses: [
+          { resource: "food", amount: 8 },
+          { resource: "science", amount: 3 }
+        ]
+      }
+    },
+    {
+      id: "northern_lights",
+      name: "Northern Lights",
+      description: "The spectacular aurora borealis. Its mystery drives scientific inquiry.",
+      icon: "\u{1F30C}",
+      era: "medieval_age",
+      discoveryChance: 0.08,
+      discovered: false,
+      bonuses: {
+        resourceMultiplier: { resource: "science", multiplier: 1.25 },
+        specialEffect: "Happiness increased by 10%"
+      }
+    },
+    {
+      id: "dead_sea",
+      name: "Dead Sea",
+      description: "The saltiest body of water on Earth. Rich in minerals and trade goods.",
+      icon: "\u{1F30A}",
+      era: "classical_age",
+      discoveryChance: 0.12,
+      discovered: false,
+      bonuses: {
+        flatBonuses: [
+          { resource: "gold", amount: 10 },
+          { resource: "stone", amount: 5 }
+        ]
+      }
+    },
+    {
+      id: "krakatoa",
+      name: "Krakatoa",
+      description: "A volcanic island between Java and Sumatra. Dangerous but fertile.",
+      icon: "\u{1F30B}",
+      era: "renaissance",
+      discoveryChance: 0.08,
+      discovered: false,
+      bonuses: {
+        flatBonuses: [
+          { resource: "food", amount: 15 },
+          { resource: "stone", amount: 10 }
+        ],
+        specialEffect: "Chance to cause disasters but also windfalls"
+      }
+    },
+    {
+      id: "el_dorado",
+      name: "El Dorado",
+      description: "The legendary city of gold! Its treasures are beyond imagination.",
+      icon: "\u{1F3F0}",
+      era: "renaissance",
+      discoveryChance: 0.05,
+      discovered: false,
+      bonuses: {
+        flatBonuses: [{ resource: "gold", amount: 50 }],
+        specialEffect: "One-time bonus of 5000 gold upon discovery"
+      }
+    }
+  ];
+  var RELIGION_TEMPLATES = [
+    {
+      id: "ancestor_worship",
+      name: "Ancestor Worship",
+      description: "Honor the spirits of ancestors who guide and protect.",
+      icon: "\u{1F47B}",
+      bonuses: {
+        resourceMultipliers: { food: 1.15 },
+        militaryBonuses: { morale: 1.2 },
+        specialAbility: "Ancestral Guidance: +15% to all production during peaceful times"
+      }
+    },
+    {
+      id: "sun_worship",
+      name: "Solar Faith",
+      description: "Worship of the life-giving sun.",
+      icon: "\u2600\uFE0F",
+      bonuses: {
+        resourceMultipliers: { food: 1.2, gold: 1.1 },
+        specialAbility: "Solar Blessing: Farms and gold production boosted during day"
+      }
+    },
+    {
+      id: "earth_mother",
+      name: "Earth Mother Cult",
+      description: "Veneration of the earth and its bounty.",
+      icon: "\u{1F30D}",
+      bonuses: {
+        resourceMultipliers: { food: 1.15, stone: 1.15, wood: 1.15 },
+        specialAbility: "Nature's Bounty: Natural resources regenerate faster"
+      }
+    },
+    {
+      id: "war_god",
+      name: "War God Devotion",
+      description: "Worship of a deity of battle and victory.",
+      icon: "\u2694\uFE0F",
+      bonuses: {
+        militaryBonuses: { attack: 1.25, morale: 1.15 },
+        specialAbility: "Battle Fury: +25% attack power in combat"
+      }
+    },
+    {
+      id: "wisdom_path",
+      name: "Path of Wisdom",
+      description: "A philosophical tradition emphasizing knowledge and enlightenment.",
+      icon: "\u{1F4DC}",
+      bonuses: {
+        resourceMultipliers: { science: 1.3 },
+        specialAbility: "Enlightenment: Research costs reduced by 15%"
+      }
+    },
+    {
+      id: "prosperity_creed",
+      name: "Creed of Prosperity",
+      description: "A belief system centered on wealth and commerce.",
+      icon: "\u{1F48E}",
+      bonuses: {
+        resourceMultipliers: { gold: 1.3 },
+        specialAbility: "Divine Commerce: +30% gold from all sources"
+      }
+    },
+    {
+      id: "harmony_faith",
+      name: "Faith of Harmony",
+      description: "A peaceful religion promoting balance and unity.",
+      icon: "\u262F\uFE0F",
+      bonuses: {
+        resourceMultipliers: { food: 1.1, wood: 1.1, stone: 1.1, gold: 1.1, science: 1.1 },
+        militaryBonuses: { defense: 1.2 },
+        specialAbility: "Inner Peace: All bonuses apply even during war"
+      }
+    },
+    {
+      id: "techno_faith",
+      name: "Techno-Religion",
+      description: "Worship of technology and progress.",
+      icon: "\u{1F916}",
+      bonuses: {
+        resourceMultipliers: { science: 1.4, gold: 1.1 },
+        specialAbility: "Digital Transcendence: +40% science production"
+      }
+    }
+  ];
+  var CULTURAL_POLICIES = [
+    {
+      id: "tradition",
+      name: "Tradition",
+      description: "Embrace the old ways for stability.",
+      icon: "\u{1F3DB}\uFE0F",
+      adopted: false,
+      cost: 100,
+      effects: {
+        resourceBonus: { resource: "food", amount: 2 },
+        special: "Capital city produces 25% more resources"
+      }
+    },
+    {
+      id: "liberty",
+      name: "Liberty",
+      description: "Freedom drives innovation.",
+      icon: "\u{1F5FD}",
+      adopted: false,
+      cost: 150,
+      effects: {
+        resourceBonus: { resource: "science", amount: 3 },
+        special: "Free settler and worker at adoption"
+      }
+    },
+    {
+      id: "honor",
+      name: "Honor",
+      description: "Military might is the path to glory.",
+      icon: "\u2694\uFE0F",
+      adopted: false,
+      cost: 200,
+      effects: {
+        militaryBonus: { stat: "attack", amount: 10 },
+        special: "Combat experience gained 50% faster"
+      }
+    },
+    {
+      id: "piety",
+      name: "Piety",
+      description: "Faith guides our people.",
+      icon: "\u{1F64F}",
+      adopted: false,
+      cost: 175,
+      effects: {
+        resourceBonus: { resource: "gold", amount: 3 },
+        special: "Religion spreads 50% faster"
+      }
+    },
+    {
+      id: "patronage",
+      name: "Patronage",
+      description: "Support the arts and sciences.",
+      icon: "\u{1F3AD}",
+      adopted: false,
+      cost: 250,
+      effects: {
+        resourceBonus: { resource: "science", amount: 5 },
+        special: "Great people born 25% more often"
+      }
+    },
+    {
+      id: "commerce",
+      name: "Commerce",
+      description: "Trade is the lifeblood of empire.",
+      icon: "\u{1F4B0}",
+      adopted: false,
+      cost: 225,
+      effects: {
+        resourceBonus: { resource: "gold", amount: 5 },
+        special: "Trade routes generate 50% more income"
+      }
+    },
+    {
+      id: "rationalism",
+      name: "Rationalism",
+      description: "Reason and logic above all.",
+      icon: "\u{1F52C}",
+      adopted: false,
+      cost: 300,
+      effects: {
+        resourceBonus: { resource: "science", amount: 8 },
+        special: "Scientific buildings 25% more effective"
+      }
+    },
+    {
+      id: "aesthetics",
+      name: "Aesthetics",
+      description: "Beauty and culture define civilization.",
+      icon: "\u{1F3A8}",
+      adopted: false,
+      cost: 200,
+      effects: {
+        special: "Cultural influence spreads 100% faster"
+      }
+    }
+  ];
+  function getCivilizationById(id) {
+    return CIVILIZATIONS.find((civ) => civ.id === id);
+  }
+  function getLeaderById(id) {
+    return LEADERS.find((leader) => leader.id === id);
+  }
+  function getAvailableLeaders(civilizationId, currentEra, eras) {
+    const currentEraIndex = eras.findIndex((e) => e.id === currentEra);
+    return LEADERS.filter((leader) => {
+      const leaderEraIndex = eras.findIndex((e) => e.id === leader.era);
+      const eraAvailable = leaderEraIndex <= currentEraIndex;
+      const civMatch = leader.civilizationId === "any" || leader.civilizationId === civilizationId;
+      return eraAvailable && civMatch;
+    });
+  }
+  function getNaturalWonderById(id) {
+    return NATURAL_WONDERS.find((wonder) => wonder.id === id);
+  }
+  function getAvailableWonders(currentEra, eras) {
+    const currentEraIndex = eras.findIndex((e) => e.id === currentEra);
+    return NATURAL_WONDERS.filter((wonder) => {
+      const wonderEraIndex = eras.findIndex((e) => e.id === wonder.era);
+      return wonderEraIndex <= currentEraIndex && !wonder.discovered;
+    });
+  }
+  function getReligionTemplateById(id) {
+    return RELIGION_TEMPLATES.find((rel) => rel.id === id);
+  }
+  function getPolicyById(id) {
+    return CULTURAL_POLICIES.find((policy) => policy.id === id);
+  }
+  function calculateCivilizationBonuses(civilization, leader) {
+    const resourceMultipliers = {
+      food: 1,
+      wood: 1,
+      stone: 1,
+      gold: 1,
+      science: 1
+    };
+    const militaryBonuses = {
+      attack: 1,
+      defense: 1,
+      health: 1
+    };
+    if (civilization.bonuses.resourceMultipliers) {
+      if (civilization.bonuses.resourceMultipliers.food) {
+        resourceMultipliers.food *= civilization.bonuses.resourceMultipliers.food;
+      }
+      if (civilization.bonuses.resourceMultipliers.wood) {
+        resourceMultipliers.wood *= civilization.bonuses.resourceMultipliers.wood;
+      }
+      if (civilization.bonuses.resourceMultipliers.stone) {
+        resourceMultipliers.stone *= civilization.bonuses.resourceMultipliers.stone;
+      }
+      if (civilization.bonuses.resourceMultipliers.gold) {
+        resourceMultipliers.gold *= civilization.bonuses.resourceMultipliers.gold;
+      }
+      if (civilization.bonuses.resourceMultipliers.science) {
+        resourceMultipliers.science *= civilization.bonuses.resourceMultipliers.science;
+      }
+    }
+    if (civilization.bonuses.militaryBonuses) {
+      if (civilization.bonuses.militaryBonuses.attack) {
+        militaryBonuses.attack *= civilization.bonuses.militaryBonuses.attack;
+      }
+      if (civilization.bonuses.militaryBonuses.defense) {
+        militaryBonuses.defense *= civilization.bonuses.militaryBonuses.defense;
+      }
+      if (civilization.bonuses.militaryBonuses.health) {
+        militaryBonuses.health *= civilization.bonuses.militaryBonuses.health;
+      }
+    }
+    if (leader) {
+      if (leader.bonuses.resourceMultipliers) {
+        if (leader.bonuses.resourceMultipliers.food) {
+          resourceMultipliers.food *= leader.bonuses.resourceMultipliers.food;
+        }
+        if (leader.bonuses.resourceMultipliers.wood) {
+          resourceMultipliers.wood *= leader.bonuses.resourceMultipliers.wood;
+        }
+        if (leader.bonuses.resourceMultipliers.stone) {
+          resourceMultipliers.stone *= leader.bonuses.resourceMultipliers.stone;
+        }
+        if (leader.bonuses.resourceMultipliers.gold) {
+          resourceMultipliers.gold *= leader.bonuses.resourceMultipliers.gold;
+        }
+        if (leader.bonuses.resourceMultipliers.science) {
+          resourceMultipliers.science *= leader.bonuses.resourceMultipliers.science;
+        }
+      }
+      if (leader.bonuses.militaryBonuses) {
+        if (leader.bonuses.militaryBonuses.attack) {
+          militaryBonuses.attack *= leader.bonuses.militaryBonuses.attack;
+        }
+        if (leader.bonuses.militaryBonuses.defense) {
+          militaryBonuses.defense *= leader.bonuses.militaryBonuses.defense;
+        }
+        if (leader.bonuses.militaryBonuses.health) {
+          militaryBonuses.health *= leader.bonuses.militaryBonuses.health;
+        }
+      }
+    }
+    return { resourceMultipliers, militaryBonuses };
+  }
+  function calculateReligionBonuses(religion) {
+    const resourceMultipliers = {
+      food: 1,
+      wood: 1,
+      stone: 1,
+      gold: 1,
+      science: 1
+    };
+    const militaryBonuses = {
+      attack: 1,
+      defense: 1,
+      morale: 1
+    };
+    if (!religion) {
+      return { resourceMultipliers, militaryBonuses };
+    }
+    if (religion.bonuses.resourceMultipliers) {
+      if (religion.bonuses.resourceMultipliers.food) {
+        resourceMultipliers.food *= religion.bonuses.resourceMultipliers.food;
+      }
+      if (religion.bonuses.resourceMultipliers.wood) {
+        resourceMultipliers.wood *= religion.bonuses.resourceMultipliers.wood;
+      }
+      if (religion.bonuses.resourceMultipliers.stone) {
+        resourceMultipliers.stone *= religion.bonuses.resourceMultipliers.stone;
+      }
+      if (religion.bonuses.resourceMultipliers.gold) {
+        resourceMultipliers.gold *= religion.bonuses.resourceMultipliers.gold;
+      }
+      if (religion.bonuses.resourceMultipliers.science) {
+        resourceMultipliers.science *= religion.bonuses.resourceMultipliers.science;
+      }
+    }
+    if (religion.bonuses.militaryBonuses) {
+      if (religion.bonuses.militaryBonuses.attack) {
+        militaryBonuses.attack *= religion.bonuses.militaryBonuses.attack;
+      }
+      if (religion.bonuses.militaryBonuses.defense) {
+        militaryBonuses.defense *= religion.bonuses.militaryBonuses.defense;
+      }
+      if (religion.bonuses.militaryBonuses.morale) {
+        militaryBonuses.morale *= religion.bonuses.militaryBonuses.morale;
+      }
+    }
+    return { resourceMultipliers, militaryBonuses };
+  }
+  function calculateNaturalWonderBonuses(discoveredWonders) {
+    const flatBonuses = { food: 0, wood: 0, stone: 0, gold: 0, science: 0 };
+    const multipliers = { food: 1, wood: 1, stone: 1, gold: 1, science: 1 };
+    const validResources = ["food", "wood", "stone", "gold", "science"];
+    for (const wonderId of discoveredWonders) {
+      const wonder = getNaturalWonderById(wonderId);
+      if (wonder) {
+        if (wonder.bonuses.flatBonuses) {
+          for (const bonus of wonder.bonuses.flatBonuses) {
+            const resource = bonus.resource;
+            if (validResources.includes(resource)) {
+              flatBonuses[resource] += bonus.amount;
+            }
+          }
+        }
+        if (wonder.bonuses.resourceMultiplier) {
+          const resource = wonder.bonuses.resourceMultiplier.resource;
+          if (validResources.includes(resource)) {
+            multipliers[resource] *= wonder.bonuses.resourceMultiplier.multiplier;
+          }
+        }
+      }
+    }
+    return { flatBonuses, multipliers };
+  }
+  function calculatePolicyBonuses(adoptedPolicies) {
+    const flatBonuses = { food: 0, wood: 0, stone: 0, gold: 0, science: 0 };
+    const militaryBonuses = { attack: 0, defense: 0 };
+    const validResources = ["food", "wood", "stone", "gold", "science"];
+    const validStats = ["attack", "defense"];
+    for (const policyId of adoptedPolicies) {
+      const policy = getPolicyById(policyId);
+      if (policy) {
+        if (policy.effects.resourceBonus) {
+          const resource = policy.effects.resourceBonus.resource;
+          if (validResources.includes(resource)) {
+            flatBonuses[resource] += policy.effects.resourceBonus.amount;
+          }
+        }
+        if (policy.effects.militaryBonus) {
+          const stat = policy.effects.militaryBonus.stat;
+          if (validStats.includes(stat)) {
+            militaryBonuses[stat] += policy.effects.militaryBonus.amount;
+          }
+        }
+      }
+    }
+    return { flatBonuses, militaryBonuses };
+  }
+  function createInitialLoreState() {
+    return {
+      selectedCivilization: "default",
+      selectedLeader: null,
+      discoveredWonders: /* @__PURE__ */ new Set(),
+      foundedReligion: null,
+      culturePoints: 0,
+      cultureLevel: 0,
+      adoptedPolicies: /* @__PURE__ */ new Set()
+    };
+  }
+  function tryDiscoverWonder(currentEra, discoveredWonders, eras) {
+    const availableWonders = getAvailableWonders(currentEra, eras).filter((wonder) => !discoveredWonders.has(wonder.id));
+    if (availableWonders.length === 0)
+      return null;
+    for (const wonder of availableWonders) {
+      if (Math.random() < wonder.discoveryChance) {
+        return wonder;
+      }
+    }
+    return null;
+  }
+  function foundReligion(templateId) {
+    const template = getReligionTemplateById(templateId);
+    if (!template)
+      return null;
+    return {
+      ...template,
+      founded: true,
+      followers: 1
+    };
+  }
+  function calculateCultureGain(baseAmount, adoptedPolicies, discoveredWonders) {
+    let gain = baseAmount;
+    if (adoptedPolicies.has("aesthetics")) {
+      gain *= 2;
+    }
+    gain += discoveredWonders * 0.5;
+    return Math.floor(gain);
+  }
+  function canAdoptPolicy(policyId, culturePoints, adoptedPolicies) {
+    const policy = getPolicyById(policyId);
+    if (!policy)
+      return false;
+    if (adoptedPolicies.has(policyId))
+      return false;
+    return culturePoints >= policy.cost;
+  }
+
   // dist/game.js
   var Game = class {
     constructor() {
@@ -5957,7 +7289,9 @@ body {
         activeConquestBattle: null,
         conquestMode: false,
         // Skill tree and legacy system
-        skillTree: createInitialSkillTreeState()
+        skillTree: createInitialSkillTreeState(),
+        // World and Lore system
+        lore: createInitialLoreState()
       };
     }
     setOnAchievementUnlocked(callback) {
@@ -5992,16 +7326,17 @@ body {
       const buildingProduction = calculateBuildingProduction(this.state.buildings);
       const conquestBonuses = this.getConquestBonuses();
       const conquestMultipliers = this.getConquestMultipliers();
-      const totalFoodMultiplier = this.state.resourceMultipliers.food * conquestMultipliers.food;
-      const totalWoodMultiplier = this.state.resourceMultipliers.wood * conquestMultipliers.wood;
-      const totalStoneMultiplier = this.state.resourceMultipliers.stone * conquestMultipliers.stone;
-      const totalGoldMultiplier = this.state.resourceMultipliers.gold * conquestMultipliers.gold;
-      const totalScienceMultiplier = this.state.resourceMultipliers.science * conquestMultipliers.science;
-      const foodGain = (era.resources.food.baseRate + buildingProduction.food + conquestBonuses.food) * totalFoodMultiplier * delta;
-      const woodGain = (era.resources.wood.baseRate + buildingProduction.wood + conquestBonuses.wood) * totalWoodMultiplier * delta;
-      const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone + conquestBonuses.stone) * totalStoneMultiplier * delta;
-      const goldGain = (era.resources.gold.baseRate + buildingProduction.gold + conquestBonuses.gold) * totalGoldMultiplier * delta;
-      const scienceGain = (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science) * totalScienceMultiplier * delta;
+      const loreBonuses = this.getLoreBonuses();
+      const totalFoodMultiplier = this.state.resourceMultipliers.food * conquestMultipliers.food * loreBonuses.multipliers.food;
+      const totalWoodMultiplier = this.state.resourceMultipliers.wood * conquestMultipliers.wood * loreBonuses.multipliers.wood;
+      const totalStoneMultiplier = this.state.resourceMultipliers.stone * conquestMultipliers.stone * loreBonuses.multipliers.stone;
+      const totalGoldMultiplier = this.state.resourceMultipliers.gold * conquestMultipliers.gold * loreBonuses.multipliers.gold;
+      const totalScienceMultiplier = this.state.resourceMultipliers.science * conquestMultipliers.science * loreBonuses.multipliers.science;
+      const foodGain = (era.resources.food.baseRate + buildingProduction.food + conquestBonuses.food + loreBonuses.flatBonuses.food) * totalFoodMultiplier * delta;
+      const woodGain = (era.resources.wood.baseRate + buildingProduction.wood + conquestBonuses.wood + loreBonuses.flatBonuses.wood) * totalWoodMultiplier * delta;
+      const stoneGain = (era.resources.stone.baseRate + buildingProduction.stone + conquestBonuses.stone + loreBonuses.flatBonuses.stone) * totalStoneMultiplier * delta;
+      const goldGain = (era.resources.gold.baseRate + buildingProduction.gold + conquestBonuses.gold + loreBonuses.flatBonuses.gold) * totalGoldMultiplier * delta;
+      const scienceGain = (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science + loreBonuses.flatBonuses.science) * totalScienceMultiplier * delta;
       this.state.resources.food += foodGain;
       this.state.resources.wood += woodGain;
       this.state.resources.stone += stoneGain;
@@ -6012,10 +7347,12 @@ body {
       this.state.statistics.totalStoneGathered += stoneGain;
       this.state.statistics.totalGoldEarned += goldGain;
       this.state.statistics.totalScienceGenerated += scienceGain;
+      const cultureGain = calculateCultureGain(delta * 0.1, this.state.lore.adoptedPolicies, this.state.lore.discoveredWonders.size);
+      this.state.lore.culturePoints += cultureGain;
       if (this.state.currentResearch) {
         const tech = getTechById(this.state.currentResearch);
         if (tech) {
-          this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science) * totalScienceMultiplier * delta;
+          this.state.researchProgress += (era.resources.science.baseRate + buildingProduction.science + conquestBonuses.science + loreBonuses.flatBonuses.science) * totalScienceMultiplier * delta;
           if (this.state.researchProgress >= tech.cost.science) {
             this.completeResearch();
           }
@@ -6599,6 +7936,15 @@ body {
         milestoneCompletionCounts: Array.from(this.state.skillTree.milestoneCompletionCounts.entries()),
         prestigeCount: this.state.skillTree.prestigeCount
       };
+      const loreSave = {
+        selectedCivilization: this.state.lore.selectedCivilization,
+        selectedLeader: this.state.lore.selectedLeader,
+        discoveredWonders: Array.from(this.state.lore.discoveredWonders),
+        foundedReligion: this.state.lore.foundedReligion,
+        culturePoints: this.state.lore.culturePoints,
+        cultureLevel: this.state.lore.cultureLevel,
+        adoptedPolicies: Array.from(this.state.lore.adoptedPolicies)
+      };
       const saveData = {
         ...this.state,
         researchedTechs: Array.from(this.state.researchedTechs),
@@ -6608,6 +7954,7 @@ body {
         conqueredTerritories: Array.from(this.state.conqueredTerritories),
         achievements: achievementsArray,
         skillTree: skillTreeSave,
+        lore: loreSave,
         activeBattle: null,
         // Don't save active battles
         activeConquestBattle: null,
@@ -6670,6 +8017,18 @@ body {
             prestigeCount: saveData.skillTree.prestigeCount || 0
           };
         }
+        let loreState = createInitialLoreState();
+        if (saveData.lore) {
+          loreState = {
+            selectedCivilization: saveData.lore.selectedCivilization || "default",
+            selectedLeader: saveData.lore.selectedLeader || null,
+            discoveredWonders: new Set(saveData.lore.discoveredWonders || []),
+            foundedReligion: saveData.lore.foundedReligion || null,
+            culturePoints: saveData.lore.culturePoints || 0,
+            cultureLevel: saveData.lore.cultureLevel || 0,
+            adoptedPolicies: new Set(saveData.lore.adoptedPolicies || [])
+          };
+        }
         this.state = {
           ...saveData,
           researchedTechs: new Set(saveData.researchedTechs),
@@ -6692,7 +8051,9 @@ body {
           activeConquestBattle: null,
           conquestMode: saveData.conquestMode || false,
           // Skill tree
-          skillTree: skillTreeState
+          skillTree: skillTreeState,
+          // World and Lore
+          lore: loreState
         };
         if (saveData.saveTime) {
           this.calculateOfflineProgress(saveData.saveTime);
@@ -6706,6 +8067,135 @@ body {
       this.state = this.createInitialState();
       this.offlineProgress = null;
       this.notifyStateChange();
+    }
+    // ===== Lore System Methods =====
+    getLoreBonuses() {
+      const flatBonuses = { food: 0, wood: 0, stone: 0, gold: 0, science: 0 };
+      const multipliers = { food: 1, wood: 1, stone: 1, gold: 1, science: 1 };
+      const militaryBonuses = { attack: 1, defense: 1, health: 1 };
+      const civilization = getCivilizationById(this.state.lore.selectedCivilization);
+      const leader = this.state.lore.selectedLeader ? getLeaderById(this.state.lore.selectedLeader) : null;
+      if (civilization) {
+        const civBonuses = calculateCivilizationBonuses(civilization, leader);
+        multipliers.food *= civBonuses.resourceMultipliers.food;
+        multipliers.wood *= civBonuses.resourceMultipliers.wood;
+        multipliers.stone *= civBonuses.resourceMultipliers.stone;
+        multipliers.gold *= civBonuses.resourceMultipliers.gold;
+        multipliers.science *= civBonuses.resourceMultipliers.science;
+        militaryBonuses.attack *= civBonuses.militaryBonuses.attack;
+        militaryBonuses.defense *= civBonuses.militaryBonuses.defense;
+        militaryBonuses.health *= civBonuses.militaryBonuses.health;
+      }
+      const religionBonuses = calculateReligionBonuses(this.state.lore.foundedReligion);
+      multipliers.food *= religionBonuses.resourceMultipliers.food;
+      multipliers.wood *= religionBonuses.resourceMultipliers.wood;
+      multipliers.stone *= religionBonuses.resourceMultipliers.stone;
+      multipliers.gold *= religionBonuses.resourceMultipliers.gold;
+      multipliers.science *= religionBonuses.resourceMultipliers.science;
+      const wonderBonuses = calculateNaturalWonderBonuses(Array.from(this.state.lore.discoveredWonders));
+      flatBonuses.food += wonderBonuses.flatBonuses.food;
+      flatBonuses.wood += wonderBonuses.flatBonuses.wood;
+      flatBonuses.stone += wonderBonuses.flatBonuses.stone;
+      flatBonuses.gold += wonderBonuses.flatBonuses.gold;
+      flatBonuses.science += wonderBonuses.flatBonuses.science;
+      multipliers.food *= wonderBonuses.multipliers.food;
+      multipliers.wood *= wonderBonuses.multipliers.wood;
+      multipliers.stone *= wonderBonuses.multipliers.stone;
+      multipliers.gold *= wonderBonuses.multipliers.gold;
+      multipliers.science *= wonderBonuses.multipliers.science;
+      const policyBonuses = calculatePolicyBonuses(Array.from(this.state.lore.adoptedPolicies));
+      flatBonuses.food += policyBonuses.flatBonuses.food;
+      flatBonuses.wood += policyBonuses.flatBonuses.wood;
+      flatBonuses.stone += policyBonuses.flatBonuses.stone;
+      flatBonuses.gold += policyBonuses.flatBonuses.gold;
+      flatBonuses.science += policyBonuses.flatBonuses.science;
+      militaryBonuses.attack += policyBonuses.militaryBonuses.attack / 100;
+      militaryBonuses.defense += policyBonuses.militaryBonuses.defense / 100;
+      return { flatBonuses, multipliers, militaryBonuses };
+    }
+    selectCivilization(civilizationId) {
+      const civilization = getCivilizationById(civilizationId);
+      if (!civilization)
+        return false;
+      this.state.lore.selectedCivilization = civilizationId;
+      this.state.lore.selectedLeader = null;
+      if (civilization.startingResources) {
+        this.state.resources.food += civilization.startingResources.food || 0;
+        this.state.resources.wood += civilization.startingResources.wood || 0;
+        this.state.resources.stone += civilization.startingResources.stone || 0;
+        this.state.resources.gold += civilization.startingResources.gold || 0;
+        this.state.resources.science += civilization.startingResources.science || 0;
+      }
+      this.notifyStateChange();
+      return true;
+    }
+    selectLeader(leaderId) {
+      const leader = getLeaderById(leaderId);
+      if (!leader)
+        return false;
+      const availableLeaders = getAvailableLeaders(this.state.lore.selectedCivilization, this.state.currentEra, ERAS);
+      if (!availableLeaders.find((l) => l.id === leaderId)) {
+        return false;
+      }
+      this.state.lore.selectedLeader = leaderId;
+      this.notifyStateChange();
+      return true;
+    }
+    getAvailableLeaders() {
+      return getAvailableLeaders(this.state.lore.selectedCivilization, this.state.currentEra, ERAS);
+    }
+    discoverNaturalWonder() {
+      const wonder = tryDiscoverWonder(this.state.currentEra, this.state.lore.discoveredWonders, ERAS);
+      if (wonder) {
+        this.state.lore.discoveredWonders.add(wonder.id);
+        if (wonder.id === "el_dorado") {
+          this.state.resources.gold += 5e3;
+        }
+        this.notifyStateChange();
+      }
+      return wonder;
+    }
+    getDiscoveredWonders() {
+      return Array.from(this.state.lore.discoveredWonders).map((id) => getNaturalWonderById(id)).filter((w) => w !== void 0);
+    }
+    foundNewReligion(templateId) {
+      if (this.state.lore.foundedReligion) {
+        return false;
+      }
+      const religion = foundReligion(templateId);
+      if (!religion)
+        return false;
+      this.state.lore.foundedReligion = religion;
+      this.notifyStateChange();
+      return true;
+    }
+    getReligionTemplates() {
+      return RELIGION_TEMPLATES;
+    }
+    adoptCulturalPolicy(policyId) {
+      if (!canAdoptPolicy(policyId, this.state.lore.culturePoints, this.state.lore.adoptedPolicies)) {
+        return false;
+      }
+      const policy = getPolicyById(policyId);
+      if (!policy)
+        return false;
+      this.state.lore.culturePoints -= policy.cost;
+      this.state.lore.adoptedPolicies.add(policyId);
+      this.state.lore.cultureLevel = Math.floor(this.state.lore.adoptedPolicies.size / 2);
+      this.notifyStateChange();
+      return true;
+    }
+    getAvailablePolicies() {
+      return CULTURAL_POLICIES.filter((policy) => !this.state.lore.adoptedPolicies.has(policy.id));
+    }
+    getAdoptedPolicies() {
+      return Array.from(this.state.lore.adoptedPolicies).map((id) => getPolicyById(id)).filter((p) => p !== void 0);
+    }
+    getCivilization() {
+      return getCivilizationById(this.state.lore.selectedCivilization);
+    }
+    getLeader() {
+      return this.state.lore.selectedLeader ? getLeaderById(this.state.lore.selectedLeader) : void 0;
     }
   };
 
@@ -6863,6 +8353,46 @@ body {
           }
         }
       });
+      document.getElementById("world-content")?.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("civ-btn") && !target.hasAttribute("disabled")) {
+          const civId = target.dataset.civilization;
+          if (civId) {
+            this.startInteraction();
+            this.game.selectCivilization(civId);
+          }
+        }
+        if (target.classList.contains("leader-btn") && !target.hasAttribute("disabled")) {
+          const leaderId = target.dataset.leader;
+          if (leaderId) {
+            this.startInteraction();
+            this.game.selectLeader(leaderId);
+          }
+        }
+        if (target.classList.contains("religion-btn") && !target.hasAttribute("disabled")) {
+          const religionId = target.dataset.religion;
+          if (religionId) {
+            this.startInteraction();
+            this.game.foundNewReligion(religionId);
+          }
+        }
+        if (target.classList.contains("policy-btn") && !target.hasAttribute("disabled")) {
+          const policyId = target.dataset.policy;
+          if (policyId) {
+            this.startInteraction();
+            this.game.adoptCulturalPolicy(policyId);
+          }
+        }
+        if (target.id === "explore-wonder-btn") {
+          this.startInteraction();
+          const wonder = this.game.discoverNaturalWonder();
+          if (wonder) {
+            this.showNotification(`Discovered ${wonder.name}!`);
+          } else {
+            this.showNotification("Nothing discovered this time...");
+          }
+        }
+      });
     }
     switchTab(tab) {
       this.currentTab = tab;
@@ -6934,6 +8464,13 @@ body {
             this.renderSkillsTab();
           } else {
             this.updateSkillsTab();
+          }
+          break;
+        case "world":
+          if (tabChanged) {
+            this.renderWorldTab();
+          } else {
+            this.updateWorldTab();
           }
           break;
       }
@@ -8576,6 +10113,327 @@ body {
             const canUpgrade = canUnlock && hasPoints && !isMaxed;
             btn.disabled = !canUpgrade;
           }
+        }
+      });
+    }
+    // ===== World & Lore Tab =====
+    renderWorldTab() {
+      const container = document.getElementById("world-content");
+      if (!container)
+        return;
+      const { lore } = this.game.state;
+      const currentCiv = getCivilizationById(lore.selectedCivilization);
+      const currentLeader = lore.selectedLeader ? getLeaderById(lore.selectedLeader) : null;
+      let html = "";
+      html += this.renderCivilizationSection(currentCiv, currentLeader, lore);
+      html += this.renderLeadersSection(currentLeader, lore);
+      html += this.renderReligionSection(lore);
+      html += this.renderNaturalWondersSection(lore);
+      html += this.renderCulturalPoliciesSection(lore);
+      container.innerHTML = html;
+    }
+    renderCivilizationSection(currentCiv, currentLeader, lore) {
+      let html = `
+      <div class="world-section civilization-section">
+        <h3>\u{1F3DB}\uFE0F Your Civilization</h3>
+        ${currentCiv ? `
+          <div class="current-civ-display">
+            <span class="civ-icon">${currentCiv.icon}</span>
+            <div class="civ-details">
+              <h4>${currentCiv.name}</h4>
+              <p>${currentCiv.description}</p>
+              ${currentCiv.bonuses.specialAbility ? `<span class="special-ability">\u2728 ${currentCiv.bonuses.specialAbility}</span>` : ""}
+            </div>
+          </div>
+          ${currentLeader ? `
+            <div class="current-leader-display">
+              <span class="leader-icon">${currentLeader.icon}</span>
+              <div class="leader-details">
+                <h5>${currentLeader.name} - ${currentLeader.title}</h5>
+                <p>${currentLeader.description}</p>
+                <span class="special-ability">\u2728 ${currentLeader.bonuses.specialAbility}</span>
+              </div>
+            </div>
+          ` : '<p class="no-leader">No leader selected. Choose a leader below!</p>'}
+        ` : ""}
+        
+        <h4>Choose Your Civilization</h4>
+        <div class="civ-grid">
+    `;
+      for (const civ of CIVILIZATIONS) {
+        const isSelected = civ.id === lore.selectedCivilization;
+        const bonusText = this.getCivBonusText(civ);
+        html += `
+        <div class="civ-card ${isSelected ? "selected" : ""}">
+          <div class="civ-header">
+            <span class="civ-icon">${civ.icon}</span>
+            <h5>${civ.name}</h5>
+          </div>
+          <p class="civ-desc">${civ.description}</p>
+          <div class="civ-bonuses">${bonusText}</div>
+          ${civ.bonuses.specialAbility ? `<span class="civ-special">\u2728 ${civ.bonuses.specialAbility}</span>` : ""}
+          <button class="civ-btn ${isSelected ? "selected" : ""}" 
+                  data-civilization="${civ.id}"
+                  ${isSelected ? "disabled" : ""}>
+            ${isSelected ? "\u2713 Selected" : "Select"}
+          </button>
+        </div>
+      `;
+      }
+      html += "</div></div>";
+      return html;
+    }
+    getCivBonusText(civ) {
+      const bonuses = [];
+      if (civ.bonuses.resourceMultipliers) {
+        if (civ.bonuses.resourceMultipliers.food && civ.bonuses.resourceMultipliers.food > 1) {
+          bonuses.push(`\u{1F356} \xD7${civ.bonuses.resourceMultipliers.food.toFixed(2)}`);
+        }
+        if (civ.bonuses.resourceMultipliers.wood && civ.bonuses.resourceMultipliers.wood > 1) {
+          bonuses.push(`\u{1FAB5} \xD7${civ.bonuses.resourceMultipliers.wood.toFixed(2)}`);
+        }
+        if (civ.bonuses.resourceMultipliers.stone && civ.bonuses.resourceMultipliers.stone > 1) {
+          bonuses.push(`\u{1FAA8} \xD7${civ.bonuses.resourceMultipliers.stone.toFixed(2)}`);
+        }
+        if (civ.bonuses.resourceMultipliers.gold && civ.bonuses.resourceMultipliers.gold > 1) {
+          bonuses.push(`\u{1F4B0} \xD7${civ.bonuses.resourceMultipliers.gold.toFixed(2)}`);
+        }
+        if (civ.bonuses.resourceMultipliers.science && civ.bonuses.resourceMultipliers.science > 1) {
+          bonuses.push(`\u{1F52C} \xD7${civ.bonuses.resourceMultipliers.science.toFixed(2)}`);
+        }
+      }
+      if (civ.bonuses.militaryBonuses) {
+        if (civ.bonuses.militaryBonuses.attack && civ.bonuses.militaryBonuses.attack > 1) {
+          bonuses.push(`\u2694\uFE0F \xD7${civ.bonuses.militaryBonuses.attack.toFixed(2)}`);
+        }
+        if (civ.bonuses.militaryBonuses.defense && civ.bonuses.militaryBonuses.defense > 1) {
+          bonuses.push(`\u{1F6E1}\uFE0F \xD7${civ.bonuses.militaryBonuses.defense.toFixed(2)}`);
+        }
+      }
+      return bonuses.length > 0 ? bonuses.join(" ") : "No special bonuses";
+    }
+    renderLeadersSection(currentLeader, lore) {
+      const availableLeaders = this.game.getAvailableLeaders();
+      let html = `
+      <div class="world-section leaders-section">
+        <h3>\u{1F451} Historical Leaders</h3>
+        <p>Choose a leader to guide your civilization. More leaders unlock as you advance through eras.</p>
+        <div class="leader-grid">
+    `;
+      if (availableLeaders.length === 0) {
+        html += '<p class="empty-message">No leaders available yet. Keep progressing!</p>';
+      } else {
+        for (const leader of availableLeaders) {
+          const isSelected = leader.id === lore.selectedLeader;
+          html += `
+          <div class="leader-card ${isSelected ? "selected" : ""}">
+            <div class="leader-header">
+              <span class="leader-icon">${leader.icon}</span>
+              <div>
+                <h5>${leader.name}</h5>
+                <span class="leader-title">${leader.title}</span>
+              </div>
+            </div>
+            <p class="leader-desc">${leader.description}</p>
+            <span class="leader-ability">\u2728 ${leader.bonuses.specialAbility}</span>
+            <button class="leader-btn ${isSelected ? "selected" : ""}"
+                    data-leader="${leader.id}"
+                    ${isSelected ? "disabled" : ""}>
+              ${isSelected ? "\u2713 Selected" : "Select Leader"}
+            </button>
+          </div>
+        `;
+        }
+      }
+      html += "</div></div>";
+      return html;
+    }
+    renderReligionSection(lore) {
+      let html = `
+      <div class="world-section religion-section">
+        <h3>\u{1F64F} Religion</h3>
+    `;
+      if (lore.foundedReligion) {
+        const religion = lore.foundedReligion;
+        html += `
+        <div class="founded-religion">
+          <div class="religion-header">
+            <span class="religion-icon">${religion.icon}</span>
+            <div>
+              <h4>${religion.name}</h4>
+              <span class="follower-count">${religion.followers} followers</span>
+            </div>
+          </div>
+          <p class="religion-desc">${religion.description}</p>
+          <span class="religion-ability">\u2728 ${religion.bonuses.specialAbility}</span>
+        </div>
+      `;
+      } else {
+        html += `
+        <p>Found a religion to gain permanent bonuses for your civilization.</p>
+        <div class="religion-grid">
+      `;
+        for (const template of RELIGION_TEMPLATES) {
+          html += `
+          <div class="religion-card">
+            <div class="religion-header">
+              <span class="religion-icon">${template.icon}</span>
+              <h5>${template.name}</h5>
+            </div>
+            <p class="religion-desc">${template.description}</p>
+            <span class="religion-ability">\u2728 ${template.bonuses.specialAbility}</span>
+            <button class="religion-btn" data-religion="${template.id}">
+              Found Religion
+            </button>
+          </div>
+        `;
+        }
+        html += "</div>";
+      }
+      html += "</div>";
+      return html;
+    }
+    renderNaturalWondersSection(lore) {
+      const discoveredWonders = this.game.getDiscoveredWonders();
+      let html = `
+      <div class="world-section wonders-section">
+        <h3>\u{1F30D} Natural Wonders</h3>
+        <p>Explore the world to discover natural wonders that provide permanent bonuses.</p>
+        <button id="explore-wonder-btn" class="explore-btn">\u{1F50D} Explore for Wonders</button>
+        
+        <h4>Discovered Wonders (${discoveredWonders.length}/${NATURAL_WONDERS.length})</h4>
+        <div class="wonder-grid">
+    `;
+      if (discoveredWonders.length === 0) {
+        html += '<p class="empty-message">No wonders discovered yet. Keep exploring!</p>';
+      } else {
+        for (const wonder of discoveredWonders) {
+          const bonusText = this.getWonderBonusText(wonder);
+          html += `
+          <div class="wonder-card discovered">
+            <div class="wonder-header">
+              <span class="wonder-icon">${wonder.icon}</span>
+              <h5>${wonder.name}</h5>
+            </div>
+            <p class="wonder-desc">${wonder.description}</p>
+            <div class="wonder-bonuses">${bonusText}</div>
+            ${wonder.bonuses.specialEffect ? `<span class="wonder-effect">\u2728 ${wonder.bonuses.specialEffect}</span>` : ""}
+          </div>
+        `;
+        }
+      }
+      html += "</div></div>";
+      return html;
+    }
+    getWonderBonusText(wonder) {
+      const bonuses = [];
+      if (wonder.bonuses.flatBonuses) {
+        for (const bonus of wonder.bonuses.flatBonuses) {
+          const emoji = this.getResourceEmoji(bonus.resource);
+          bonuses.push(`${emoji} +${bonus.amount}/s`);
+        }
+      }
+      if (wonder.bonuses.resourceMultiplier) {
+        const emoji = this.getResourceEmoji(wonder.bonuses.resourceMultiplier.resource);
+        bonuses.push(`${emoji} \xD7${wonder.bonuses.resourceMultiplier.multiplier.toFixed(2)}`);
+      }
+      return bonuses.length > 0 ? bonuses.join(" ") : "Special effects only";
+    }
+    renderCulturalPoliciesSection(lore) {
+      const adoptedPolicies = this.game.getAdoptedPolicies();
+      const availablePolicies = this.game.getAvailablePolicies();
+      let html = `
+      <div class="world-section culture-section">
+        <h3>\u{1F3AD} Cultural Policies</h3>
+        <div class="culture-overview">
+          <div class="culture-points">
+            <span class="culture-icon">\u{1F3A8}</span>
+            <span class="culture-label">Culture Points:</span>
+            <span class="culture-value">${Math.floor(lore.culturePoints)}</span>
+          </div>
+          <div class="culture-level">
+            <span>Culture Level: ${lore.cultureLevel}</span>
+          </div>
+        </div>
+        
+        <h4>Adopted Policies (${adoptedPolicies.length}/${CULTURAL_POLICIES.length})</h4>
+        <div class="adopted-policies">
+    `;
+      if (adoptedPolicies.length === 0) {
+        html += '<p class="empty-message">No policies adopted yet.</p>';
+      } else {
+        for (const policy of adoptedPolicies) {
+          html += `
+          <div class="policy-card adopted">
+            <span class="policy-icon">${policy.icon}</span>
+            <div class="policy-info">
+              <h5>${policy.name}</h5>
+              <p>${policy.description}</p>
+              ${policy.effects.special ? `<span class="policy-effect">\u2728 ${policy.effects.special}</span>` : ""}
+            </div>
+          </div>
+        `;
+        }
+      }
+      html += `
+        </div>
+        
+        <h4>Available Policies</h4>
+        <div class="policy-grid">
+    `;
+      if (availablePolicies.length === 0) {
+        html += '<p class="empty-message">All policies adopted!</p>';
+      } else {
+        for (const policy of availablePolicies) {
+          const canAdopt = canAdoptPolicy(policy.id, lore.culturePoints, lore.adoptedPolicies);
+          html += `
+          <div class="policy-card ${canAdopt ? "available" : "locked"}">
+            <div class="policy-header">
+              <span class="policy-icon">${policy.icon}</span>
+              <h5>${policy.name}</h5>
+            </div>
+            <p class="policy-desc">${policy.description}</p>
+            ${policy.effects.special ? `<span class="policy-effect">\u2728 ${policy.effects.special}</span>` : ""}
+            <div class="policy-cost">Cost: \u{1F3A8} ${policy.cost}</div>
+            <button class="policy-btn ${canAdopt ? "" : "disabled"}"
+                    data-policy="${policy.id}"
+                    ${canAdopt ? "" : "disabled"}>
+              ${canAdopt ? "Adopt Policy" : "Need More Culture"}
+            </button>
+          </div>
+        `;
+        }
+      }
+      html += "</div></div>";
+      return html;
+    }
+    updateWorldTab() {
+      const container = document.getElementById("world-content");
+      if (!container) {
+        this.renderWorldTab();
+        return;
+      }
+      const { lore } = this.game.state;
+      const discoveredCount = lore.discoveredWonders.size;
+      const policiesCount = lore.adoptedPolicies.size;
+      const hasReligion = lore.foundedReligion ? 1 : 0;
+      const versionKey = `${lore.selectedCivilization}-${lore.selectedLeader}-${discoveredCount}-${policiesCount}-${hasReligion}`;
+      const lastVersion = this.tabContentVersions.get("world");
+      if (lastVersion === void 0 || lastVersion !== versionKey) {
+        this.tabContentVersions.set("world", versionKey);
+        this.renderWorldTab();
+        return;
+      }
+      const cultureValue = container.querySelector(".culture-value");
+      if (cultureValue) {
+        cultureValue.textContent = Math.floor(lore.culturePoints).toString();
+      }
+      const policyButtons = container.querySelectorAll(".policy-btn");
+      policyButtons.forEach((btn) => {
+        const policyId = btn.dataset.policy;
+        if (policyId) {
+          const canAdopt = canAdoptPolicy(policyId, lore.culturePoints, lore.adoptedPolicies);
+          btn.disabled = !canAdopt;
         }
       });
     }

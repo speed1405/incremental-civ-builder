@@ -1,5 +1,5 @@
 // UI management for the game
-import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES, Mission, ActiveBattle, Achievement, BuildingType, Territory } from './game.js';
+import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES, CIVILIZATIONS, LEADERS, NATURAL_WONDERS, RELIGION_TEMPLATES, CULTURAL_POLICIES, Mission, ActiveBattle, Achievement, BuildingType, Territory, Civilization, Leader, NaturalWonder, Religion, CulturalPolicy } from './game.js';
 import { getEraById } from './eras.js';
 import { getTechById } from './research.js';
 import { getTroopTypeById, calculateArmyPower } from './barracks.js';
@@ -7,6 +7,7 @@ import { getMissionById, getMissionsByEra, isMissionAvailable, getTerritoryById,
 import { getAchievementsByCategory } from './achievements.js';
 import { getBuildingTypeById, calculateBuildingProduction } from './buildings.js';
 import { SKILLS, LEGACY_MILESTONES, getSkillById, getSkillsByCategory, canUnlockSkill, getSkillLevel, getSkillCost, getSkillEffect, calculateSkillBonuses, Skill } from './skills.js';
+import { getCivilizationById, getLeaderById, getNaturalWonderById, getPolicyById, canAdoptPolicy } from './lore.js';
 
 // UI timing constants
 const RENDER_DEBOUNCE_MS = 100;
@@ -206,6 +207,58 @@ export class GameUI {
         }
       }
     });
+
+    // World tab - civilization, leader, religion, and policy buttons
+    document.getElementById('world-content')?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      
+      // Civilization selection
+      if (target.classList.contains('civ-btn') && !target.hasAttribute('disabled')) {
+        const civId = target.dataset.civilization;
+        if (civId) {
+          this.startInteraction();
+          this.game.selectCivilization(civId);
+        }
+      }
+      
+      // Leader selection
+      if (target.classList.contains('leader-btn') && !target.hasAttribute('disabled')) {
+        const leaderId = target.dataset.leader;
+        if (leaderId) {
+          this.startInteraction();
+          this.game.selectLeader(leaderId);
+        }
+      }
+      
+      // Religion founding
+      if (target.classList.contains('religion-btn') && !target.hasAttribute('disabled')) {
+        const religionId = target.dataset.religion;
+        if (religionId) {
+          this.startInteraction();
+          this.game.foundNewReligion(religionId);
+        }
+      }
+      
+      // Policy adoption
+      if (target.classList.contains('policy-btn') && !target.hasAttribute('disabled')) {
+        const policyId = target.dataset.policy;
+        if (policyId) {
+          this.startInteraction();
+          this.game.adoptCulturalPolicy(policyId);
+        }
+      }
+      
+      // Explore for natural wonders
+      if (target.id === 'explore-wonder-btn') {
+        this.startInteraction();
+        const wonder = this.game.discoverNaturalWonder();
+        if (wonder) {
+          this.showNotification(`Discovered ${wonder.name}!`);
+        } else {
+          this.showNotification('Nothing discovered this time...');
+        }
+      }
+    });
   }
 
   private switchTab(tab: string): void {
@@ -292,6 +345,13 @@ export class GameUI {
           this.renderSkillsTab();
         } else {
           this.updateSkillsTab();
+        }
+        break;
+      case 'world':
+        if (tabChanged) {
+          this.renderWorldTab();
+        } else {
+          this.updateWorldTab();
         }
         break;
     }
@@ -2182,6 +2242,375 @@ export class GameUI {
           const canUpgrade = canUnlock && hasPoints && !isMaxed;
           btn.disabled = !canUpgrade;
         }
+      }
+    });
+  }
+
+  // ===== World & Lore Tab =====
+  
+  renderWorldTab(): void {
+    const container = document.getElementById('world-content');
+    if (!container) return;
+
+    const { lore } = this.game.state;
+    const currentCiv = getCivilizationById(lore.selectedCivilization);
+    const currentLeader = lore.selectedLeader ? getLeaderById(lore.selectedLeader) : null;
+
+    let html = '';
+
+    // Civilization Overview
+    html += this.renderCivilizationSection(currentCiv, currentLeader, lore);
+    
+    // Leaders Section
+    html += this.renderLeadersSection(currentLeader, lore);
+    
+    // Religion Section
+    html += this.renderReligionSection(lore);
+    
+    // Natural Wonders Section
+    html += this.renderNaturalWondersSection(lore);
+    
+    // Cultural Policies Section
+    html += this.renderCulturalPoliciesSection(lore);
+
+    container.innerHTML = html;
+  }
+
+  private renderCivilizationSection(currentCiv: Civilization | undefined, currentLeader: Leader | null | undefined, lore: typeof this.game.state.lore): string {
+    let html = `
+      <div class="world-section civilization-section">
+        <h3>🏛️ Your Civilization</h3>
+        ${currentCiv ? `
+          <div class="current-civ-display">
+            <span class="civ-icon">${currentCiv.icon}</span>
+            <div class="civ-details">
+              <h4>${currentCiv.name}</h4>
+              <p>${currentCiv.description}</p>
+              ${currentCiv.bonuses.specialAbility ? `<span class="special-ability">✨ ${currentCiv.bonuses.specialAbility}</span>` : ''}
+            </div>
+          </div>
+          ${currentLeader ? `
+            <div class="current-leader-display">
+              <span class="leader-icon">${currentLeader.icon}</span>
+              <div class="leader-details">
+                <h5>${currentLeader.name} - ${currentLeader.title}</h5>
+                <p>${currentLeader.description}</p>
+                <span class="special-ability">✨ ${currentLeader.bonuses.specialAbility}</span>
+              </div>
+            </div>
+          ` : '<p class="no-leader">No leader selected. Choose a leader below!</p>'}
+        ` : ''}
+        
+        <h4>Choose Your Civilization</h4>
+        <div class="civ-grid">
+    `;
+
+    for (const civ of CIVILIZATIONS) {
+      const isSelected = civ.id === lore.selectedCivilization;
+      const bonusText = this.getCivBonusText(civ);
+      
+      html += `
+        <div class="civ-card ${isSelected ? 'selected' : ''}">
+          <div class="civ-header">
+            <span class="civ-icon">${civ.icon}</span>
+            <h5>${civ.name}</h5>
+          </div>
+          <p class="civ-desc">${civ.description}</p>
+          <div class="civ-bonuses">${bonusText}</div>
+          ${civ.bonuses.specialAbility ? `<span class="civ-special">✨ ${civ.bonuses.specialAbility}</span>` : ''}
+          <button class="civ-btn ${isSelected ? 'selected' : ''}" 
+                  data-civilization="${civ.id}"
+                  ${isSelected ? 'disabled' : ''}>
+            ${isSelected ? '✓ Selected' : 'Select'}
+          </button>
+        </div>
+      `;
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  private getCivBonusText(civ: Civilization): string {
+    const bonuses: string[] = [];
+    if (civ.bonuses.resourceMultipliers) {
+      if (civ.bonuses.resourceMultipliers.food && civ.bonuses.resourceMultipliers.food > 1) {
+        bonuses.push(`🍖 ×${civ.bonuses.resourceMultipliers.food.toFixed(2)}`);
+      }
+      if (civ.bonuses.resourceMultipliers.wood && civ.bonuses.resourceMultipliers.wood > 1) {
+        bonuses.push(`🪵 ×${civ.bonuses.resourceMultipliers.wood.toFixed(2)}`);
+      }
+      if (civ.bonuses.resourceMultipliers.stone && civ.bonuses.resourceMultipliers.stone > 1) {
+        bonuses.push(`🪨 ×${civ.bonuses.resourceMultipliers.stone.toFixed(2)}`);
+      }
+      if (civ.bonuses.resourceMultipliers.gold && civ.bonuses.resourceMultipliers.gold > 1) {
+        bonuses.push(`💰 ×${civ.bonuses.resourceMultipliers.gold.toFixed(2)}`);
+      }
+      if (civ.bonuses.resourceMultipliers.science && civ.bonuses.resourceMultipliers.science > 1) {
+        bonuses.push(`🔬 ×${civ.bonuses.resourceMultipliers.science.toFixed(2)}`);
+      }
+    }
+    if (civ.bonuses.militaryBonuses) {
+      if (civ.bonuses.militaryBonuses.attack && civ.bonuses.militaryBonuses.attack > 1) {
+        bonuses.push(`⚔️ ×${civ.bonuses.militaryBonuses.attack.toFixed(2)}`);
+      }
+      if (civ.bonuses.militaryBonuses.defense && civ.bonuses.militaryBonuses.defense > 1) {
+        bonuses.push(`🛡️ ×${civ.bonuses.militaryBonuses.defense.toFixed(2)}`);
+      }
+    }
+    return bonuses.length > 0 ? bonuses.join(' ') : 'No special bonuses';
+  }
+
+  private renderLeadersSection(currentLeader: Leader | null | undefined, lore: typeof this.game.state.lore): string {
+    const availableLeaders = this.game.getAvailableLeaders();
+    
+    let html = `
+      <div class="world-section leaders-section">
+        <h3>👑 Historical Leaders</h3>
+        <p>Choose a leader to guide your civilization. More leaders unlock as you advance through eras.</p>
+        <div class="leader-grid">
+    `;
+
+    if (availableLeaders.length === 0) {
+      html += '<p class="empty-message">No leaders available yet. Keep progressing!</p>';
+    } else {
+      for (const leader of availableLeaders) {
+        const isSelected = leader.id === lore.selectedLeader;
+        
+        html += `
+          <div class="leader-card ${isSelected ? 'selected' : ''}">
+            <div class="leader-header">
+              <span class="leader-icon">${leader.icon}</span>
+              <div>
+                <h5>${leader.name}</h5>
+                <span class="leader-title">${leader.title}</span>
+              </div>
+            </div>
+            <p class="leader-desc">${leader.description}</p>
+            <span class="leader-ability">✨ ${leader.bonuses.specialAbility}</span>
+            <button class="leader-btn ${isSelected ? 'selected' : ''}"
+                    data-leader="${leader.id}"
+                    ${isSelected ? 'disabled' : ''}>
+              ${isSelected ? '✓ Selected' : 'Select Leader'}
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  private renderReligionSection(lore: typeof this.game.state.lore): string {
+    let html = `
+      <div class="world-section religion-section">
+        <h3>🙏 Religion</h3>
+    `;
+
+    if (lore.foundedReligion) {
+      const religion = lore.foundedReligion;
+      html += `
+        <div class="founded-religion">
+          <div class="religion-header">
+            <span class="religion-icon">${religion.icon}</span>
+            <div>
+              <h4>${religion.name}</h4>
+              <span class="follower-count">${religion.followers} followers</span>
+            </div>
+          </div>
+          <p class="religion-desc">${religion.description}</p>
+          <span class="religion-ability">✨ ${religion.bonuses.specialAbility}</span>
+        </div>
+      `;
+    } else {
+      html += `
+        <p>Found a religion to gain permanent bonuses for your civilization.</p>
+        <div class="religion-grid">
+      `;
+
+      for (const template of RELIGION_TEMPLATES) {
+        html += `
+          <div class="religion-card">
+            <div class="religion-header">
+              <span class="religion-icon">${template.icon}</span>
+              <h5>${template.name}</h5>
+            </div>
+            <p class="religion-desc">${template.description}</p>
+            <span class="religion-ability">✨ ${template.bonuses.specialAbility}</span>
+            <button class="religion-btn" data-religion="${template.id}">
+              Found Religion
+            </button>
+          </div>
+        `;
+      }
+
+      html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  private renderNaturalWondersSection(lore: typeof this.game.state.lore): string {
+    const discoveredWonders = this.game.getDiscoveredWonders();
+    
+    let html = `
+      <div class="world-section wonders-section">
+        <h3>🌍 Natural Wonders</h3>
+        <p>Explore the world to discover natural wonders that provide permanent bonuses.</p>
+        <button id="explore-wonder-btn" class="explore-btn">🔍 Explore for Wonders</button>
+        
+        <h4>Discovered Wonders (${discoveredWonders.length}/${NATURAL_WONDERS.length})</h4>
+        <div class="wonder-grid">
+    `;
+
+    if (discoveredWonders.length === 0) {
+      html += '<p class="empty-message">No wonders discovered yet. Keep exploring!</p>';
+    } else {
+      for (const wonder of discoveredWonders) {
+        const bonusText = this.getWonderBonusText(wonder);
+        html += `
+          <div class="wonder-card discovered">
+            <div class="wonder-header">
+              <span class="wonder-icon">${wonder.icon}</span>
+              <h5>${wonder.name}</h5>
+            </div>
+            <p class="wonder-desc">${wonder.description}</p>
+            <div class="wonder-bonuses">${bonusText}</div>
+            ${wonder.bonuses.specialEffect ? `<span class="wonder-effect">✨ ${wonder.bonuses.specialEffect}</span>` : ''}
+          </div>
+        `;
+      }
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  private getWonderBonusText(wonder: NaturalWonder): string {
+    const bonuses: string[] = [];
+    if (wonder.bonuses.flatBonuses) {
+      for (const bonus of wonder.bonuses.flatBonuses) {
+        const emoji = this.getResourceEmoji(bonus.resource);
+        bonuses.push(`${emoji} +${bonus.amount}/s`);
+      }
+    }
+    if (wonder.bonuses.resourceMultiplier) {
+      const emoji = this.getResourceEmoji(wonder.bonuses.resourceMultiplier.resource);
+      bonuses.push(`${emoji} ×${wonder.bonuses.resourceMultiplier.multiplier.toFixed(2)}`);
+    }
+    return bonuses.length > 0 ? bonuses.join(' ') : 'Special effects only';
+  }
+
+  private renderCulturalPoliciesSection(lore: typeof this.game.state.lore): string {
+    const adoptedPolicies = this.game.getAdoptedPolicies();
+    const availablePolicies = this.game.getAvailablePolicies();
+    
+    let html = `
+      <div class="world-section culture-section">
+        <h3>🎭 Cultural Policies</h3>
+        <div class="culture-overview">
+          <div class="culture-points">
+            <span class="culture-icon">🎨</span>
+            <span class="culture-label">Culture Points:</span>
+            <span class="culture-value">${Math.floor(lore.culturePoints)}</span>
+          </div>
+          <div class="culture-level">
+            <span>Culture Level: ${lore.cultureLevel}</span>
+          </div>
+        </div>
+        
+        <h4>Adopted Policies (${adoptedPolicies.length}/${CULTURAL_POLICIES.length})</h4>
+        <div class="adopted-policies">
+    `;
+
+    if (adoptedPolicies.length === 0) {
+      html += '<p class="empty-message">No policies adopted yet.</p>';
+    } else {
+      for (const policy of adoptedPolicies) {
+        html += `
+          <div class="policy-card adopted">
+            <span class="policy-icon">${policy.icon}</span>
+            <div class="policy-info">
+              <h5>${policy.name}</h5>
+              <p>${policy.description}</p>
+              ${policy.effects.special ? `<span class="policy-effect">✨ ${policy.effects.special}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    html += `
+        </div>
+        
+        <h4>Available Policies</h4>
+        <div class="policy-grid">
+    `;
+
+    if (availablePolicies.length === 0) {
+      html += '<p class="empty-message">All policies adopted!</p>';
+    } else {
+      for (const policy of availablePolicies) {
+        const canAdopt = canAdoptPolicy(policy.id, lore.culturePoints, lore.adoptedPolicies);
+        html += `
+          <div class="policy-card ${canAdopt ? 'available' : 'locked'}">
+            <div class="policy-header">
+              <span class="policy-icon">${policy.icon}</span>
+              <h5>${policy.name}</h5>
+            </div>
+            <p class="policy-desc">${policy.description}</p>
+            ${policy.effects.special ? `<span class="policy-effect">✨ ${policy.effects.special}</span>` : ''}
+            <div class="policy-cost">Cost: 🎨 ${policy.cost}</div>
+            <button class="policy-btn ${canAdopt ? '' : 'disabled'}"
+                    data-policy="${policy.id}"
+                    ${canAdopt ? '' : 'disabled'}>
+              ${canAdopt ? 'Adopt Policy' : 'Need More Culture'}
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  updateWorldTab(): void {
+    const container = document.getElementById('world-content');
+    if (!container) {
+      this.renderWorldTab();
+      return;
+    }
+
+    const { lore } = this.game.state;
+    const discoveredCount = lore.discoveredWonders.size;
+    const policiesCount = lore.adoptedPolicies.size;
+    const hasReligion = lore.foundedReligion ? 1 : 0;
+
+    const versionKey = `${lore.selectedCivilization}-${lore.selectedLeader}-${discoveredCount}-${policiesCount}-${hasReligion}`;
+    const lastVersion = this.tabContentVersions.get('world');
+
+    if (lastVersion === undefined || lastVersion !== versionKey) {
+      this.tabContentVersions.set('world', versionKey);
+      this.renderWorldTab();
+      return;
+    }
+
+    // Update culture points display
+    const cultureValue = container.querySelector('.culture-value');
+    if (cultureValue) {
+      cultureValue.textContent = Math.floor(lore.culturePoints).toString();
+    }
+
+    // Update policy button states
+    const policyButtons = container.querySelectorAll('.policy-btn') as NodeListOf<HTMLButtonElement>;
+    policyButtons.forEach(btn => {
+      const policyId = btn.dataset.policy;
+      if (policyId) {
+        const canAdopt = canAdoptPolicy(policyId, lore.culturePoints, lore.adoptedPolicies);
+        btn.disabled = !canAdopt;
       }
     });
   }
