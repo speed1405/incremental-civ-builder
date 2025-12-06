@@ -93,6 +93,52 @@ import {
   calculateCultureGain,
   canAdoptPolicy,
 } from './lore.js';
+import {
+  MilitaryState,
+  UNIT_UPGRADES,
+  FORMATIONS,
+  DEFENSE_STRUCTURES,
+  HEROES,
+  NAVAL_UNITS,
+  SIEGE_WEAPONS,
+  MILITARY_TRADITIONS,
+  SPY_MISSIONS,
+  createInitialMilitaryState,
+  getUpgradeById,
+  getUpgradesForUnit,
+  canUpgradeUnit,
+  getFormationById,
+  getAvailableFormations,
+  getDefenseStructureById,
+  calculateDefenseBonuses,
+  getHeroById,
+  getAvailableHeroes,
+  getNavalUnitById,
+  calculateNavalPower,
+  getSiegeWeaponById,
+  calculateSiegePower,
+  getTraditionById,
+  checkTraditionUnlock,
+  calculateTraditionBonuses,
+  getSpyMissionById,
+  getAvailableSpyMissions,
+  calculateSpySuccessChance,
+  calculateTotalMilitaryPower,
+  UnitUpgrade,
+  Formation,
+  DefenseStructure,
+  DefenseBuilding,
+  Hero,
+  NavalUnit,
+  NavalTroop,
+  SiegeWeapon,
+  SiegeTroop,
+  MilitaryTradition,
+  SpyMission,
+  Spy,
+  EXPERIENCE_LEVELS,
+  getExperienceLevel,
+} from './military.js';
 
 export interface GameState {
   currentEra: string;
@@ -140,6 +186,8 @@ export interface GameState {
   skillTree: SkillTreeState;
   // World and Lore system
   lore: LoreState;
+  // Military enhancements
+  military: MilitaryState;
 }
 
 export class Game {
@@ -200,6 +248,8 @@ export class Game {
       skillTree: createInitialSkillTreeState(),
       // World and Lore system
       lore: createInitialLoreState(),
+      // Military enhancements
+      military: createInitialMilitaryState(),
     };
   }
 
@@ -299,6 +349,12 @@ export class Game {
 
     // Update construction queue
     this.updateConstructionQueue(now);
+
+    // Update military queues (defense, naval, siege, spy)
+    this.updateMilitaryQueues(now);
+
+    // Check for military traditions
+    this.checkMilitaryTraditions();
 
     // Check for achievement unlocks
     this.checkAchievements();
@@ -1032,6 +1088,24 @@ export class Game {
       cultureLevel: this.state.lore.cultureLevel,
       adoptedPolicies: Array.from(this.state.lore.adoptedPolicies),
     };
+
+    // Convert military Sets and Maps to arrays for JSON serialization
+    const militarySave = {
+      selectedFormation: this.state.military.selectedFormation,
+      defenseBuildings: this.state.military.defenseBuildings,
+      defenseConstructionQueue: this.state.military.defenseConstructionQueue,
+      recruitedHeroes: Array.from(this.state.military.recruitedHeroes),
+      activeHero: this.state.military.activeHero,
+      unitExperience: Array.from(this.state.military.unitExperience.entries()),
+      navy: this.state.military.navy,
+      navalTrainingQueue: this.state.military.navalTrainingQueue,
+      siegeWeapons: this.state.military.siegeWeapons,
+      siegeTrainingQueue: this.state.military.siegeTrainingQueue,
+      unlockedTraditions: Array.from(this.state.military.unlockedTraditions),
+      spies: this.state.military.spies,
+      activeSpyMissions: this.state.military.activeSpyMissions,
+      maxSpies: this.state.military.maxSpies,
+    };
     
     const saveData = {
       ...this.state,
@@ -1043,6 +1117,7 @@ export class Game {
       achievements: achievementsArray,
       skillTree: skillTreeSave,
       lore: loreSave,
+      military: militarySave,
       activeBattle: null, // Don't save active battles
       activeConquestBattle: null, // Don't save active conquest battles
       saveTime: Date.now(), // Save timestamp for offline progress
@@ -1131,6 +1206,27 @@ export class Game {
           adoptedPolicies: new Set(saveData.lore.adoptedPolicies || []),
         };
       }
+
+      // Handle military state (may not exist in old saves)
+      let militaryState = createInitialMilitaryState();
+      if (saveData.military) {
+        militaryState = {
+          selectedFormation: saveData.military.selectedFormation || 'standard',
+          defenseBuildings: saveData.military.defenseBuildings || [],
+          defenseConstructionQueue: saveData.military.defenseConstructionQueue || [],
+          recruitedHeroes: new Set(saveData.military.recruitedHeroes || []),
+          activeHero: saveData.military.activeHero || null,
+          unitExperience: new Map(saveData.military.unitExperience || []),
+          navy: saveData.military.navy || [],
+          navalTrainingQueue: saveData.military.navalTrainingQueue || [],
+          siegeWeapons: saveData.military.siegeWeapons || [],
+          siegeTrainingQueue: saveData.military.siegeTrainingQueue || [],
+          unlockedTraditions: new Set(saveData.military.unlockedTraditions || []),
+          spies: saveData.military.spies || [],
+          activeSpyMissions: saveData.military.activeSpyMissions || [],
+          maxSpies: saveData.military.maxSpies || 3,
+        };
+      }
       
       this.state = {
         ...saveData,
@@ -1156,6 +1252,8 @@ export class Game {
         skillTree: skillTreeState,
         // World and Lore
         lore: loreState,
+        // Military enhancements
+        military: militaryState,
       };
       
       // Calculate offline progress if save time is available
@@ -1366,6 +1464,475 @@ export class Game {
   getLeader(): Leader | undefined {
     return this.state.lore.selectedLeader ? getLeaderById(this.state.lore.selectedLeader) : undefined;
   }
+
+  // ===== Military Enhancement Methods =====
+
+  // Unit Upgrades
+  getAvailableUnitUpgrades(): UnitUpgrade[] {
+    return UNIT_UPGRADES.filter(upgrade => 
+      canUpgradeUnit(upgrade, this.state.army, this.state.resources, this.state.researchedTechs)
+    );
+  }
+
+  upgradeUnit(upgradeId: string): boolean {
+    const upgrade = getUpgradeById(upgradeId);
+    if (!upgrade) return false;
+
+    if (!canUpgradeUnit(upgrade, this.state.army, this.state.resources, this.state.researchedTechs)) {
+      return false;
+    }
+
+    // Deduct costs
+    this.state.resources.food -= upgrade.cost.food;
+    this.state.resources.gold -= upgrade.cost.gold;
+    this.state.resources.science -= upgrade.cost.science;
+
+    // Find the troop to upgrade
+    const fromTroop = this.state.army.find(t => t.typeId === upgrade.fromUnit);
+    if (!fromTroop || fromTroop.count <= 0) return false;
+
+    // Remove one unit from the old type
+    fromTroop.count--;
+    if (fromTroop.count <= 0) {
+      this.state.army = this.state.army.filter(t => t.count > 0);
+    }
+
+    // Add one unit to the new type
+    const toTroop = this.state.army.find(t => t.typeId === upgrade.toUnit);
+    if (toTroop) {
+      toTroop.count++;
+    } else {
+      this.state.army.push({ typeId: upgrade.toUnit, count: 1 });
+      // Make sure the new troop type is unlocked
+      this.state.unlockedTroops.add(upgrade.toUnit);
+    }
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  // Formations
+  getAvailableFormations(): Formation[] {
+    return getAvailableFormations(this.state.researchedTechs);
+  }
+
+  setFormation(formationId: string): boolean {
+    const formation = getFormationById(formationId);
+    if (!formation) return false;
+
+    // Check if formation is available
+    if (formation.requiredTech && !this.state.researchedTechs.has(formation.requiredTech)) {
+      return false;
+    }
+
+    this.state.military.selectedFormation = formationId;
+    this.notifyStateChange();
+    return true;
+  }
+
+  getCurrentFormation(): Formation | undefined {
+    return getFormationById(this.state.military.selectedFormation);
+  }
+
+  // Defense System
+  getAvailableDefenseStructures(): DefenseStructure[] {
+    return DEFENSE_STRUCTURES.filter(structure => 
+      this.state.researchedTechs.has(structure.requiredTech)
+    );
+  }
+
+  buildDefenseStructure(structureId: string): boolean {
+    const structure = getDefenseStructureById(structureId);
+    if (!structure) return false;
+
+    // Check tech requirement
+    if (!this.state.researchedTechs.has(structure.requiredTech)) return false;
+
+    // Check if at max count
+    const currentCount = this.state.military.defenseBuildings.find(b => b.typeId === structureId)?.count || 0;
+    if (currentCount >= structure.maxCount) return false;
+
+    // Check resources
+    if (this.state.resources.food < structure.cost.food) return false;
+    if (this.state.resources.wood < structure.cost.wood) return false;
+    if (this.state.resources.stone < structure.cost.stone) return false;
+    if (this.state.resources.gold < structure.cost.gold) return false;
+
+    // Deduct costs
+    this.state.resources.food -= structure.cost.food;
+    this.state.resources.wood -= structure.cost.wood;
+    this.state.resources.stone -= structure.cost.stone;
+    this.state.resources.gold -= structure.cost.gold;
+
+    // Add to construction queue
+    const now = Date.now();
+    this.state.military.defenseConstructionQueue.push({
+      typeId: structureId,
+      endTime: now + structure.buildTime * 1000,
+    });
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  getDefenseBonuses(): { defense: number; health: number } {
+    return calculateDefenseBonuses(this.state.military.defenseBuildings);
+  }
+
+  // Heroes
+  getAvailableHeroes(): Hero[] {
+    return getAvailableHeroes(this.state.researchedTechs, this.state.military.recruitedHeroes);
+  }
+
+  recruitHero(heroId: string): boolean {
+    const hero = getHeroById(heroId);
+    if (!hero) return false;
+
+    // Check if already recruited
+    if (this.state.military.recruitedHeroes.has(heroId)) return false;
+
+    // Check tech requirement
+    if (!this.state.researchedTechs.has(hero.requiredTech)) return false;
+
+    // Check resources
+    if (this.state.resources.gold < hero.cost.gold) return false;
+    if (this.state.resources.science < hero.cost.science) return false;
+
+    // Deduct costs
+    this.state.resources.gold -= hero.cost.gold;
+    this.state.resources.science -= hero.cost.science;
+
+    // Add hero
+    this.state.military.recruitedHeroes.add(heroId);
+
+    // Auto-activate if no hero is active
+    if (!this.state.military.activeHero) {
+      this.state.military.activeHero = heroId;
+    }
+
+    // Update statistics
+    this.state.statistics.heroesRecruited = (this.state.statistics.heroesRecruited || 0) + 1;
+
+    // Check for military tradition unlock
+    this.checkMilitaryTraditions();
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  setActiveHero(heroId: string | null): boolean {
+    if (heroId && !this.state.military.recruitedHeroes.has(heroId)) {
+      return false;
+    }
+    this.state.military.activeHero = heroId;
+    this.notifyStateChange();
+    return true;
+  }
+
+  getActiveHero(): Hero | undefined {
+    return this.state.military.activeHero ? getHeroById(this.state.military.activeHero) : undefined;
+  }
+
+  getRecruitedHeroes(): Hero[] {
+    return Array.from(this.state.military.recruitedHeroes)
+      .map(id => getHeroById(id))
+      .filter((h): h is Hero => h !== undefined);
+  }
+
+  // Naval Forces
+  getAvailableNavalUnits(): NavalUnit[] {
+    return NAVAL_UNITS.filter(unit => 
+      this.state.researchedTechs.has(unit.requiredTech)
+    );
+  }
+
+  trainNavalUnit(unitId: string): boolean {
+    const unit = getNavalUnitById(unitId);
+    if (!unit) return false;
+
+    // Check tech requirement
+    if (!this.state.researchedTechs.has(unit.requiredTech)) return false;
+
+    // Check resources
+    if (this.state.resources.food < unit.cost.food) return false;
+    if (this.state.resources.wood < unit.cost.wood) return false;
+    if (this.state.resources.gold < unit.cost.gold) return false;
+
+    // Deduct costs
+    this.state.resources.food -= unit.cost.food;
+    this.state.resources.wood -= unit.cost.wood;
+    this.state.resources.gold -= unit.cost.gold;
+
+    // Add to training queue
+    const now = Date.now();
+    this.state.military.navalTrainingQueue.push({
+      typeId: unitId,
+      endTime: now + unit.trainTime * 1000,
+    });
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  getNavalPower(): { attack: number; defense: number; health: number } {
+    return calculateNavalPower(this.state.military.navy);
+  }
+
+  // Siege Weapons
+  getAvailableSiegeWeapons(): SiegeWeapon[] {
+    return SIEGE_WEAPONS.filter(weapon => 
+      this.state.researchedTechs.has(weapon.requiredTech)
+    );
+  }
+
+  trainSiegeWeapon(weaponId: string): boolean {
+    const weapon = getSiegeWeaponById(weaponId);
+    if (!weapon) return false;
+
+    // Check tech requirement
+    if (!this.state.researchedTechs.has(weapon.requiredTech)) return false;
+
+    // Check resources
+    if (this.state.resources.food < weapon.cost.food) return false;
+    if (this.state.resources.wood < weapon.cost.wood) return false;
+    if (this.state.resources.stone < weapon.cost.stone) return false;
+    if (this.state.resources.gold < weapon.cost.gold) return false;
+
+    // Deduct costs
+    this.state.resources.food -= weapon.cost.food;
+    this.state.resources.wood -= weapon.cost.wood;
+    this.state.resources.stone -= weapon.cost.stone;
+    this.state.resources.gold -= weapon.cost.gold;
+
+    // Add to training queue
+    const now = Date.now();
+    this.state.military.siegeTrainingQueue.push({
+      typeId: weaponId,
+      endTime: now + weapon.trainTime * 1000,
+    });
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  getSiegePower(): { attack: number; defense: number; health: number; siegeBonus: number } {
+    return calculateSiegePower(this.state.military.siegeWeapons);
+  }
+
+  // Military Traditions
+  checkMilitaryTraditions(): void {
+    const stats = {
+      battlesWon: this.state.statistics.battlesWon,
+      territoriesConquered: this.state.statistics.territoriesConquered || 0,
+      heroesRecruited: this.state.statistics.heroesRecruited || 0,
+      veteranUnits: this.getVeteranUnitCount(),
+    };
+
+    for (const tradition of MILITARY_TRADITIONS) {
+      if (!this.state.military.unlockedTraditions.has(tradition.id)) {
+        if (checkTraditionUnlock(tradition, stats)) {
+          this.state.military.unlockedTraditions.add(tradition.id);
+        }
+      }
+    }
+  }
+
+  private getVeteranUnitCount(): number {
+    let count = 0;
+    for (const [, expData] of this.state.military.unitExperience) {
+      if (expData.level >= 2) { // Veteran or Elite
+        count++;
+      }
+    }
+    return count;
+  }
+
+  getUnlockedTraditions(): MilitaryTradition[] {
+    return Array.from(this.state.military.unlockedTraditions)
+      .map(id => getTraditionById(id))
+      .filter((t): t is MilitaryTradition => t !== undefined);
+  }
+
+  getTraditionBonuses(): ReturnType<typeof calculateTraditionBonuses> {
+    return calculateTraditionBonuses(this.state.military.unlockedTraditions);
+  }
+
+  // Espionage
+  getAvailableSpyMissions(): SpyMission[] {
+    return getAvailableSpyMissions(this.state.researchedTechs);
+  }
+
+  recruitSpy(): boolean {
+    // Check if at max spies
+    if (this.state.military.spies.length >= this.state.military.maxSpies) return false;
+
+    // Cost to recruit a spy
+    const spyCost = 500 * (this.state.military.spies.length + 1);
+    if (this.state.resources.gold < spyCost) return false;
+
+    this.state.resources.gold -= spyCost;
+
+    // Create new spy
+    const spy: Spy = {
+      id: `spy_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
+      name: this.generateSpyName(),
+      level: 1,
+      experience: 0,
+      currentMission: null,
+      missionEndTime: null,
+    };
+
+    this.state.military.spies.push(spy);
+    this.notifyStateChange();
+    return true;
+  }
+
+  private generateSpyName(): string {
+    const firstNames = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Reese', 'Dakota'];
+    const lastNames = ['Shadow', 'Steele', 'Fox', 'Wolf', 'Storm', 'Raven', 'Black', 'Gray', 'Stone', 'Cross'];
+    return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+  }
+
+  startSpyMission(spyId: string, missionId: string): boolean {
+    const spy = this.state.military.spies.find(s => s.id === spyId);
+    if (!spy) return false;
+    if (spy.currentMission) return false; // Spy is busy
+
+    const mission = getSpyMissionById(missionId);
+    if (!mission) return false;
+
+    // Check tech requirement
+    if (!this.state.researchedTechs.has(mission.requiredTech)) return false;
+
+    // Check cost
+    if (this.state.resources.gold < mission.cost.gold) return false;
+
+    // Deduct cost
+    this.state.resources.gold -= mission.cost.gold;
+
+    // Start mission
+    const now = Date.now();
+    spy.currentMission = missionId;
+    spy.missionEndTime = now + mission.duration * 1000;
+
+    this.state.military.activeSpyMissions.push({
+      spyId,
+      missionId,
+      startTime: now,
+      endTime: now + mission.duration * 1000,
+    });
+
+    this.notifyStateChange();
+    return true;
+  }
+
+  // Get total military power including all systems
+  getTotalMilitaryPower(): { attack: number; defense: number; health: number } {
+    return calculateTotalMilitaryPower(this.state.army, this.state.military, this.state.researchedTechs);
+  }
+
+  // Update military training queues (called from main update loop)
+  private updateMilitaryQueues(now: number): void {
+    // Update defense construction
+    const completedDefense: number[] = [];
+    for (let i = 0; i < this.state.military.defenseConstructionQueue.length; i++) {
+      const construction = this.state.military.defenseConstructionQueue[i];
+      if (now >= construction.endTime) {
+        // Add defense building
+        const existing = this.state.military.defenseBuildings.find(b => b.typeId === construction.typeId);
+        if (existing) {
+          existing.count++;
+        } else {
+          this.state.military.defenseBuildings.push({ typeId: construction.typeId, count: 1 });
+        }
+        completedDefense.push(i);
+      }
+    }
+    for (let i = completedDefense.length - 1; i >= 0; i--) {
+      this.state.military.defenseConstructionQueue.splice(completedDefense[i], 1);
+    }
+
+    // Update naval training
+    const completedNaval: number[] = [];
+    for (let i = 0; i < this.state.military.navalTrainingQueue.length; i++) {
+      const training = this.state.military.navalTrainingQueue[i];
+      if (now >= training.endTime) {
+        // Add naval unit
+        const existing = this.state.military.navy.find(n => n.typeId === training.typeId);
+        if (existing) {
+          existing.count++;
+        } else {
+          this.state.military.navy.push({ typeId: training.typeId, count: 1 });
+        }
+        completedNaval.push(i);
+      }
+    }
+    for (let i = completedNaval.length - 1; i >= 0; i--) {
+      this.state.military.navalTrainingQueue.splice(completedNaval[i], 1);
+    }
+
+    // Update siege weapon training
+    const completedSiege: number[] = [];
+    for (let i = 0; i < this.state.military.siegeTrainingQueue.length; i++) {
+      const training = this.state.military.siegeTrainingQueue[i];
+      if (now >= training.endTime) {
+        // Add siege weapon
+        const existing = this.state.military.siegeWeapons.find(s => s.typeId === training.typeId);
+        if (existing) {
+          existing.count++;
+        } else {
+          this.state.military.siegeWeapons.push({ typeId: training.typeId, count: 1 });
+        }
+        completedSiege.push(i);
+      }
+    }
+    for (let i = completedSiege.length - 1; i >= 0; i--) {
+      this.state.military.siegeTrainingQueue.splice(completedSiege[i], 1);
+    }
+
+    // Update spy missions
+    const completedSpyMissions: number[] = [];
+    for (let i = 0; i < this.state.military.activeSpyMissions.length; i++) {
+      const activeMission = this.state.military.activeSpyMissions[i];
+      if (now >= activeMission.endTime) {
+        this.completeSpyMission(activeMission);
+        completedSpyMissions.push(i);
+      }
+    }
+    for (let i = completedSpyMissions.length - 1; i >= 0; i--) {
+      this.state.military.activeSpyMissions.splice(completedSpyMissions[i], 1);
+    }
+  }
+
+  private completeSpyMission(activeMission: { spyId: string; missionId: string }): void {
+    const spy = this.state.military.spies.find(s => s.id === activeMission.spyId);
+    const mission = getSpyMissionById(activeMission.missionId);
+    
+    if (!spy || !mission) return;
+
+    // Calculate success
+    const successChance = calculateSpySuccessChance(mission, spy);
+    const success = Math.random() < successChance;
+
+    if (success) {
+      // Apply mission effects
+      if (mission.effects.type === 'steal' && mission.effects.resourceStolen) {
+        const resource = mission.effects.resourceStolen.resource as keyof typeof this.state.resources;
+        this.state.resources[resource] += mission.effects.resourceStolen.amount;
+      }
+      // Other effects could be stored for battle use
+
+      // Gain experience
+      spy.experience += 50;
+      if (spy.experience >= 100 * spy.level) {
+        spy.level++;
+      }
+    }
+
+    // Reset spy
+    spy.currentMission = null;
+    spy.missionEndTime = null;
+  }
 }
 
 // Export for global use
@@ -1375,3 +1942,10 @@ export type { Civilization, Leader, NaturalWonder, Religion, CulturalPolicy, Lor
 export type { Mission, ActiveBattle, BattleResult, BattleLog, Territory, ArmySize } from './combat.js';
 export type { Achievement, AchievementProgress, Statistics } from './achievements.js';
 export type { BuildingType, Building, ConstructingBuilding } from './buildings.js';
+// Military exports
+export { UNIT_UPGRADES, FORMATIONS, DEFENSE_STRUCTURES, HEROES, NAVAL_UNITS, SIEGE_WEAPONS, MILITARY_TRADITIONS, SPY_MISSIONS, EXPERIENCE_LEVELS } from './military.js';
+export type { 
+  MilitaryState, UnitUpgrade, Formation, DefenseStructure, DefenseBuilding, 
+  Hero, NavalUnit, NavalTroop, SiegeWeapon, SiegeTroop, 
+  MilitaryTradition, SpyMission, Spy, UnitExperience 
+} from './military.js';

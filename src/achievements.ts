@@ -447,6 +447,7 @@ export interface Statistics {
   offlineEarnings: number;
   totalBuildingsConstructed: number;
   territoriesConquered: number;
+  heroesRecruited: number;
 }
 
 export function createInitialStatistics(): Statistics {
@@ -463,6 +464,7 @@ export function createInitialStatistics(): Statistics {
     offlineEarnings: 0,
     totalBuildingsConstructed: 0,
     territoriesConquered: 0,
+    heroesRecruited: 0,
   };
 }
 
