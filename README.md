@@ -144,15 +144,15 @@ Here are some ideas to enhance the game:
 - **Statistics Page**: Track historical data and graphs ✅ (Implemented!)
 - **Offline Progress**: Earn resources while away ✅ (Implemented!)
 - **Sound Effects & Music**: Audio feedback for actions
-- **Dark/Light Theme Toggle**: User preference for visual theme
+- **Dark/Light Theme Toggle**: User preference for visual theme ✅ (Implemented!)
 - **Tutorial System**: Guided introduction for new players
 - **Mini-Map**: Visual representation of your civilization
 - **Notification Center**: Centralized alerts and messages
 - **Resource Forecast**: Predict future resource levels
 - **Comparison Tools**: Compare units, technologies side-by-side
 - **Customizable UI**: Drag and drop UI elements to preferred positions
-- **Tooltips Enhancement**: Detailed hover information for all elements
-- **Animation Effects**: Visual feedback for resource gains and combat
+- **Tooltips Enhancement**: Detailed hover information for all elements ✅ (Implemented!)
+- **Animation Effects**: Visual feedback for resource gains and combat ✅ (Implemented!)
 
 ### 🔧 Technical Enhancements
 - **Cloud Saves**: Sync progress across devices
