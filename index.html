@@ -2279,6 +2279,698 @@ body {
   }
 }
 
+/* ===== Military Tab Styles ===== */
+.military-content {
+  padding: 10px 0;
+}
+
+.military-section {
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.military-section h3 {
+  color: var(--accent-gold);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.military-section h4 {
+  color: var(--accent-secondary);
+  margin: 15px 0 10px 0;
+}
+
+/* Military Overview Panel */
+.military-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.military-stat {
+  background: var(--bg-secondary);
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.military-stat-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.military-stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--accent-gold);
+}
+
+.military-stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Formation Grid */
+.formation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.formation-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.formation-card:hover {
+  border-color: var(--accent-secondary);
+}
+
+.formation-card.active {
+  border-color: var(--accent-gold);
+  background: rgba(255, 217, 61, 0.1);
+}
+
+.formation-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.formation-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.formation-icon {
+  font-size: 1.5rem;
+}
+
+.formation-name {
+  font-weight: bold;
+}
+
+.formation-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.formation-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+.formation-stat {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+}
+
+.formation-stat.positive {
+  color: var(--success);
+}
+
+.formation-stat.negative {
+  color: var(--danger);
+}
+
+.formation-special {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+}
+
+/* Hero Grid */
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.hero-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.hero-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.hero-card.recruited {
+  border-color: var(--success);
+  background: rgba(107, 203, 119, 0.1);
+}
+
+.hero-card.active {
+  border-color: var(--accent-gold);
+  background: rgba(255, 217, 61, 0.15);
+}
+
+.hero-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.hero-icon {
+  font-size: 2rem;
+}
+
+.hero-info h5 {
+  margin: 0;
+  color: var(--accent-gold);
+}
+
+.hero-title {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.hero-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.hero-bonuses {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.hero-bonus {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--success);
+}
+
+.hero-ability {
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+  margin-bottom: 10px;
+}
+
+.hero-cost {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.hero-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-btn:hover:not(:disabled) {
+  background: var(--success);
+}
+
+.hero-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hero-btn.set-active {
+  background: var(--accent-gold);
+}
+
+/* Defense Grid */
+.defense-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.defense-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.defense-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.defense-card.maxed {
+  border-color: var(--success);
+  opacity: 0.7;
+}
+
+.defense-card.locked {
+  opacity: 0.5;
+}
+
+.defense-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.defense-header h5 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.defense-count {
+  font-size: 0.9rem;
+  color: var(--accent-gold);
+}
+
+.defense-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.defense-bonuses {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.defense-cost {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.build-defense-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.build-defense-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.build-defense-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Naval and Siege Grid */
+.naval-grid, .siege-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.naval-card, .siege-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.naval-card.available, .siege-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.naval-header, .siege-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.naval-icon, .siege-icon {
+  font-size: 1.5rem;
+}
+
+.naval-desc, .siege-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.naval-stats, .siege-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.naval-cost, .siege-cost {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.train-naval-btn, .train-siege-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.train-naval-btn:hover:not(:disabled), .train-siege-btn:hover:not(:disabled) {
+  background: var(--success);
+}
+
+.train-naval-btn:disabled, .train-siege-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Unit Upgrade Grid */
+.upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.upgrade-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.upgrade-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.upgrade-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.upgrade-from, .upgrade-to {
+  padding: 8px 15px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.upgrade-cost {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.upgrade-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent-gold);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upgrade-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.upgrade-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Traditions Grid */
+.traditions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.tradition-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.tradition-card.unlocked {
+  border-color: var(--accent-gold);
+  background: rgba(255, 217, 61, 0.1);
+}
+
+.tradition-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tradition-icon {
+  font-size: 1.5rem;
+}
+
+.tradition-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.tradition-bonus {
+  font-size: 0.85rem;
+  color: var(--success);
+  margin-bottom: 10px;
+}
+
+.tradition-requirement {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.tradition-requirement.met {
+  color: var(--success);
+}
+
+/* Espionage Styles */
+.spy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.spy-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.spy-card.busy {
+  border-color: var(--warning);
+}
+
+.spy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.spy-name {
+  font-weight: bold;
+}
+
+.spy-level {
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+}
+
+.spy-status {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.spy-status.on-mission {
+  color: var(--warning);
+}
+
+.spy-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.spy-mission-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.spy-mission-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.mission-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mission-icon {
+  font-size: 1.5rem;
+}
+
+.mission-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.mission-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.spy-mission-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.spy-mission-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.spy-mission-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recruit-spy-btn {
+  padding: 12px 24px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.recruit-spy-btn:hover:not(:disabled) {
+  background: var(--success);
+}
+
+.recruit-spy-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Training Queue Styles for Military */
+.military-queue {
+  background: var(--bg-secondary);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.military-queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.military-queue-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Military Tab Responsive */
+@media (max-width: 768px) {
+  .military-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .formation-grid,
+  .hero-grid,
+  .defense-grid,
+  .naval-grid,
+  .siege-grid,
+  .upgrade-grid,
+  .traditions-grid,
+  .spy-grid,
+  .spy-mission-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .formation-stats,
+  .hero-bonuses,
+  .defense-bonuses {
+    justify-content: center;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2337,6 +3029,7 @@ body {
       <button class="tab-btn" data-tab="combat">🎯 Combat</button>
       <button class="tab-btn" data-tab="world">🌍 World</button>
       <button class="tab-btn" data-tab="skills">🌟 Skills</button>
+      <button class="tab-btn" data-tab="military">🎖️ Military</button>
       <button class="tab-btn" data-tab="achievements">🏆 Achievements</button>
     </nav>
 
@@ -2408,6 +3101,15 @@ body {
       </div>
 
       <!-- Skills Tab -->
+      <!-- Military Tab -->
+      <div id="military-tab" class="tab-content">
+        <h2>🎖️ Military Command</h2>
+        <p>Manage your military forces - formations, defenses, heroes, naval forces, siege weapons, espionage, and more!</p>
+        <div id="military-content" class="military-content">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
       <div id="skills-tab" class="tab-content">
         <h2>🌟 Skill Tree</h2>
         <p>Spend legacy points to unlock permanent upgrades that persist across prestiges!</p>
@@ -5444,7 +6146,8 @@ body {
       clickCount: 0,
       offlineEarnings: 0,
       totalBuildingsConstructed: 0,
-      territoriesConquered: 0
+      territoriesConquered: 0,
+      heroesRecruited: 0
     };
   }
   function createInitialAchievementProgress() {
@@ -7234,6 +7937,1076 @@ body {
     return culturePoints >= policy.cost;
   }
 
+  // dist/military.js
+  var UNIT_UPGRADES = [
+    // Stone Age -> Bronze Age
+    {
+      id: "upgrade_hunter_warrior",
+      name: "Upgrade Hunters",
+      description: "Upgrade your Hunters to Warriors with bronze weapons.",
+      fromUnit: "hunter",
+      toUnit: "warrior",
+      cost: { food: 30, gold: 20, science: 20 },
+      requiredTech: "bronze_working"
+    },
+    // Bronze Age -> Iron Age
+    {
+      id: "upgrade_warrior_swordsman",
+      name: "Upgrade Warriors",
+      description: "Upgrade your Warriors to Swordsmen with iron weapons.",
+      fromUnit: "warrior",
+      toUnit: "swordsman",
+      cost: { food: 50, gold: 40, science: 50 },
+      requiredTech: "iron_working"
+    },
+    {
+      id: "upgrade_chariot_horseman",
+      name: "Upgrade Chariots",
+      description: "Upgrade your War Chariots to Horsemen.",
+      fromUnit: "chariot",
+      toUnit: "horseman",
+      cost: { food: 60, gold: 50, science: 60 },
+      requiredTech: "horseback_riding"
+    },
+    // Classical -> Medieval
+    {
+      id: "upgrade_horseman_knight",
+      name: "Upgrade Horsemen",
+      description: "Upgrade your Horsemen to Knights.",
+      fromUnit: "horseman",
+      toUnit: "knight",
+      cost: { food: 80, gold: 100, science: 100 },
+      requiredTech: "feudalism"
+    },
+    {
+      id: "upgrade_legionary_knight",
+      name: "Upgrade Legionaries",
+      description: "Upgrade your Legionaries to Knights.",
+      fromUnit: "legionary",
+      toUnit: "knight",
+      cost: { food: 70, gold: 90, science: 90 },
+      requiredTech: "feudalism"
+    },
+    // Medieval -> Renaissance
+    {
+      id: "upgrade_musketeer_rifleman",
+      name: "Upgrade Musketeers",
+      description: "Upgrade your Musketeers to Riflemen.",
+      fromUnit: "musketeer",
+      toUnit: "rifleman",
+      cost: { food: 100, gold: 150, science: 200 },
+      requiredTech: "military_science"
+    },
+    // Industrial -> Modern
+    {
+      id: "upgrade_artillery_rocket_artillery",
+      name: "Upgrade Artillery",
+      description: "Upgrade your Artillery to Rocket Artillery.",
+      fromUnit: "artillery",
+      toUnit: "rocket_artillery",
+      cost: { food: 200, gold: 500, science: 600 },
+      requiredTech: "rocketry"
+    },
+    // Modern -> Information
+    {
+      id: "upgrade_tank_mech_infantry",
+      name: "Mechanize Infantry",
+      description: "Upgrade your Tanks to Mechanized Infantry.",
+      fromUnit: "tank",
+      toUnit: "mech_infantry",
+      cost: { food: 300, gold: 800, science: 1e3 },
+      requiredTech: "robotics"
+    },
+    // Information -> Future
+    {
+      id: "upgrade_mech_space_marine",
+      name: "Space Marine Program",
+      description: "Upgrade your Mechanized Infantry to Space Marines.",
+      fromUnit: "mech_infantry",
+      toUnit: "space_marine",
+      cost: { food: 500, gold: 1500, science: 2e3 },
+      requiredTech: "space_colonization"
+    }
+  ];
+  function getUpgradeById(id) {
+    return UNIT_UPGRADES.find((u) => u.id === id);
+  }
+  function canUpgradeUnit(upgrade, army, resources, researchedTechs) {
+    const troopEntry = army.find((t) => t.typeId === upgrade.fromUnit);
+    if (!troopEntry || troopEntry.count <= 0)
+      return false;
+    if (!researchedTechs.has(upgrade.requiredTech))
+      return false;
+    if (resources.food < upgrade.cost.food)
+      return false;
+    if (resources.gold < upgrade.cost.gold)
+      return false;
+    if (resources.science < upgrade.cost.science)
+      return false;
+    return true;
+  }
+  var FORMATIONS = [
+    {
+      id: "standard",
+      name: "Standard Formation",
+      description: "Balanced formation with no special bonuses.",
+      icon: "\u2694\uFE0F",
+      attackModifier: 1,
+      defenseModifier: 1,
+      healthModifier: 1
+    },
+    {
+      id: "aggressive",
+      name: "Aggressive Stance",
+      description: "All-out attack sacrificing defense. +30% Attack, -20% Defense.",
+      icon: "\u{1F525}",
+      attackModifier: 1.3,
+      defenseModifier: 0.8,
+      healthModifier: 1,
+      specialEffect: "First strike bonus"
+    },
+    {
+      id: "defensive",
+      name: "Defensive Stance",
+      description: "Hunker down and hold the line. +40% Defense, -15% Attack.",
+      icon: "\u{1F6E1}\uFE0F",
+      attackModifier: 0.85,
+      defenseModifier: 1.4,
+      healthModifier: 1,
+      specialEffect: "Reduced casualties"
+    },
+    {
+      id: "phalanx",
+      name: "Phalanx Formation",
+      description: "Ancient formation focusing on collective defense. +50% Defense.",
+      icon: "\u{1F5E1}\uFE0F",
+      attackModifier: 0.9,
+      defenseModifier: 1.5,
+      healthModifier: 1.1,
+      requiredTech: "iron_working",
+      specialEffect: "Shield wall"
+    },
+    {
+      id: "cavalry_charge",
+      name: "Cavalry Charge",
+      description: "Swift mounted attack. +50% Attack but lower defense.",
+      icon: "\u{1F434}",
+      attackModifier: 1.5,
+      defenseModifier: 0.7,
+      healthModifier: 1,
+      requiredTech: "horseback_riding",
+      specialEffect: "Breakthrough damage"
+    },
+    {
+      id: "guerrilla",
+      name: "Guerrilla Tactics",
+      description: "Hit and run tactics. +20% Attack, +20% Defense, -10% Health.",
+      icon: "\u{1F33F}",
+      attackModifier: 1.2,
+      defenseModifier: 1.2,
+      healthModifier: 0.9,
+      requiredTech: "military_science",
+      specialEffect: "Evasion bonus"
+    },
+    {
+      id: "blitzkrieg",
+      name: "Blitzkrieg",
+      description: "Lightning warfare. +60% Attack, -30% Defense.",
+      icon: "\u26A1",
+      attackModifier: 1.6,
+      defenseModifier: 0.7,
+      healthModifier: 1,
+      requiredTech: "combustion",
+      specialEffect: "Shock and awe"
+    },
+    {
+      id: "combined_arms",
+      name: "Combined Arms",
+      description: "Modern integrated warfare. +25% to all stats.",
+      icon: "\u{1F3AF}",
+      attackModifier: 1.25,
+      defenseModifier: 1.25,
+      healthModifier: 1.25,
+      requiredTech: "internet",
+      specialEffect: "Force multiplier"
+    }
+  ];
+  function getFormationById(id) {
+    return FORMATIONS.find((f) => f.id === id);
+  }
+  function getAvailableFormations(researchedTechs) {
+    return FORMATIONS.filter((f) => !f.requiredTech || researchedTechs.has(f.requiredTech));
+  }
+  var DEFENSE_STRUCTURES = [
+    {
+      id: "wooden_palisade",
+      name: "Wooden Palisade",
+      description: "Basic wooden defensive wall.",
+      icon: "\u{1FAB5}",
+      era: "stone_age",
+      defenseBonus: 10,
+      healthBonus: 50,
+      cost: { food: 0, wood: 100, stone: 0, gold: 0 },
+      buildTime: 30,
+      maxCount: 3,
+      requiredTech: "stone_tools"
+    },
+    {
+      id: "stone_wall",
+      name: "Stone Wall",
+      description: "Sturdy stone defensive wall.",
+      icon: "\u{1F9F1}",
+      era: "bronze_age",
+      defenseBonus: 25,
+      healthBonus: 150,
+      cost: { food: 0, wood: 50, stone: 200, gold: 50 },
+      buildTime: 60,
+      maxCount: 3,
+      requiredTech: "bronze_working"
+    },
+    {
+      id: "watchtower",
+      name: "Watchtower",
+      description: "Provides early warning and ranged defense.",
+      icon: "\u{1F5FC}",
+      era: "iron_age",
+      defenseBonus: 15,
+      healthBonus: 75,
+      cost: { food: 0, wood: 100, stone: 150, gold: 50 },
+      buildTime: 45,
+      maxCount: 4,
+      requiredTech: "construction"
+    },
+    {
+      id: "fortified_wall",
+      name: "Fortified Wall",
+      description: "Reinforced wall with battlements.",
+      icon: "\u{1F3F0}",
+      era: "classical_age",
+      defenseBonus: 50,
+      healthBonus: 300,
+      cost: { food: 0, wood: 100, stone: 400, gold: 100 },
+      buildTime: 90,
+      maxCount: 3,
+      requiredTech: "engineering"
+    },
+    {
+      id: "castle",
+      name: "Castle",
+      description: "Massive fortification providing ultimate defense.",
+      icon: "\u{1F3EF}",
+      era: "medieval_age",
+      defenseBonus: 100,
+      healthBonus: 500,
+      cost: { food: 100, wood: 200, stone: 800, gold: 300 },
+      buildTime: 180,
+      maxCount: 2,
+      requiredTech: "feudalism"
+    },
+    {
+      id: "star_fort",
+      name: "Star Fort",
+      description: "Angular fortress designed to resist cannon fire.",
+      icon: "\u2B50",
+      era: "renaissance",
+      defenseBonus: 150,
+      healthBonus: 750,
+      cost: { food: 200, wood: 300, stone: 1200, gold: 500 },
+      buildTime: 240,
+      maxCount: 2,
+      requiredTech: "military_science"
+    },
+    {
+      id: "bunker",
+      name: "Bunker",
+      description: "Reinforced concrete bunker for modern warfare.",
+      icon: "\u{1F3D7}\uFE0F",
+      era: "modern_age",
+      defenseBonus: 200,
+      healthBonus: 1e3,
+      cost: { food: 300, wood: 100, stone: 2e3, gold: 800 },
+      buildTime: 300,
+      maxCount: 3,
+      requiredTech: "electricity"
+    },
+    {
+      id: "missile_defense",
+      name: "Missile Defense System",
+      description: "Advanced anti-missile defense network.",
+      icon: "\u{1F680}",
+      era: "atomic_age",
+      defenseBonus: 300,
+      healthBonus: 1500,
+      cost: { food: 500, wood: 200, stone: 3e3, gold: 2e3 },
+      buildTime: 360,
+      maxCount: 2,
+      requiredTech: "rocketry"
+    },
+    {
+      id: "energy_shield",
+      name: "Energy Shield",
+      description: "Force field protection against all attacks.",
+      icon: "\u{1F4A0}",
+      era: "future_age",
+      defenseBonus: 500,
+      healthBonus: 3e3,
+      cost: { food: 1e3, wood: 500, stone: 5e3, gold: 5e3 },
+      buildTime: 480,
+      maxCount: 1,
+      requiredTech: "fusion_power"
+    }
+  ];
+  function getDefenseStructureById(id) {
+    return DEFENSE_STRUCTURES.find((d) => d.id === id);
+  }
+  function calculateDefenseBonuses(defenseBuildings) {
+    let totalDefense = 0;
+    let totalHealth = 0;
+    for (const building of defenseBuildings) {
+      const structure = getDefenseStructureById(building.typeId);
+      if (structure) {
+        totalDefense += structure.defenseBonus * building.count;
+        totalHealth += structure.healthBonus * building.count;
+      }
+    }
+    return { defense: totalDefense, health: totalHealth };
+  }
+  var HEROES = [
+    {
+      id: "tribal_chief",
+      name: "Grunk",
+      title: "Tribal Chief",
+      description: "A fierce tribal leader who inspires warriors.",
+      icon: "\u{1F9B4}",
+      era: "stone_age",
+      bonuses: {
+        attackBonus: 10,
+        defenseBonus: 5,
+        healthBonus: 50,
+        specialAbility: "Rally Cry - +15% attack for all units"
+      },
+      cost: { gold: 50, science: 30 },
+      requiredTech: "hunting"
+    },
+    {
+      id: "bronze_commander",
+      name: "Marduk",
+      title: "Bronze Commander",
+      description: "A legendary commander of bronze age armies.",
+      icon: "\u2694\uFE0F",
+      era: "bronze_age",
+      bonuses: {
+        attackBonus: 20,
+        defenseBonus: 15,
+        healthBonus: 100,
+        specialAbility: "Bronze Wall - +25% defense when defending"
+      },
+      cost: { gold: 150, science: 100 },
+      requiredTech: "bronze_working"
+    },
+    {
+      id: "iron_general",
+      name: "Leonidas",
+      title: "Iron General",
+      description: "A tactical genius of iron age warfare.",
+      icon: "\u{1F6E1}\uFE0F",
+      era: "iron_age",
+      bonuses: {
+        attackBonus: 35,
+        defenseBonus: 40,
+        healthBonus: 200,
+        specialAbility: "Phalanx Master - Defense formations are 50% more effective"
+      },
+      cost: { gold: 400, science: 300 },
+      requiredTech: "iron_working"
+    },
+    {
+      id: "classical_strategos",
+      name: "Alexander",
+      title: "Strategos",
+      description: "A conquering hero who never lost a battle.",
+      icon: "\u{1F451}",
+      era: "classical_age",
+      bonuses: {
+        attackBonus: 60,
+        defenseBonus: 30,
+        healthBonus: 250,
+        specialAbility: "Conqueror - +50% rewards from victories"
+      },
+      cost: { gold: 800, science: 500 },
+      requiredTech: "philosophy"
+    },
+    {
+      id: "medieval_knight",
+      name: "Richard",
+      title: "Lionheart",
+      description: "A crusading king renowned for his valor.",
+      icon: "\u{1F981}",
+      era: "medieval_age",
+      bonuses: {
+        attackBonus: 80,
+        defenseBonus: 60,
+        healthBonus: 400,
+        specialAbility: "Chivalry - Knights deal double damage"
+      },
+      cost: { gold: 1500, science: 800 },
+      requiredTech: "feudalism"
+    },
+    {
+      id: "renaissance_admiral",
+      name: "Drake",
+      title: "Admiral",
+      description: "A master of naval warfare and exploration.",
+      icon: "\u2693",
+      era: "renaissance",
+      bonuses: {
+        attackBonus: 100,
+        defenseBonus: 50,
+        healthBonus: 350,
+        specialAbility: "Sea Wolf - Naval units +75% effectiveness"
+      },
+      cost: { gold: 2500, science: 1200 },
+      requiredTech: "astronomy"
+    },
+    {
+      id: "industrial_marshal",
+      name: "Napoleon",
+      title: "Marshal",
+      description: "A military genius who conquered empires.",
+      icon: "\u{1F396}\uFE0F",
+      era: "industrial_age",
+      bonuses: {
+        attackBonus: 150,
+        defenseBonus: 80,
+        healthBonus: 600,
+        specialAbility: "Grande Arm\xE9e - All units +20% stats"
+      },
+      cost: { gold: 5e3, science: 2500 },
+      requiredTech: "steam_power"
+    },
+    {
+      id: "modern_general",
+      name: "Patton",
+      title: "General",
+      description: "A tank commander who led from the front.",
+      icon: "\u{1F397}\uFE0F",
+      era: "modern_age",
+      bonuses: {
+        attackBonus: 250,
+        defenseBonus: 120,
+        healthBonus: 800,
+        specialAbility: "Armor Blitz - Tanks deal +100% damage"
+      },
+      cost: { gold: 1e4, science: 5e3 },
+      requiredTech: "combustion"
+    },
+    {
+      id: "atomic_commander",
+      name: "Zhukov",
+      title: "Supreme Commander",
+      description: "Master of massive military operations.",
+      icon: "\u2B50",
+      era: "atomic_age",
+      bonuses: {
+        attackBonus: 400,
+        defenseBonus: 200,
+        healthBonus: 1200,
+        specialAbility: "Deep Battle - +30% attack, -25% casualties"
+      },
+      cost: { gold: 2e4, science: 1e4 },
+      requiredTech: "rocketry"
+    },
+    {
+      id: "cyber_commander",
+      name: "ARIA",
+      title: "Cyber Commander",
+      description: "An AI military strategist.",
+      icon: "\u{1F916}",
+      era: "information_age",
+      bonuses: {
+        attackBonus: 600,
+        defenseBonus: 400,
+        healthBonus: 2e3,
+        specialAbility: "Network Warfare - Enemy defense reduced by 30%"
+      },
+      cost: { gold: 4e4, science: 25e3 },
+      requiredTech: "artificial_intelligence"
+    },
+    {
+      id: "stellar_admiral",
+      name: "Nova",
+      title: "Stellar Admiral",
+      description: "Commander of the space fleet.",
+      icon: "\u{1F31F}",
+      era: "future_age",
+      bonuses: {
+        attackBonus: 1e3,
+        defenseBonus: 600,
+        healthBonus: 3e3,
+        specialAbility: "Orbital Strike - First strike deals triple damage"
+      },
+      cost: { gold: 1e5, science: 5e4 },
+      requiredTech: "space_colonization"
+    }
+  ];
+  function getHeroById(id) {
+    return HEROES.find((h) => h.id === id);
+  }
+  function getAvailableHeroes(researchedTechs, recruitedHeroes) {
+    return HEROES.filter((h) => researchedTechs.has(h.requiredTech) && !recruitedHeroes.has(h.id));
+  }
+  var NAVAL_UNITS = [
+    {
+      id: "raft",
+      name: "War Raft",
+      description: "Simple wooden raft for river combat.",
+      icon: "\u{1FAB5}",
+      era: "stone_age",
+      stats: { attack: 5, defense: 2, health: 30 },
+      cost: { food: 20, wood: 50, gold: 0 },
+      trainTime: 15,
+      requiredTech: "hunting"
+    },
+    {
+      id: "galley",
+      name: "Galley",
+      description: "Oar-powered warship with bronze ram.",
+      icon: "\u26F5",
+      era: "bronze_age",
+      stats: { attack: 15, defense: 8, health: 60 },
+      cost: { food: 40, wood: 100, gold: 30 },
+      trainTime: 25,
+      requiredTech: "bronze_working"
+    },
+    {
+      id: "trireme",
+      name: "Trireme",
+      description: "Advanced galley with three rows of oars.",
+      icon: "\u{1F6A3}",
+      era: "classical_age",
+      stats: { attack: 30, defense: 15, health: 100 },
+      cost: { food: 60, wood: 150, gold: 60 },
+      trainTime: 35,
+      requiredTech: "iron_casting"
+    },
+    {
+      id: "longship",
+      name: "Longship",
+      description: "Fast raiding ship of the north.",
+      icon: "\u{1F6F6}",
+      era: "medieval_age",
+      stats: { attack: 45, defense: 20, health: 120 },
+      cost: { food: 80, wood: 200, gold: 100 },
+      trainTime: 40,
+      requiredTech: "feudalism"
+    },
+    {
+      id: "caravel",
+      name: "Caravel",
+      description: "Exploration and combat ship.",
+      icon: "\u26F5",
+      era: "renaissance",
+      stats: { attack: 60, defense: 35, health: 180 },
+      cost: { food: 100, wood: 300, gold: 200 },
+      trainTime: 50,
+      requiredTech: "astronomy"
+    },
+    {
+      id: "ship_of_the_line",
+      name: "Ship of the Line",
+      description: "Massive warship with multiple gun decks.",
+      icon: "\u{1F6A2}",
+      era: "renaissance",
+      stats: { attack: 100, defense: 60, health: 300 },
+      cost: { food: 150, wood: 500, gold: 400 },
+      trainTime: 70,
+      requiredTech: "military_science"
+    },
+    {
+      id: "ironclad",
+      name: "Ironclad",
+      description: "Steam-powered armored warship.",
+      icon: "\u{1F6A2}",
+      era: "industrial_age",
+      stats: { attack: 150, defense: 100, health: 500 },
+      cost: { food: 200, wood: 300, gold: 700 },
+      trainTime: 90,
+      requiredTech: "steam_power"
+    },
+    {
+      id: "battleship",
+      name: "Battleship",
+      description: "Heavily armored capital ship.",
+      icon: "\u{1F6F3}\uFE0F",
+      era: "modern_age",
+      stats: { attack: 300, defense: 200, health: 1e3 },
+      cost: { food: 300, wood: 400, gold: 1500 },
+      trainTime: 120,
+      requiredTech: "electricity"
+    },
+    {
+      id: "carrier",
+      name: "Aircraft Carrier",
+      description: "Mobile airbase at sea.",
+      icon: "\u{1F6F3}\uFE0F",
+      era: "modern_age",
+      stats: { attack: 400, defense: 150, health: 1200 },
+      cost: { food: 400, wood: 500, gold: 2500 },
+      trainTime: 150,
+      requiredTech: "flight"
+    },
+    {
+      id: "nuclear_submarine",
+      name: "Nuclear Submarine",
+      description: "Stealth underwater attack vessel.",
+      icon: "\u{1F6A2}",
+      era: "atomic_age",
+      stats: { attack: 500, defense: 250, health: 800 },
+      cost: { food: 500, wood: 300, gold: 3500 },
+      trainTime: 180,
+      requiredTech: "nuclear_power"
+    },
+    {
+      id: "stealth_destroyer",
+      name: "Stealth Destroyer",
+      description: "Advanced radar-evading warship.",
+      icon: "\u{1F6A2}",
+      era: "information_age",
+      stats: { attack: 700, defense: 400, health: 1500 },
+      cost: { food: 600, wood: 400, gold: 5e3 },
+      trainTime: 200,
+      requiredTech: "internet"
+    },
+    {
+      id: "space_cruiser",
+      name: "Space Cruiser",
+      description: "Interplanetary combat vessel.",
+      icon: "\u{1F680}",
+      era: "future_age",
+      stats: { attack: 1200, defense: 800, health: 3e3 },
+      cost: { food: 1e3, wood: 500, gold: 1e4 },
+      trainTime: 300,
+      requiredTech: "space_colonization"
+    }
+  ];
+  function getNavalUnitById(id) {
+    return NAVAL_UNITS.find((n) => n.id === id);
+  }
+  function calculateNavalPower(navy) {
+    let totalAttack = 0;
+    let totalDefense = 0;
+    let totalHealth = 0;
+    for (const ship of navy) {
+      const unit = getNavalUnitById(ship.typeId);
+      if (unit) {
+        totalAttack += unit.stats.attack * ship.count;
+        totalDefense += unit.stats.defense * ship.count;
+        totalHealth += unit.stats.health * ship.count;
+      }
+    }
+    return { attack: totalAttack, defense: totalDefense, health: totalHealth };
+  }
+  var SIEGE_WEAPONS = [
+    {
+      id: "battering_ram",
+      name: "Battering Ram",
+      description: "Simple ram for breaking gates.",
+      icon: "\u{1FAB5}",
+      era: "bronze_age",
+      stats: { attack: 10, defense: 5, health: 50, siegeBonus: 50 },
+      cost: { food: 20, wood: 80, stone: 0, gold: 10 },
+      trainTime: 20,
+      requiredTech: "bronze_working"
+    },
+    {
+      id: "siege_tower",
+      name: "Siege Tower",
+      description: "Mobile tower for scaling walls.",
+      icon: "\u{1F5FC}",
+      era: "iron_age",
+      stats: { attack: 5, defense: 20, health: 100, siegeBonus: 40 },
+      cost: { food: 30, wood: 150, stone: 0, gold: 30 },
+      trainTime: 40,
+      requiredTech: "construction"
+    },
+    {
+      id: "catapult",
+      name: "Catapult",
+      description: "Hurls stones at fortifications.",
+      icon: "\u{1F3AF}",
+      era: "classical_age",
+      stats: { attack: 40, defense: 5, health: 60, siegeBonus: 100 },
+      cost: { food: 40, wood: 120, stone: 50, gold: 50 },
+      trainTime: 35,
+      requiredTech: "engineering"
+    },
+    {
+      id: "ballista",
+      name: "Ballista",
+      description: "Giant crossbow for anti-personnel and siege.",
+      icon: "\u{1F3F9}",
+      era: "classical_age",
+      stats: { attack: 50, defense: 3, health: 40, siegeBonus: 60 },
+      cost: { food: 30, wood: 100, stone: 20, gold: 40 },
+      trainTime: 30,
+      requiredTech: "engineering"
+    },
+    {
+      id: "trebuchet",
+      name: "Trebuchet",
+      description: "Massive counterweight siege engine.",
+      icon: "\u{1F3AA}",
+      era: "medieval_age",
+      stats: { attack: 80, defense: 5, health: 80, siegeBonus: 200 },
+      cost: { food: 60, wood: 200, stone: 100, gold: 100 },
+      trainTime: 60,
+      requiredTech: "machinery"
+    },
+    {
+      id: "bombard",
+      name: "Bombard",
+      description: "Early cannon for siege warfare.",
+      icon: "\u{1F4A3}",
+      era: "medieval_age",
+      stats: { attack: 120, defense: 5, health: 60, siegeBonus: 300 },
+      cost: { food: 80, wood: 100, stone: 50, gold: 200 },
+      trainTime: 70,
+      requiredTech: "gunpowder"
+    },
+    {
+      id: "cannon",
+      name: "Siege Cannon",
+      description: "Powerful artillery for breaching walls.",
+      icon: "\u{1F4A5}",
+      era: "renaissance",
+      stats: { attack: 180, defense: 10, health: 100, siegeBonus: 400 },
+      cost: { food: 100, wood: 150, stone: 100, gold: 350 },
+      trainTime: 80,
+      requiredTech: "military_science"
+    },
+    {
+      id: "howitzer",
+      name: "Howitzer",
+      description: "Long-range bombardment weapon.",
+      icon: "\u{1F52B}",
+      era: "industrial_age",
+      stats: { attack: 300, defense: 15, health: 150, siegeBonus: 500 },
+      cost: { food: 150, wood: 100, stone: 150, gold: 600 },
+      trainTime: 100,
+      requiredTech: "dynamite"
+    },
+    {
+      id: "cruise_missile",
+      name: "Cruise Missile",
+      description: "Precision-guided munition.",
+      icon: "\u{1F680}",
+      era: "atomic_age",
+      stats: { attack: 600, defense: 0, health: 50, siegeBonus: 1e3 },
+      cost: { food: 200, wood: 50, stone: 100, gold: 1500 },
+      trainTime: 60,
+      requiredTech: "rocketry"
+    },
+    {
+      id: "orbital_bombardment",
+      name: "Orbital Strike Platform",
+      description: "Space-based weapons system.",
+      icon: "\uFFFD\uFFFD",
+      era: "future_age",
+      stats: { attack: 1500, defense: 100, health: 200, siegeBonus: 3e3 },
+      cost: { food: 500, wood: 200, stone: 500, gold: 5e3 },
+      trainTime: 150,
+      requiredTech: "space_colonization"
+    }
+  ];
+  function getSiegeWeaponById(id) {
+    return SIEGE_WEAPONS.find((s) => s.id === id);
+  }
+  function calculateSiegePower(siegeWeapons) {
+    let totalAttack = 0;
+    let totalDefense = 0;
+    let totalHealth = 0;
+    let totalSiegeBonus = 0;
+    for (const weapon of siegeWeapons) {
+      const unit = getSiegeWeaponById(weapon.typeId);
+      if (unit) {
+        totalAttack += unit.stats.attack * weapon.count;
+        totalDefense += unit.stats.defense * weapon.count;
+        totalHealth += unit.stats.health * weapon.count;
+        totalSiegeBonus += unit.stats.siegeBonus * weapon.count;
+      }
+    }
+    return { attack: totalAttack, defense: totalDefense, health: totalHealth, siegeBonus: totalSiegeBonus };
+  }
+  var MILITARY_TRADITIONS = [
+    {
+      id: "warrior_spirit",
+      name: "Warrior Spirit",
+      description: "Your soldiers fight with fierce determination.",
+      icon: "\u{1F525}",
+      bonuses: { attackMultiplier: 1.05, special: "+5% attack" },
+      requirement: { battlesWon: 5 }
+    },
+    {
+      id: "iron_discipline",
+      name: "Iron Discipline",
+      description: "Strict training creates resilient soldiers.",
+      icon: "\u2694\uFE0F",
+      bonuses: { defenseMultiplier: 1.05, special: "+5% defense" },
+      requirement: { battlesWon: 10 }
+    },
+    {
+      id: "shock_tactics",
+      name: "Shock Tactics",
+      description: "Lightning-fast attacks overwhelm enemies.",
+      icon: "\u26A1",
+      bonuses: { attackMultiplier: 1.1, special: "+10% attack" },
+      requirement: { battlesWon: 25 }
+    },
+    {
+      id: "fortification_masters",
+      name: "Fortification Masters",
+      description: "Your engineers build superior defenses.",
+      icon: "\u{1F3F0}",
+      bonuses: { defenseMultiplier: 1.15, special: "+15% defense" },
+      requirement: { territoriesConquered: 10 }
+    },
+    {
+      id: "veteran_corps",
+      name: "Veteran Corps",
+      description: "Battle-hardened units form your army core.",
+      icon: "\u{1F396}\uFE0F",
+      bonuses: { healthMultiplier: 1.1, experienceGain: 1.25, special: "+10% health, +25% exp gain" },
+      requirement: { veteranUnits: 5 }
+    },
+    {
+      id: "heroic_legacy",
+      name: "Heroic Legacy",
+      description: "Tales of great heroes inspire your troops.",
+      icon: "\u{1F451}",
+      bonuses: { attackMultiplier: 1.1, defenseMultiplier: 1.1, special: "+10% attack and defense" },
+      requirement: { heroesRecruited: 3 }
+    },
+    {
+      id: "conquerors_pride",
+      name: "Conqueror's Pride",
+      description: "Your empire is built on victory.",
+      icon: "\u{1F30D}",
+      bonuses: { attackMultiplier: 1.15, casualtyReduction: 0.1, special: "+15% attack, -10% casualties" },
+      requirement: { territoriesConquered: 20 }
+    },
+    {
+      id: "elite_forces",
+      name: "Elite Forces",
+      description: "The finest military in the world.",
+      icon: "\u2B50",
+      bonuses: { attackMultiplier: 1.2, defenseMultiplier: 1.2, healthMultiplier: 1.2, special: "+20% all stats" },
+      requirement: { battlesWon: 100 }
+    }
+  ];
+  function getTraditionById(id) {
+    return MILITARY_TRADITIONS.find((t) => t.id === id);
+  }
+  function checkTraditionUnlock(tradition, stats) {
+    const req = tradition.requirement;
+    if (req.battlesWon && stats.battlesWon < req.battlesWon)
+      return false;
+    if (req.territoriesConquered && stats.territoriesConquered < req.territoriesConquered)
+      return false;
+    if (req.heroesRecruited && stats.heroesRecruited < req.heroesRecruited)
+      return false;
+    if (req.veteranUnits && stats.veteranUnits < req.veteranUnits)
+      return false;
+    return true;
+  }
+  function calculateTraditionBonuses(unlockedTraditions) {
+    let attackMultiplier = 1;
+    let defenseMultiplier = 1;
+    let healthMultiplier = 1;
+    let casualtyReduction = 0;
+    let experienceGain = 1;
+    for (const traditionId of unlockedTraditions) {
+      const tradition = getTraditionById(traditionId);
+      if (tradition) {
+        if (tradition.bonuses.attackMultiplier)
+          attackMultiplier *= tradition.bonuses.attackMultiplier;
+        if (tradition.bonuses.defenseMultiplier)
+          defenseMultiplier *= tradition.bonuses.defenseMultiplier;
+        if (tradition.bonuses.healthMultiplier)
+          healthMultiplier *= tradition.bonuses.healthMultiplier;
+        if (tradition.bonuses.casualtyReduction)
+          casualtyReduction += tradition.bonuses.casualtyReduction;
+        if (tradition.bonuses.experienceGain)
+          experienceGain *= tradition.bonuses.experienceGain;
+      }
+    }
+    return { attackMultiplier, defenseMultiplier, healthMultiplier, casualtyReduction, experienceGain };
+  }
+  var SPY_MISSIONS = [
+    {
+      id: "scout_enemy",
+      name: "Scout Enemy",
+      description: "Gather intelligence on enemy forces.",
+      icon: "\u{1F50D}",
+      duration: 30,
+      successChance: 0.9,
+      cost: { gold: 50 },
+      effects: { type: "intel", intelGained: "enemy_strength" },
+      requiredTech: "writing"
+    },
+    {
+      id: "steal_gold",
+      name: "Steal Gold",
+      description: "Pilfer gold from enemy treasury.",
+      icon: "\u{1F4B0}",
+      duration: 60,
+      successChance: 0.6,
+      cost: { gold: 100 },
+      effects: { type: "steal", resourceStolen: { resource: "gold", amount: 500 } },
+      requiredTech: "currency"
+    },
+    {
+      id: "sabotage_defenses",
+      name: "Sabotage Defenses",
+      description: "Weaken enemy fortifications.",
+      icon: "\u{1F4A3}",
+      duration: 90,
+      successChance: 0.5,
+      cost: { gold: 200 },
+      effects: { type: "sabotage", enemyDebuff: { stat: "defense", amount: 20 } },
+      requiredTech: "engineering"
+    },
+    {
+      id: "steal_research",
+      name: "Steal Research",
+      description: "Acquire enemy scientific knowledge.",
+      icon: "\u{1F4DC}",
+      duration: 120,
+      successChance: 0.4,
+      cost: { gold: 500 },
+      effects: { type: "steal", resourceStolen: { resource: "science", amount: 2e3 } },
+      requiredTech: "printing_press"
+    },
+    {
+      id: "assassinate",
+      name: "Assassinate Commander",
+      description: "Remove enemy leadership.",
+      icon: "\u{1F5E1}\uFE0F",
+      duration: 180,
+      successChance: 0.3,
+      cost: { gold: 1e3 },
+      effects: { type: "sabotage", enemyDebuff: { stat: "attack", amount: 30 } },
+      requiredTech: "military_science"
+    },
+    {
+      id: "counterintelligence",
+      name: "Counterintelligence",
+      description: "Protect against enemy spies.",
+      icon: "\u{1F6E1}\uFE0F",
+      duration: 60,
+      successChance: 0.8,
+      cost: { gold: 300 },
+      effects: { type: "counter", intelGained: "spy_protection" },
+      requiredTech: "radio"
+    },
+    {
+      id: "cyber_attack",
+      name: "Cyber Attack",
+      description: "Disrupt enemy communications.",
+      icon: "\u{1F4BB}",
+      duration: 60,
+      successChance: 0.65,
+      cost: { gold: 2e3 },
+      effects: { type: "sabotage", enemyDebuff: { stat: "health", amount: 25 } },
+      requiredTech: "internet"
+    },
+    {
+      id: "grand_heist",
+      name: "Grand Heist",
+      description: "Massive coordinated theft operation.",
+      icon: "\u{1F3AD}",
+      duration: 240,
+      successChance: 0.35,
+      cost: { gold: 5e3 },
+      effects: { type: "steal", resourceStolen: { resource: "gold", amount: 25e3 } },
+      requiredTech: "artificial_intelligence"
+    }
+  ];
+  function getSpyMissionById(id) {
+    return SPY_MISSIONS.find((m) => m.id === id);
+  }
+  function getAvailableSpyMissions(researchedTechs) {
+    return SPY_MISSIONS.filter((m) => researchedTechs.has(m.requiredTech));
+  }
+  function calculateSpySuccessChance(mission, spy) {
+    const levelBonus = spy.level * 0.05;
+    return Math.min(0.95, mission.successChance + levelBonus);
+  }
+  function createInitialMilitaryState() {
+    return {
+      selectedFormation: "standard",
+      defenseBuildings: [],
+      defenseConstructionQueue: [],
+      recruitedHeroes: /* @__PURE__ */ new Set(),
+      activeHero: null,
+      unitExperience: /* @__PURE__ */ new Map(),
+      navy: [],
+      navalTrainingQueue: [],
+      siegeWeapons: [],
+      siegeTrainingQueue: [],
+      unlockedTraditions: /* @__PURE__ */ new Set(),
+      spies: [],
+      activeSpyMissions: [],
+      maxSpies: 3
+    };
+  }
+  function calculateTotalMilitaryPower(army, militaryState, researchedTechs) {
+    let totalAttack = 0;
+    let totalDefense = 0;
+    let totalHealth = 0;
+    for (const troop of army) {
+      const troopType = getTroopTypeById(troop.typeId);
+      if (troopType) {
+        totalAttack += troopType.stats.attack * troop.count;
+        totalDefense += troopType.stats.defense * troop.count;
+        totalHealth += troopType.stats.health * troop.count;
+      }
+    }
+    const navalPower = calculateNavalPower(militaryState.navy);
+    totalAttack += navalPower.attack;
+    totalDefense += navalPower.defense;
+    totalHealth += navalPower.health;
+    const siegePower = calculateSiegePower(militaryState.siegeWeapons);
+    totalAttack += siegePower.attack;
+    totalDefense += siegePower.defense;
+    totalHealth += siegePower.health;
+    const defenseBonuses = calculateDefenseBonuses(militaryState.defenseBuildings);
+    totalDefense += defenseBonuses.defense;
+    totalHealth += defenseBonuses.health;
+    const formation = getFormationById(militaryState.selectedFormation);
+    if (formation) {
+      totalAttack *= formation.attackModifier;
+      totalDefense *= formation.defenseModifier;
+      totalHealth *= formation.healthModifier;
+    }
+    if (militaryState.activeHero) {
+      const hero = getHeroById(militaryState.activeHero);
+      if (hero) {
+        totalAttack += hero.bonuses.attackBonus;
+        totalDefense += hero.bonuses.defenseBonus;
+        totalHealth += hero.bonuses.healthBonus;
+      }
+    }
+    const traditionBonuses = calculateTraditionBonuses(militaryState.unlockedTraditions);
+    totalAttack *= traditionBonuses.attackMultiplier;
+    totalDefense *= traditionBonuses.defenseMultiplier;
+    totalHealth *= traditionBonuses.healthMultiplier;
+    return {
+      attack: Math.floor(totalAttack),
+      defense: Math.floor(totalDefense),
+      health: Math.floor(totalHealth)
+    };
+  }
+
   // dist/game.js
   var Game = class {
     constructor() {
@@ -7291,7 +9064,9 @@ body {
         // Skill tree and legacy system
         skillTree: createInitialSkillTreeState(),
         // World and Lore system
-        lore: createInitialLoreState()
+        lore: createInitialLoreState(),
+        // Military enhancements
+        military: createInitialMilitaryState()
       };
     }
     setOnAchievementUnlocked(callback) {
@@ -7360,6 +9135,8 @@ body {
       }
       this.updateTrainingQueue(now);
       this.updateConstructionQueue(now);
+      this.updateMilitaryQueues(now);
+      this.checkMilitaryTraditions();
       this.checkAchievements();
       this.notifyStateChange();
     }
@@ -7945,6 +9722,22 @@ body {
         cultureLevel: this.state.lore.cultureLevel,
         adoptedPolicies: Array.from(this.state.lore.adoptedPolicies)
       };
+      const militarySave = {
+        selectedFormation: this.state.military.selectedFormation,
+        defenseBuildings: this.state.military.defenseBuildings,
+        defenseConstructionQueue: this.state.military.defenseConstructionQueue,
+        recruitedHeroes: Array.from(this.state.military.recruitedHeroes),
+        activeHero: this.state.military.activeHero,
+        unitExperience: Array.from(this.state.military.unitExperience.entries()),
+        navy: this.state.military.navy,
+        navalTrainingQueue: this.state.military.navalTrainingQueue,
+        siegeWeapons: this.state.military.siegeWeapons,
+        siegeTrainingQueue: this.state.military.siegeTrainingQueue,
+        unlockedTraditions: Array.from(this.state.military.unlockedTraditions),
+        spies: this.state.military.spies,
+        activeSpyMissions: this.state.military.activeSpyMissions,
+        maxSpies: this.state.military.maxSpies
+      };
       const saveData = {
         ...this.state,
         researchedTechs: Array.from(this.state.researchedTechs),
@@ -7955,6 +9748,7 @@ body {
         achievements: achievementsArray,
         skillTree: skillTreeSave,
         lore: loreSave,
+        military: militarySave,
         activeBattle: null,
         // Don't save active battles
         activeConquestBattle: null,
@@ -8029,6 +9823,25 @@ body {
             adoptedPolicies: new Set(saveData.lore.adoptedPolicies || [])
           };
         }
+        let militaryState = createInitialMilitaryState();
+        if (saveData.military) {
+          militaryState = {
+            selectedFormation: saveData.military.selectedFormation || "standard",
+            defenseBuildings: saveData.military.defenseBuildings || [],
+            defenseConstructionQueue: saveData.military.defenseConstructionQueue || [],
+            recruitedHeroes: new Set(saveData.military.recruitedHeroes || []),
+            activeHero: saveData.military.activeHero || null,
+            unitExperience: new Map(saveData.military.unitExperience || []),
+            navy: saveData.military.navy || [],
+            navalTrainingQueue: saveData.military.navalTrainingQueue || [],
+            siegeWeapons: saveData.military.siegeWeapons || [],
+            siegeTrainingQueue: saveData.military.siegeTrainingQueue || [],
+            unlockedTraditions: new Set(saveData.military.unlockedTraditions || []),
+            spies: saveData.military.spies || [],
+            activeSpyMissions: saveData.military.activeSpyMissions || [],
+            maxSpies: saveData.military.maxSpies || 3
+          };
+        }
         this.state = {
           ...saveData,
           researchedTechs: new Set(saveData.researchedTechs),
@@ -8053,7 +9866,9 @@ body {
           // Skill tree
           skillTree: skillTreeState,
           // World and Lore
-          lore: loreState
+          lore: loreState,
+          // Military enhancements
+          military: militaryState
         };
         if (saveData.saveTime) {
           this.calculateOfflineProgress(saveData.saveTime);
@@ -8197,6 +10012,367 @@ body {
     }
     getLeader() {
       return this.state.lore.selectedLeader ? getLeaderById(this.state.lore.selectedLeader) : void 0;
+    }
+    // ===== Military Enhancement Methods =====
+    // Unit Upgrades
+    getAvailableUnitUpgrades() {
+      return UNIT_UPGRADES.filter((upgrade) => canUpgradeUnit(upgrade, this.state.army, this.state.resources, this.state.researchedTechs));
+    }
+    upgradeUnit(upgradeId) {
+      const upgrade = getUpgradeById(upgradeId);
+      if (!upgrade)
+        return false;
+      if (!canUpgradeUnit(upgrade, this.state.army, this.state.resources, this.state.researchedTechs)) {
+        return false;
+      }
+      this.state.resources.food -= upgrade.cost.food;
+      this.state.resources.gold -= upgrade.cost.gold;
+      this.state.resources.science -= upgrade.cost.science;
+      const fromTroop = this.state.army.find((t) => t.typeId === upgrade.fromUnit);
+      if (!fromTroop || fromTroop.count <= 0)
+        return false;
+      fromTroop.count--;
+      if (fromTroop.count <= 0) {
+        this.state.army = this.state.army.filter((t) => t.count > 0);
+      }
+      const toTroop = this.state.army.find((t) => t.typeId === upgrade.toUnit);
+      if (toTroop) {
+        toTroop.count++;
+      } else {
+        this.state.army.push({ typeId: upgrade.toUnit, count: 1 });
+        this.state.unlockedTroops.add(upgrade.toUnit);
+      }
+      this.notifyStateChange();
+      return true;
+    }
+    // Formations
+    getAvailableFormations() {
+      return getAvailableFormations(this.state.researchedTechs);
+    }
+    setFormation(formationId) {
+      const formation = getFormationById(formationId);
+      if (!formation)
+        return false;
+      if (formation.requiredTech && !this.state.researchedTechs.has(formation.requiredTech)) {
+        return false;
+      }
+      this.state.military.selectedFormation = formationId;
+      this.notifyStateChange();
+      return true;
+    }
+    getCurrentFormation() {
+      return getFormationById(this.state.military.selectedFormation);
+    }
+    // Defense System
+    getAvailableDefenseStructures() {
+      return DEFENSE_STRUCTURES.filter((structure) => this.state.researchedTechs.has(structure.requiredTech));
+    }
+    buildDefenseStructure(structureId) {
+      const structure = getDefenseStructureById(structureId);
+      if (!structure)
+        return false;
+      if (!this.state.researchedTechs.has(structure.requiredTech))
+        return false;
+      const currentCount = this.state.military.defenseBuildings.find((b) => b.typeId === structureId)?.count || 0;
+      if (currentCount >= structure.maxCount)
+        return false;
+      if (this.state.resources.food < structure.cost.food)
+        return false;
+      if (this.state.resources.wood < structure.cost.wood)
+        return false;
+      if (this.state.resources.stone < structure.cost.stone)
+        return false;
+      if (this.state.resources.gold < structure.cost.gold)
+        return false;
+      this.state.resources.food -= structure.cost.food;
+      this.state.resources.wood -= structure.cost.wood;
+      this.state.resources.stone -= structure.cost.stone;
+      this.state.resources.gold -= structure.cost.gold;
+      const now = Date.now();
+      this.state.military.defenseConstructionQueue.push({
+        typeId: structureId,
+        endTime: now + structure.buildTime * 1e3
+      });
+      this.notifyStateChange();
+      return true;
+    }
+    getDefenseBonuses() {
+      return calculateDefenseBonuses(this.state.military.defenseBuildings);
+    }
+    // Heroes
+    getAvailableHeroes() {
+      return getAvailableHeroes(this.state.researchedTechs, this.state.military.recruitedHeroes);
+    }
+    recruitHero(heroId) {
+      const hero = getHeroById(heroId);
+      if (!hero)
+        return false;
+      if (this.state.military.recruitedHeroes.has(heroId))
+        return false;
+      if (!this.state.researchedTechs.has(hero.requiredTech))
+        return false;
+      if (this.state.resources.gold < hero.cost.gold)
+        return false;
+      if (this.state.resources.science < hero.cost.science)
+        return false;
+      this.state.resources.gold -= hero.cost.gold;
+      this.state.resources.science -= hero.cost.science;
+      this.state.military.recruitedHeroes.add(heroId);
+      if (!this.state.military.activeHero) {
+        this.state.military.activeHero = heroId;
+      }
+      this.state.statistics.heroesRecruited = (this.state.statistics.heroesRecruited || 0) + 1;
+      this.checkMilitaryTraditions();
+      this.notifyStateChange();
+      return true;
+    }
+    setActiveHero(heroId) {
+      if (heroId && !this.state.military.recruitedHeroes.has(heroId)) {
+        return false;
+      }
+      this.state.military.activeHero = heroId;
+      this.notifyStateChange();
+      return true;
+    }
+    getActiveHero() {
+      return this.state.military.activeHero ? getHeroById(this.state.military.activeHero) : void 0;
+    }
+    getRecruitedHeroes() {
+      return Array.from(this.state.military.recruitedHeroes).map((id) => getHeroById(id)).filter((h) => h !== void 0);
+    }
+    // Naval Forces
+    getAvailableNavalUnits() {
+      return NAVAL_UNITS.filter((unit) => this.state.researchedTechs.has(unit.requiredTech));
+    }
+    trainNavalUnit(unitId) {
+      const unit = getNavalUnitById(unitId);
+      if (!unit)
+        return false;
+      if (!this.state.researchedTechs.has(unit.requiredTech))
+        return false;
+      if (this.state.resources.food < unit.cost.food)
+        return false;
+      if (this.state.resources.wood < unit.cost.wood)
+        return false;
+      if (this.state.resources.gold < unit.cost.gold)
+        return false;
+      this.state.resources.food -= unit.cost.food;
+      this.state.resources.wood -= unit.cost.wood;
+      this.state.resources.gold -= unit.cost.gold;
+      const now = Date.now();
+      this.state.military.navalTrainingQueue.push({
+        typeId: unitId,
+        endTime: now + unit.trainTime * 1e3
+      });
+      this.notifyStateChange();
+      return true;
+    }
+    getNavalPower() {
+      return calculateNavalPower(this.state.military.navy);
+    }
+    // Siege Weapons
+    getAvailableSiegeWeapons() {
+      return SIEGE_WEAPONS.filter((weapon) => this.state.researchedTechs.has(weapon.requiredTech));
+    }
+    trainSiegeWeapon(weaponId) {
+      const weapon = getSiegeWeaponById(weaponId);
+      if (!weapon)
+        return false;
+      if (!this.state.researchedTechs.has(weapon.requiredTech))
+        return false;
+      if (this.state.resources.food < weapon.cost.food)
+        return false;
+      if (this.state.resources.wood < weapon.cost.wood)
+        return false;
+      if (this.state.resources.stone < weapon.cost.stone)
+        return false;
+      if (this.state.resources.gold < weapon.cost.gold)
+        return false;
+      this.state.resources.food -= weapon.cost.food;
+      this.state.resources.wood -= weapon.cost.wood;
+      this.state.resources.stone -= weapon.cost.stone;
+      this.state.resources.gold -= weapon.cost.gold;
+      const now = Date.now();
+      this.state.military.siegeTrainingQueue.push({
+        typeId: weaponId,
+        endTime: now + weapon.trainTime * 1e3
+      });
+      this.notifyStateChange();
+      return true;
+    }
+    getSiegePower() {
+      return calculateSiegePower(this.state.military.siegeWeapons);
+    }
+    // Military Traditions
+    checkMilitaryTraditions() {
+      const stats = {
+        battlesWon: this.state.statistics.battlesWon,
+        territoriesConquered: this.state.statistics.territoriesConquered || 0,
+        heroesRecruited: this.state.statistics.heroesRecruited || 0,
+        veteranUnits: this.getVeteranUnitCount()
+      };
+      for (const tradition of MILITARY_TRADITIONS) {
+        if (!this.state.military.unlockedTraditions.has(tradition.id)) {
+          if (checkTraditionUnlock(tradition, stats)) {
+            this.state.military.unlockedTraditions.add(tradition.id);
+          }
+        }
+      }
+    }
+    getVeteranUnitCount() {
+      let count = 0;
+      for (const [, expData] of this.state.military.unitExperience) {
+        if (expData.level >= 2) {
+          count++;
+        }
+      }
+      return count;
+    }
+    getUnlockedTraditions() {
+      return Array.from(this.state.military.unlockedTraditions).map((id) => getTraditionById(id)).filter((t) => t !== void 0);
+    }
+    getTraditionBonuses() {
+      return calculateTraditionBonuses(this.state.military.unlockedTraditions);
+    }
+    // Espionage
+    getAvailableSpyMissions() {
+      return getAvailableSpyMissions(this.state.researchedTechs);
+    }
+    recruitSpy() {
+      if (this.state.military.spies.length >= this.state.military.maxSpies)
+        return false;
+      const spyCost = 500 * (this.state.military.spies.length + 1);
+      if (this.state.resources.gold < spyCost)
+        return false;
+      this.state.resources.gold -= spyCost;
+      const spy = {
+        id: `spy_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        name: this.generateSpyName(),
+        level: 1,
+        experience: 0,
+        currentMission: null,
+        missionEndTime: null
+      };
+      this.state.military.spies.push(spy);
+      this.notifyStateChange();
+      return true;
+    }
+    generateSpyName() {
+      const firstNames = ["Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Quinn", "Avery", "Reese", "Dakota"];
+      const lastNames = ["Shadow", "Steele", "Fox", "Wolf", "Storm", "Raven", "Black", "Gray", "Stone", "Cross"];
+      return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+    }
+    startSpyMission(spyId, missionId) {
+      const spy = this.state.military.spies.find((s) => s.id === spyId);
+      if (!spy)
+        return false;
+      if (spy.currentMission)
+        return false;
+      const mission = getSpyMissionById(missionId);
+      if (!mission)
+        return false;
+      if (!this.state.researchedTechs.has(mission.requiredTech))
+        return false;
+      if (this.state.resources.gold < mission.cost.gold)
+        return false;
+      this.state.resources.gold -= mission.cost.gold;
+      const now = Date.now();
+      spy.currentMission = missionId;
+      spy.missionEndTime = now + mission.duration * 1e3;
+      this.state.military.activeSpyMissions.push({
+        spyId,
+        missionId,
+        startTime: now,
+        endTime: now + mission.duration * 1e3
+      });
+      this.notifyStateChange();
+      return true;
+    }
+    // Get total military power including all systems
+    getTotalMilitaryPower() {
+      return calculateTotalMilitaryPower(this.state.army, this.state.military, this.state.researchedTechs);
+    }
+    // Update military training queues (called from main update loop)
+    updateMilitaryQueues(now) {
+      const completedDefense = [];
+      for (let i = 0; i < this.state.military.defenseConstructionQueue.length; i++) {
+        const construction = this.state.military.defenseConstructionQueue[i];
+        if (now >= construction.endTime) {
+          const existing = this.state.military.defenseBuildings.find((b) => b.typeId === construction.typeId);
+          if (existing) {
+            existing.count++;
+          } else {
+            this.state.military.defenseBuildings.push({ typeId: construction.typeId, count: 1 });
+          }
+          completedDefense.push(i);
+        }
+      }
+      for (let i = completedDefense.length - 1; i >= 0; i--) {
+        this.state.military.defenseConstructionQueue.splice(completedDefense[i], 1);
+      }
+      const completedNaval = [];
+      for (let i = 0; i < this.state.military.navalTrainingQueue.length; i++) {
+        const training = this.state.military.navalTrainingQueue[i];
+        if (now >= training.endTime) {
+          const existing = this.state.military.navy.find((n) => n.typeId === training.typeId);
+          if (existing) {
+            existing.count++;
+          } else {
+            this.state.military.navy.push({ typeId: training.typeId, count: 1 });
+          }
+          completedNaval.push(i);
+        }
+      }
+      for (let i = completedNaval.length - 1; i >= 0; i--) {
+        this.state.military.navalTrainingQueue.splice(completedNaval[i], 1);
+      }
+      const completedSiege = [];
+      for (let i = 0; i < this.state.military.siegeTrainingQueue.length; i++) {
+        const training = this.state.military.siegeTrainingQueue[i];
+        if (now >= training.endTime) {
+          const existing = this.state.military.siegeWeapons.find((s) => s.typeId === training.typeId);
+          if (existing) {
+            existing.count++;
+          } else {
+            this.state.military.siegeWeapons.push({ typeId: training.typeId, count: 1 });
+          }
+          completedSiege.push(i);
+        }
+      }
+      for (let i = completedSiege.length - 1; i >= 0; i--) {
+        this.state.military.siegeTrainingQueue.splice(completedSiege[i], 1);
+      }
+      const completedSpyMissions = [];
+      for (let i = 0; i < this.state.military.activeSpyMissions.length; i++) {
+        const activeMission = this.state.military.activeSpyMissions[i];
+        if (now >= activeMission.endTime) {
+          this.completeSpyMission(activeMission);
+          completedSpyMissions.push(i);
+        }
+      }
+      for (let i = completedSpyMissions.length - 1; i >= 0; i--) {
+        this.state.military.activeSpyMissions.splice(completedSpyMissions[i], 1);
+      }
+    }
+    completeSpyMission(activeMission) {
+      const spy = this.state.military.spies.find((s) => s.id === activeMission.spyId);
+      const mission = getSpyMissionById(activeMission.missionId);
+      if (!spy || !mission)
+        return;
+      const successChance = calculateSpySuccessChance(mission, spy);
+      const success = Math.random() < successChance;
+      if (success) {
+        if (mission.effects.type === "steal" && mission.effects.resourceStolen) {
+          const resource = mission.effects.resourceStolen.resource;
+          this.state.resources[resource] += mission.effects.resourceStolen.amount;
+        }
+        spy.experience += 50;
+        if (spy.experience >= 100 * spy.level) {
+          spy.level++;
+        }
+      }
+      spy.currentMission = null;
+      spy.missionEndTime = null;
     }
   };
 
@@ -8394,6 +10570,71 @@ body {
           }
         }
       });
+      document.getElementById("military-content")?.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("formation-card") && !target.classList.contains("locked")) {
+          const formationId = target.dataset.formation;
+          if (formationId) {
+            this.startInteraction();
+            this.game.setFormation(formationId);
+          }
+        }
+        if (target.classList.contains("hero-btn") && !target.hasAttribute("disabled")) {
+          const heroId = target.dataset.hero;
+          if (heroId) {
+            this.startInteraction();
+            if (target.classList.contains("recruit")) {
+              this.game.recruitHero(heroId);
+            } else if (target.classList.contains("set-active")) {
+              this.game.setActiveHero(heroId);
+            }
+          }
+        }
+        if (target.classList.contains("build-defense-btn") && !target.hasAttribute("disabled")) {
+          const structureId = target.dataset.defense;
+          if (structureId) {
+            this.startInteraction();
+            this.game.buildDefenseStructure(structureId);
+          }
+        }
+        if (target.classList.contains("train-naval-btn") && !target.hasAttribute("disabled")) {
+          const unitId = target.dataset.naval;
+          if (unitId) {
+            this.startInteraction();
+            this.game.trainNavalUnit(unitId);
+          }
+        }
+        if (target.classList.contains("train-siege-btn") && !target.hasAttribute("disabled")) {
+          const weaponId = target.dataset.siege;
+          if (weaponId) {
+            this.startInteraction();
+            this.game.trainSiegeWeapon(weaponId);
+          }
+        }
+        if (target.classList.contains("upgrade-btn") && !target.hasAttribute("disabled")) {
+          const upgradeId = target.dataset.upgrade;
+          if (upgradeId) {
+            this.startInteraction();
+            this.game.upgradeUnit(upgradeId);
+          }
+        }
+        if (target.id === "recruit-spy-btn" && !target.hasAttribute("disabled")) {
+          this.startInteraction();
+          if (this.game.recruitSpy()) {
+            this.showNotification("New spy recruited!");
+          }
+        }
+        if (target.classList.contains("spy-mission-btn") && !target.hasAttribute("disabled")) {
+          const spyId = target.dataset.spy;
+          const missionId = target.dataset.mission;
+          if (spyId && missionId) {
+            this.startInteraction();
+            if (this.game.startSpyMission(spyId, missionId)) {
+              this.showNotification("Spy mission started!");
+            }
+          }
+        }
+      });
     }
     switchTab(tab) {
       this.currentTab = tab;
@@ -8472,6 +10713,13 @@ body {
             this.renderWorldTab();
           } else {
             this.updateWorldTab();
+          }
+          break;
+        case "military":
+          if (tabChanged) {
+            this.renderMilitaryTab();
+          } else {
+            this.updateMilitaryTab();
           }
           break;
       }
@@ -10437,6 +12685,623 @@ body {
           btn.disabled = !canAdopt;
         }
       });
+    }
+    // ===== Military Tab =====
+    renderMilitaryTab() {
+      const container = document.getElementById("military-content");
+      if (!container)
+        return;
+      let html = "";
+      html += this.renderMilitaryOverview();
+      html += this.renderFormationsSection();
+      html += this.renderUnitUpgradesSection();
+      html += this.renderHeroesSection();
+      html += this.renderDefenseSection();
+      html += this.renderNavalSection();
+      html += this.renderSiegeSection();
+      html += this.renderTraditionsSection();
+      html += this.renderEspionageSection();
+      container.innerHTML = html;
+    }
+    renderMilitaryOverview() {
+      const totalPower = this.game.getTotalMilitaryPower();
+      const formation = this.game.getCurrentFormation();
+      const activeHero = this.game.getActiveHero();
+      const traditionBonuses = this.game.getTraditionBonuses();
+      const defenseBonuses = this.game.getDefenseBonuses();
+      const navalPower = this.game.getNavalPower();
+      const siegePower = this.game.getSiegePower();
+      return `
+      <div class="military-section">
+        <h3>\u{1F4CA} Military Overview</h3>
+        <div class="military-overview">
+          <div class="military-stat">
+            <span class="military-stat-icon">\u2694\uFE0F</span>
+            <span class="military-stat-value">${totalPower.attack}</span>
+            <span class="military-stat-label">Total Attack</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">\u{1F6E1}\uFE0F</span>
+            <span class="military-stat-value">${totalPower.defense}</span>
+            <span class="military-stat-label">Total Defense</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">\u2764\uFE0F</span>
+            <span class="military-stat-value">${totalPower.health}</span>
+            <span class="military-stat-label">Total Health</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">${formation?.icon || "\u2694\uFE0F"}</span>
+            <span class="military-stat-value">${formation?.name || "Standard"}</span>
+            <span class="military-stat-label">Formation</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">${activeHero?.icon || "\u274C"}</span>
+            <span class="military-stat-value">${activeHero?.name || "None"}</span>
+            <span class="military-stat-label">Active Hero</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">\u{1F3F0}</span>
+            <span class="military-stat-value">+${defenseBonuses.defense}</span>
+            <span class="military-stat-label">Defense Bonus</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">\u2693</span>
+            <span class="military-stat-value">${navalPower.attack}</span>
+            <span class="military-stat-label">Naval Power</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">\u{1F4A3}</span>
+            <span class="military-stat-value">${siegePower.siegeBonus}</span>
+            <span class="military-stat-label">Siege Bonus</span>
+          </div>
+        </div>
+        ${traditionBonuses.attackMultiplier > 1 || traditionBonuses.defenseMultiplier > 1 ? `
+          <div class="tradition-bonuses-summary">
+            <h4>Tradition Bonuses Active:</h4>
+            <span>
+              ${traditionBonuses.attackMultiplier > 1 ? `\u2694\uFE0F \xD7${traditionBonuses.attackMultiplier.toFixed(2)}` : ""}
+              ${traditionBonuses.defenseMultiplier > 1 ? `\u{1F6E1}\uFE0F \xD7${traditionBonuses.defenseMultiplier.toFixed(2)}` : ""}
+              ${traditionBonuses.healthMultiplier > 1 ? `\u2764\uFE0F \xD7${traditionBonuses.healthMultiplier.toFixed(2)}` : ""}
+              ${traditionBonuses.casualtyReduction > 0 ? `\u{1F396}\uFE0F -${(traditionBonuses.casualtyReduction * 100).toFixed(0)}% casualties` : ""}
+            </span>
+          </div>
+        ` : ""}
+      </div>
+    `;
+    }
+    renderFormationsSection() {
+      const availableFormations = this.game.getAvailableFormations();
+      const currentFormation = this.game.state.military.selectedFormation;
+      let html = `
+      <div class="military-section">
+        <h3>\u2694\uFE0F Combat Formations</h3>
+        <p>Choose a formation to modify your army's combat effectiveness.</p>
+        <div class="formation-grid">
+    `;
+      for (const formation of availableFormations) {
+        const isActive = formation.id === currentFormation;
+        html += `
+        <div class="formation-card ${isActive ? "active" : ""}" data-formation="${formation.id}">
+          <div class="formation-header">
+            <span class="formation-icon">${formation.icon}</span>
+            <span class="formation-name">${formation.name}</span>
+          </div>
+          <p class="formation-desc">${formation.description}</p>
+          <div class="formation-stats">
+            <span class="formation-stat ${formation.attackModifier >= 1 ? "positive" : "negative"}">
+              \u2694\uFE0F ${formation.attackModifier >= 1 ? "+" : ""}${((formation.attackModifier - 1) * 100).toFixed(0)}%
+            </span>
+            <span class="formation-stat ${formation.defenseModifier >= 1 ? "positive" : "negative"}">
+              \u{1F6E1}\uFE0F ${formation.defenseModifier >= 1 ? "+" : ""}${((formation.defenseModifier - 1) * 100).toFixed(0)}%
+            </span>
+            <span class="formation-stat ${formation.healthModifier >= 1 ? "positive" : "negative"}">
+              \u2764\uFE0F ${formation.healthModifier >= 1 ? "+" : ""}${((formation.healthModifier - 1) * 100).toFixed(0)}%
+            </span>
+          </div>
+          ${formation.specialEffect ? `<span class="formation-special">\u2728 ${formation.specialEffect}</span>` : ""}
+          ${isActive ? '<span class="badge">\u2713 Active</span>' : ""}
+        </div>
+      `;
+      }
+      html += "</div></div>";
+      return html;
+    }
+    renderUnitUpgradesSection() {
+      const availableUpgrades = this.game.getAvailableUnitUpgrades();
+      let html = `
+      <div class="military-section">
+        <h3>\u2B06\uFE0F Unit Upgrades</h3>
+        <p>Upgrade your existing units to more powerful versions.</p>
+    `;
+      if (availableUpgrades.length === 0) {
+        html += '<p class="empty-message">No unit upgrades available. Train units and research technologies to unlock upgrades.</p>';
+      } else {
+        html += '<div class="upgrade-grid">';
+        for (const upgrade of availableUpgrades) {
+          html += `
+          <div class="upgrade-card available">
+            <h5>${upgrade.name}</h5>
+            <p class="upgrade-desc">${upgrade.description}</p>
+            <div class="upgrade-arrow">
+              <span class="upgrade-from">${this.getTroopName(upgrade.fromUnit)}</span>
+              <span>\u2192</span>
+              <span class="upgrade-to">${this.getTroopName(upgrade.toUnit)}</span>
+            </div>
+            <div class="upgrade-cost">
+              <span>\u{1F356} ${upgrade.cost.food}</span>
+              <span>\u{1F4B0} ${upgrade.cost.gold}</span>
+              <span>\u{1F52C} ${upgrade.cost.science}</span>
+            </div>
+            <button class="upgrade-btn" data-upgrade="${upgrade.id}">Upgrade</button>
+          </div>
+        `;
+        }
+        html += "</div>";
+      }
+      html += "</div>";
+      return html;
+    }
+    getTroopName(troopId) {
+      const troop = getTroopTypeById(troopId);
+      return troop ? troop.name : troopId;
+    }
+    renderHeroesSection() {
+      const availableHeroes = this.game.getAvailableHeroes();
+      const recruitedHeroes = this.game.getRecruitedHeroes();
+      const activeHeroId = this.game.state.military.activeHero;
+      let html = `
+      <div class="military-section">
+        <h3>\u{1F451} Heroes & Generals</h3>
+        <p>Recruit legendary commanders to lead your armies.</p>
+    `;
+      if (recruitedHeroes.length > 0) {
+        html += '<h4>Your Heroes</h4><div class="hero-grid">';
+        for (const hero of recruitedHeroes) {
+          const isActive = hero.id === activeHeroId;
+          html += `
+          <div class="hero-card recruited ${isActive ? "active" : ""}">
+            <div class="hero-header">
+              <span class="hero-icon">${hero.icon}</span>
+              <div class="hero-info">
+                <h5>${hero.name}</h5>
+                <span class="hero-title">${hero.title}</span>
+              </div>
+            </div>
+            <p class="hero-desc">${hero.description}</p>
+            <div class="hero-bonuses">
+              <span class="hero-bonus">\u2694\uFE0F +${hero.bonuses.attackBonus}</span>
+              <span class="hero-bonus">\u{1F6E1}\uFE0F +${hero.bonuses.defenseBonus}</span>
+              <span class="hero-bonus">\u2764\uFE0F +${hero.bonuses.healthBonus}</span>
+            </div>
+            <span class="hero-ability">\u2728 ${hero.bonuses.specialAbility}</span>
+            <button class="hero-btn set-active" data-hero="${hero.id}" ${isActive ? "disabled" : ""}>
+              ${isActive ? "\u2713 Active" : "Set Active"}
+            </button>
+          </div>
+        `;
+        }
+        html += "</div>";
+      }
+      if (availableHeroes.length > 0) {
+        html += '<h4>Available Heroes</h4><div class="hero-grid">';
+        for (const hero of availableHeroes) {
+          const canAfford = this.game.state.resources.gold >= hero.cost.gold && this.game.state.resources.science >= hero.cost.science;
+          html += `
+          <div class="hero-card ${canAfford ? "available" : ""}">
+            <div class="hero-header">
+              <span class="hero-icon">${hero.icon}</span>
+              <div class="hero-info">
+                <h5>${hero.name}</h5>
+                <span class="hero-title">${hero.title}</span>
+              </div>
+            </div>
+            <p class="hero-desc">${hero.description}</p>
+            <div class="hero-bonuses">
+              <span class="hero-bonus">\u2694\uFE0F +${hero.bonuses.attackBonus}</span>
+              <span class="hero-bonus">\u{1F6E1}\uFE0F +${hero.bonuses.defenseBonus}</span>
+              <span class="hero-bonus">\u2764\uFE0F +${hero.bonuses.healthBonus}</span>
+            </div>
+            <span class="hero-ability">\u2728 ${hero.bonuses.specialAbility}</span>
+            <div class="hero-cost">
+              <span>\u{1F4B0} ${hero.cost.gold}</span>
+              <span>\u{1F52C} ${hero.cost.science}</span>
+            </div>
+            <button class="hero-btn recruit" data-hero="${hero.id}" ${!canAfford ? "disabled" : ""}>
+              Recruit
+            </button>
+          </div>
+        `;
+        }
+        html += "</div>";
+      }
+      if (availableHeroes.length === 0 && recruitedHeroes.length === 0) {
+        html += '<p class="empty-message">No heroes available. Research technologies to unlock heroes.</p>';
+      }
+      html += "</div>";
+      return html;
+    }
+    renderDefenseSection() {
+      const availableStructures = this.game.getAvailableDefenseStructures();
+      const defenseBuildings = this.game.state.military.defenseBuildings;
+      const constructionQueue = this.game.state.military.defenseConstructionQueue;
+      let html = `
+      <div class="military-section">
+        <h3>\u{1F3F0} Defense Structures</h3>
+        <p>Build fortifications to protect your civilization.</p>
+    `;
+      if (constructionQueue.length > 0) {
+        html += '<h4>Under Construction</h4><div class="military-queue">';
+        const now = Date.now();
+        for (const construction of constructionQueue) {
+          const structure = getDefenseStructureById(construction.typeId);
+          if (structure) {
+            const remaining = Math.max(0, (construction.endTime - now) / 1e3);
+            html += `
+            <div class="military-queue-item">
+              <span>${structure.icon} ${structure.name}</span>
+              <span>${remaining.toFixed(1)}s</span>
+            </div>
+          `;
+          }
+        }
+        html += "</div>";
+      }
+      if (availableStructures.length > 0) {
+        html += '<div class="defense-grid">';
+        for (const structure of availableStructures) {
+          const currentCount = defenseBuildings.find((b) => b.typeId === structure.id)?.count || 0;
+          const atMax = currentCount >= structure.maxCount;
+          const canBuild = !atMax && this.game.state.resources.food >= structure.cost.food && this.game.state.resources.wood >= structure.cost.wood && this.game.state.resources.stone >= structure.cost.stone && this.game.state.resources.gold >= structure.cost.gold;
+          html += `
+          <div class="defense-card ${canBuild ? "available" : ""} ${atMax ? "maxed" : ""}">
+            <div class="defense-header">
+              <h5>${structure.icon} ${structure.name}</h5>
+              <span class="defense-count">${currentCount}/${structure.maxCount}</span>
+            </div>
+            <p class="defense-desc">${structure.description}</p>
+            <div class="defense-bonuses">
+              <span>\u{1F6E1}\uFE0F +${structure.defenseBonus}</span>
+              <span>\u2764\uFE0F +${structure.healthBonus}</span>
+            </div>
+            <div class="defense-cost">
+              ${structure.cost.food > 0 ? `<span>\u{1F356} ${structure.cost.food}</span>` : ""}
+              ${structure.cost.wood > 0 ? `<span>\u{1FAB5} ${structure.cost.wood}</span>` : ""}
+              ${structure.cost.stone > 0 ? `<span>\u{1FAA8} ${structure.cost.stone}</span>` : ""}
+              ${structure.cost.gold > 0 ? `<span>\u{1F4B0} ${structure.cost.gold}</span>` : ""}
+            </div>
+            <p class="build-time">\u23F1\uFE0F ${structure.buildTime}s</p>
+            <button class="build-defense-btn" data-defense="${structure.id}" ${!canBuild || atMax ? "disabled" : ""}>
+              ${atMax ? "Max Built" : "Build"}
+            </button>
+          </div>
+        `;
+        }
+        html += "</div>";
+      } else {
+        html += '<p class="empty-message">No defense structures available. Research technologies to unlock.</p>';
+      }
+      html += "</div>";
+      return html;
+    }
+    renderNavalSection() {
+      const availableNaval = this.game.getAvailableNavalUnits();
+      const navy = this.game.state.military.navy;
+      const trainingQueue = this.game.state.military.navalTrainingQueue;
+      let html = `
+      <div class="military-section">
+        <h3>\u2693 Naval Forces</h3>
+        <p>Build a fleet to dominate the seas.</p>
+    `;
+      const navalPower = this.game.getNavalPower();
+      if (navy.length > 0) {
+        html += `
+        <div class="naval-summary">
+          <span>Fleet Power: \u2694\uFE0F ${navalPower.attack} | \u{1F6E1}\uFE0F ${navalPower.defense} | \u2764\uFE0F ${navalPower.health}</span>
+        </div>
+      `;
+      }
+      if (trainingQueue.length > 0) {
+        html += '<h4>Shipyard Queue</h4><div class="military-queue">';
+        const now = Date.now();
+        for (const training of trainingQueue) {
+          const unit = getNavalUnitById(training.typeId);
+          if (unit) {
+            const remaining = Math.max(0, (training.endTime - now) / 1e3);
+            html += `
+            <div class="military-queue-item">
+              <span>${unit.icon} ${unit.name}</span>
+              <span>${remaining.toFixed(1)}s</span>
+            </div>
+          `;
+          }
+        }
+        html += "</div>";
+      }
+      if (navy.length > 0) {
+        html += '<h4>Your Fleet</h4><div class="naval-grid">';
+        for (const ship of navy) {
+          const unit = getNavalUnitById(ship.typeId);
+          if (unit) {
+            html += `
+            <div class="naval-card">
+              <div class="naval-header">
+                <span class="naval-icon">${unit.icon}</span>
+                <h5>${unit.name} (\xD7${ship.count})</h5>
+              </div>
+              <div class="naval-stats">
+                <span>\u2694\uFE0F ${unit.stats.attack * ship.count}</span>
+                <span>\u{1F6E1}\uFE0F ${unit.stats.defense * ship.count}</span>
+                <span>\u2764\uFE0F ${unit.stats.health * ship.count}</span>
+              </div>
+            </div>
+          `;
+          }
+        }
+        html += "</div>";
+      }
+      if (availableNaval.length > 0) {
+        html += '<h4>Build Ships</h4><div class="naval-grid">';
+        for (const unit of availableNaval) {
+          const canTrain = this.game.state.resources.food >= unit.cost.food && this.game.state.resources.wood >= unit.cost.wood && this.game.state.resources.gold >= unit.cost.gold;
+          html += `
+          <div class="naval-card ${canTrain ? "available" : ""}">
+            <div class="naval-header">
+              <span class="naval-icon">${unit.icon}</span>
+              <h5>${unit.name}</h5>
+            </div>
+            <p class="naval-desc">${unit.description}</p>
+            <div class="naval-stats">
+              <span>\u2694\uFE0F ${unit.stats.attack}</span>
+              <span>\u{1F6E1}\uFE0F ${unit.stats.defense}</span>
+              <span>\u2764\uFE0F ${unit.stats.health}</span>
+            </div>
+            <div class="naval-cost">
+              <span>\u{1F356} ${unit.cost.food}</span>
+              <span>\u{1FAB5} ${unit.cost.wood}</span>
+              <span>\u{1F4B0} ${unit.cost.gold}</span>
+            </div>
+            <p class="train-time">\u23F1\uFE0F ${unit.trainTime}s</p>
+            <button class="train-naval-btn" data-naval="${unit.id}" ${!canTrain ? "disabled" : ""}>
+              Build
+            </button>
+          </div>
+        `;
+        }
+        html += "</div>";
+      } else {
+        html += '<p class="empty-message">No naval units available. Research technologies to unlock.</p>';
+      }
+      html += "</div>";
+      return html;
+    }
+    renderSiegeSection() {
+      const availableSiege = this.game.getAvailableSiegeWeapons();
+      const siegeWeapons = this.game.state.military.siegeWeapons;
+      const trainingQueue = this.game.state.military.siegeTrainingQueue;
+      let html = `
+      <div class="military-section">
+        <h3>\u{1F4A3} Siege Weapons</h3>
+        <p>Build siege equipment to breach enemy fortifications.</p>
+    `;
+      const siegePower = this.game.getSiegePower();
+      if (siegeWeapons.length > 0) {
+        html += `
+        <div class="siege-summary">
+          <span>Siege Power: \u2694\uFE0F ${siegePower.attack} | \u{1F4A5} +${siegePower.siegeBonus} siege bonus</span>
+        </div>
+      `;
+      }
+      if (trainingQueue.length > 0) {
+        html += '<h4>Workshop Queue</h4><div class="military-queue">';
+        const now = Date.now();
+        for (const training of trainingQueue) {
+          const weapon = getSiegeWeaponById(training.typeId);
+          if (weapon) {
+            const remaining = Math.max(0, (training.endTime - now) / 1e3);
+            html += `
+            <div class="military-queue-item">
+              <span>${weapon.icon} ${weapon.name}</span>
+              <span>${remaining.toFixed(1)}s</span>
+            </div>
+          `;
+          }
+        }
+        html += "</div>";
+      }
+      if (siegeWeapons.length > 0) {
+        html += '<h4>Your Arsenal</h4><div class="siege-grid">';
+        for (const weapon of siegeWeapons) {
+          const unit = getSiegeWeaponById(weapon.typeId);
+          if (unit) {
+            html += `
+            <div class="siege-card">
+              <div class="siege-header">
+                <span class="siege-icon">${unit.icon}</span>
+                <h5>${unit.name} (\xD7${weapon.count})</h5>
+              </div>
+              <div class="siege-stats">
+                <span>\u2694\uFE0F ${unit.stats.attack * weapon.count}</span>
+                <span>\u{1F4A5} +${unit.stats.siegeBonus * weapon.count}</span>
+              </div>
+            </div>
+          `;
+          }
+        }
+        html += "</div>";
+      }
+      if (availableSiege.length > 0) {
+        html += '<h4>Build Siege Weapons</h4><div class="siege-grid">';
+        for (const weapon of availableSiege) {
+          const canTrain = this.game.state.resources.food >= weapon.cost.food && this.game.state.resources.wood >= weapon.cost.wood && this.game.state.resources.stone >= weapon.cost.stone && this.game.state.resources.gold >= weapon.cost.gold;
+          html += `
+          <div class="siege-card ${canTrain ? "available" : ""}">
+            <div class="siege-header">
+              <span class="siege-icon">${weapon.icon}</span>
+              <h5>${weapon.name}</h5>
+            </div>
+            <p class="siege-desc">${weapon.description}</p>
+            <div class="siege-stats">
+              <span>\u2694\uFE0F ${weapon.stats.attack}</span>
+              <span>\u{1F4A5} +${weapon.stats.siegeBonus}</span>
+            </div>
+            <div class="siege-cost">
+              ${weapon.cost.food > 0 ? `<span>\u{1F356} ${weapon.cost.food}</span>` : ""}
+              ${weapon.cost.wood > 0 ? `<span>\u{1FAB5} ${weapon.cost.wood}</span>` : ""}
+              ${weapon.cost.stone > 0 ? `<span>\u{1FAA8} ${weapon.cost.stone}</span>` : ""}
+              ${weapon.cost.gold > 0 ? `<span>\u{1F4B0} ${weapon.cost.gold}</span>` : ""}
+            </div>
+            <p class="train-time">\u23F1\uFE0F ${weapon.trainTime}s</p>
+            <button class="train-siege-btn" data-siege="${weapon.id}" ${!canTrain ? "disabled" : ""}>
+              Build
+            </button>
+          </div>
+        `;
+        }
+        html += "</div>";
+      } else {
+        html += '<p class="empty-message">No siege weapons available. Research technologies to unlock.</p>';
+      }
+      html += "</div>";
+      return html;
+    }
+    renderTraditionsSection() {
+      const unlockedTraditions = this.game.getUnlockedTraditions();
+      const stats = {
+        battlesWon: this.game.state.statistics.battlesWon,
+        territoriesConquered: this.game.state.statistics.territoriesConquered || 0,
+        heroesRecruited: this.game.state.statistics.heroesRecruited || 0,
+        veteranUnits: 0
+        // Would need to track this
+      };
+      let html = `
+      <div class="military-section">
+        <h3>\u{1F396}\uFE0F Military Traditions</h3>
+        <p>Earn permanent combat bonuses through military achievements.</p>
+        <div class="traditions-grid">
+    `;
+      for (const tradition of MILITARY_TRADITIONS) {
+        const isUnlocked = unlockedTraditions.some((t) => t.id === tradition.id);
+        const canUnlock = checkTraditionUnlock(tradition, stats);
+        let reqText = "";
+        if (tradition.requirement.battlesWon)
+          reqText = `Win ${tradition.requirement.battlesWon} battles (${stats.battlesWon}/${tradition.requirement.battlesWon})`;
+        if (tradition.requirement.territoriesConquered)
+          reqText = `Conquer ${tradition.requirement.territoriesConquered} territories (${stats.territoriesConquered}/${tradition.requirement.territoriesConquered})`;
+        if (tradition.requirement.heroesRecruited)
+          reqText = `Recruit ${tradition.requirement.heroesRecruited} heroes (${stats.heroesRecruited}/${tradition.requirement.heroesRecruited})`;
+        if (tradition.requirement.veteranUnits)
+          reqText = `Have ${tradition.requirement.veteranUnits} veteran units`;
+        html += `
+        <div class="tradition-card ${isUnlocked ? "unlocked" : ""}">
+          <div class="tradition-header">
+            <span class="tradition-icon">${tradition.icon}</span>
+            <h5>${tradition.name}</h5>
+          </div>
+          <p class="tradition-desc">${tradition.description}</p>
+          <span class="tradition-bonus">${tradition.bonuses.special}</span>
+          <span class="tradition-requirement ${canUnlock ? "met" : ""}">${reqText}</span>
+          ${isUnlocked ? '<span class="badge">\u2713 Unlocked</span>' : ""}
+        </div>
+      `;
+      }
+      html += "</div></div>";
+      return html;
+    }
+    renderEspionageSection() {
+      const spies = this.game.state.military.spies;
+      const maxSpies = this.game.state.military.maxSpies;
+      const availableMissions = this.game.getAvailableSpyMissions();
+      const spyCost = 500 * (spies.length + 1);
+      const canRecruit = spies.length < maxSpies && this.game.state.resources.gold >= spyCost;
+      let html = `
+      <div class="military-section">
+        <h3>\u{1F575}\uFE0F Espionage</h3>
+        <p>Recruit spies for sabotage, theft, and intelligence gathering.</p>
+        
+        <div class="spy-overview">
+          <span>Spies: ${spies.length}/${maxSpies}</span>
+          <button class="recruit-spy-btn" id="recruit-spy-btn" ${!canRecruit ? "disabled" : ""}>
+            Recruit Spy (\u{1F4B0} ${spyCost})
+          </button>
+        </div>
+    `;
+      if (spies.length > 0) {
+        html += '<h4>Your Agents</h4><div class="spy-grid">';
+        for (const spy of spies) {
+          const isBusy = spy.currentMission !== null;
+          html += `
+          <div class="spy-card ${isBusy ? "busy" : ""}">
+            <div class="spy-header">
+              <span class="spy-name">\u{1F575}\uFE0F ${spy.name}</span>
+              <span class="spy-level">Lvl ${spy.level}</span>
+            </div>
+            <span class="spy-status ${isBusy ? "on-mission" : ""}">
+              ${isBusy ? "\u{1F504} On Mission" : "\u2713 Available"}
+            </span>
+          </div>
+        `;
+        }
+        html += "</div>";
+      }
+      if (availableMissions.length > 0 && spies.some((s) => !s.currentMission)) {
+        html += '<h4>Available Missions</h4><div class="spy-mission-grid">';
+        const availableSpy = spies.find((s) => !s.currentMission);
+        for (const mission of availableMissions) {
+          const canAfford = this.game.state.resources.gold >= mission.cost.gold;
+          html += `
+          <div class="spy-mission-card ${canAfford ? "available" : ""}">
+            <div class="mission-header">
+              <span class="mission-icon">${mission.icon}</span>
+              <h5>${mission.name}</h5>
+            </div>
+            <p class="mission-desc">${mission.description}</p>
+            <div class="mission-stats">
+              <span>\u23F1\uFE0F ${mission.duration}s</span>
+              <span>\u{1F3AF} ${Math.floor(mission.successChance * 100)}%</span>
+              <span>\u{1F4B0} ${mission.cost.gold}</span>
+            </div>
+            <button class="spy-mission-btn" 
+                    data-spy="${availableSpy?.id || ""}" 
+                    data-mission="${mission.id}"
+                    ${!canAfford || !availableSpy ? "disabled" : ""}>
+              Start Mission
+            </button>
+          </div>
+        `;
+        }
+        html += "</div>";
+      } else if (spies.length === 0) {
+        html += '<p class="empty-message">Recruit spies to start espionage missions.</p>';
+      } else if (!spies.some((s) => !s.currentMission)) {
+        html += '<p class="empty-message">All spies are currently on missions.</p>';
+      } else if (availableMissions.length === 0) {
+        html += '<p class="empty-message">No spy missions available. Research technologies to unlock.</p>';
+      }
+      html += "</div>";
+      return html;
+    }
+    updateMilitaryTab() {
+      const container = document.getElementById("military-content");
+      if (!container) {
+        this.renderMilitaryTab();
+        return;
+      }
+      const { military } = this.game.state;
+      const heroCount = military.recruitedHeroes.size;
+      const defenseCount = military.defenseBuildings.reduce((sum, b) => sum + b.count, 0);
+      const navalCount = military.navy.reduce((sum, n) => sum + n.count, 0);
+      const siegeCount = military.siegeWeapons.reduce((sum, s) => sum + s.count, 0);
+      const traditionCount = military.unlockedTraditions.size;
+      const spyCount = military.spies.length;
+      const queueLength = military.defenseConstructionQueue.length + military.navalTrainingQueue.length + military.siegeTrainingQueue.length;
+      const versionKey = `${military.selectedFormation}-${heroCount}-${defenseCount}-${navalCount}-${siegeCount}-${traditionCount}-${spyCount}-${queueLength}`;
+      const lastVersion = this.tabContentVersions.get("military");
+      if (lastVersion === void 0 || lastVersion !== versionKey) {
+        this.tabContentVersions.set("military", versionKey);
+        this.renderMilitaryTab();
+        return;
+      }
     }
   };
 

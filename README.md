@@ -73,6 +73,8 @@ This compiles the TypeScript source files and creates an updated `index.html` wi
 - **Research Tab**: Research new technologies to advance your civilization
 - **Barracks Tab**: Train military units
 - **Army Tab**: View your army's combined power
+- **Combat Tab**: Battle against enemy forces in missions or conquer territories
+- **Military Tab**: Manage formations, heroes, defenses, naval forces, siege weapons, and espionage
 
 ## Technologies
 
@@ -116,16 +118,16 @@ Here are some ideas to enhance the game:
 - **Terraforming**: Modify terrain for different building opportunities
 
 ### ⚔️ Military Enhancements
-- **Unit Upgrades**: Upgrade existing units to more powerful versions
-- **Formations/Tactics**: Different combat strategies
-- **Defense System**: Walls and defensive structures
-- **Conquests**: Capture territories for resource bonuses
-- **Heroes/Generals**: Unique commander units with special abilities
-- **Unit Experience**: Troops gain experience and become veterans
-- **Naval Combat**: Ships and sea battles
-- **Siege Weapons**: Special units for attacking fortifications
-- **Military Traditions**: Permanent bonuses from combat experience
-- **Espionage**: Spy units for sabotage and intelligence gathering
+- **Unit Upgrades**: Upgrade existing units to more powerful versions ✅ (Implemented!)
+- **Formations/Tactics**: Different combat strategies ✅ (Implemented!)
+- **Defense System**: Walls and defensive structures ✅ (Implemented!)
+- **Conquests**: Capture territories for resource bonuses ✅ (Implemented!)
+- **Heroes/Generals**: Unique commander units with special abilities ✅ (Implemented!)
+- **Unit Experience**: Troops gain experience and become veterans ✅ (Implemented!)
+- **Naval Combat**: Ships and sea battles ✅ (Implemented!)
+- **Siege Weapons**: Special units for attacking fortifications ✅ (Implemented!)
+- **Military Traditions**: Permanent bonuses from combat experience ✅ (Implemented!)
+- **Espionage**: Spy units for sabotage and intelligence gathering ✅ (Implemented!)
 
 ### 📊 Economy & Trade
 - **Trading System**: Trade resources with AI merchants

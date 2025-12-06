@@ -1,5 +1,5 @@
 // UI management for the game
-import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES, CIVILIZATIONS, LEADERS, NATURAL_WONDERS, RELIGION_TEMPLATES, CULTURAL_POLICIES, Mission, ActiveBattle, Achievement, BuildingType, Territory, Civilization, Leader, NaturalWonder, Religion, CulturalPolicy } from './game.js';
+import { Game, ERAS, TECHNOLOGIES, TROOP_TYPES, ACHIEVEMENTS, BUILDING_TYPES, CIVILIZATIONS, LEADERS, NATURAL_WONDERS, RELIGION_TEMPLATES, CULTURAL_POLICIES, UNIT_UPGRADES, FORMATIONS, DEFENSE_STRUCTURES, HEROES, NAVAL_UNITS, SIEGE_WEAPONS, MILITARY_TRADITIONS, SPY_MISSIONS, Mission, ActiveBattle, Achievement, BuildingType, Territory, Civilization, Leader, NaturalWonder, Religion, CulturalPolicy, UnitUpgrade, Formation, DefenseStructure, Hero, NavalUnit, SiegeWeapon, MilitaryTradition, SpyMission, Spy } from './game.js';
 import { getEraById } from './eras.js';
 import { getTechById } from './research.js';
 import { getTroopTypeById, calculateArmyPower } from './barracks.js';
@@ -8,6 +8,7 @@ import { getAchievementsByCategory } from './achievements.js';
 import { getBuildingTypeById, calculateBuildingProduction } from './buildings.js';
 import { SKILLS, LEGACY_MILESTONES, getSkillById, getSkillsByCategory, canUnlockSkill, getSkillLevel, getSkillCost, getSkillEffect, calculateSkillBonuses, Skill } from './skills.js';
 import { getCivilizationById, getLeaderById, getNaturalWonderById, getPolicyById, canAdoptPolicy } from './lore.js';
+import { getFormationById, getDefenseStructureById, getHeroById, getNavalUnitById, getSiegeWeaponById, getTraditionById, getSpyMissionById, checkTraditionUnlock, canUpgradeUnit, getUpgradeById } from './military.js';
 
 // UI timing constants
 const RENDER_DEBOUNCE_MS = 100;
@@ -259,6 +260,89 @@ export class GameUI {
         }
       }
     });
+
+    // Military tab - all military-related interactions
+    document.getElementById('military-content')?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      
+      // Formation selection
+      if (target.classList.contains('formation-card') && !target.classList.contains('locked')) {
+        const formationId = target.dataset.formation;
+        if (formationId) {
+          this.startInteraction();
+          this.game.setFormation(formationId);
+        }
+      }
+      
+      // Hero recruitment
+      if (target.classList.contains('hero-btn') && !target.hasAttribute('disabled')) {
+        const heroId = target.dataset.hero;
+        if (heroId) {
+          this.startInteraction();
+          if (target.classList.contains('recruit')) {
+            this.game.recruitHero(heroId);
+          } else if (target.classList.contains('set-active')) {
+            this.game.setActiveHero(heroId);
+          }
+        }
+      }
+      
+      // Defense building
+      if (target.classList.contains('build-defense-btn') && !target.hasAttribute('disabled')) {
+        const structureId = target.dataset.defense;
+        if (structureId) {
+          this.startInteraction();
+          this.game.buildDefenseStructure(structureId);
+        }
+      }
+      
+      // Naval unit training
+      if (target.classList.contains('train-naval-btn') && !target.hasAttribute('disabled')) {
+        const unitId = target.dataset.naval;
+        if (unitId) {
+          this.startInteraction();
+          this.game.trainNavalUnit(unitId);
+        }
+      }
+      
+      // Siege weapon training
+      if (target.classList.contains('train-siege-btn') && !target.hasAttribute('disabled')) {
+        const weaponId = target.dataset.siege;
+        if (weaponId) {
+          this.startInteraction();
+          this.game.trainSiegeWeapon(weaponId);
+        }
+      }
+      
+      // Unit upgrade
+      if (target.classList.contains('upgrade-btn') && !target.hasAttribute('disabled')) {
+        const upgradeId = target.dataset.upgrade;
+        if (upgradeId) {
+          this.startInteraction();
+          this.game.upgradeUnit(upgradeId);
+        }
+      }
+      
+      // Spy recruitment
+      if (target.id === 'recruit-spy-btn' && !target.hasAttribute('disabled')) {
+        this.startInteraction();
+        if (this.game.recruitSpy()) {
+          this.showNotification('New spy recruited!');
+        }
+      }
+      
+      // Spy mission start
+      if (target.classList.contains('spy-mission-btn') && !target.hasAttribute('disabled')) {
+        const spyId = target.dataset.spy;
+        const missionId = target.dataset.mission;
+        if (spyId && missionId) {
+          this.startInteraction();
+          if (this.game.startSpyMission(spyId, missionId)) {
+            this.showNotification('Spy mission started!');
+          }
+        }
+      }
+    });
   }
 
   private switchTab(tab: string): void {
@@ -352,6 +436,13 @@ export class GameUI {
           this.renderWorldTab();
         } else {
           this.updateWorldTab();
+        }
+        break;
+      case 'military':
+        if (tabChanged) {
+          this.renderMilitaryTab();
+        } else {
+          this.updateMilitaryTab();
         }
         break;
     }
@@ -2613,5 +2704,722 @@ export class GameUI {
         btn.disabled = !canAdopt;
       }
     });
+  }
+
+  // ===== Military Tab =====
+  
+  private renderMilitaryTab(): void {
+    const container = document.getElementById('military-content');
+    if (!container) return;
+
+    let html = '';
+
+    // Military Overview
+    html += this.renderMilitaryOverview();
+    
+    // Formations Section
+    html += this.renderFormationsSection();
+    
+    // Unit Upgrades Section
+    html += this.renderUnitUpgradesSection();
+    
+    // Heroes Section
+    html += this.renderHeroesSection();
+    
+    // Defense Section
+    html += this.renderDefenseSection();
+    
+    // Naval Forces Section
+    html += this.renderNavalSection();
+    
+    // Siege Weapons Section
+    html += this.renderSiegeSection();
+    
+    // Military Traditions Section
+    html += this.renderTraditionsSection();
+    
+    // Espionage Section
+    html += this.renderEspionageSection();
+
+    container.innerHTML = html;
+  }
+
+  private renderMilitaryOverview(): string {
+    const totalPower = this.game.getTotalMilitaryPower();
+    const formation = this.game.getCurrentFormation();
+    const activeHero = this.game.getActiveHero();
+    const traditionBonuses = this.game.getTraditionBonuses();
+    const defenseBonuses = this.game.getDefenseBonuses();
+    const navalPower = this.game.getNavalPower();
+    const siegePower = this.game.getSiegePower();
+
+    return `
+      <div class="military-section">
+        <h3>📊 Military Overview</h3>
+        <div class="military-overview">
+          <div class="military-stat">
+            <span class="military-stat-icon">⚔️</span>
+            <span class="military-stat-value">${totalPower.attack}</span>
+            <span class="military-stat-label">Total Attack</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">🛡️</span>
+            <span class="military-stat-value">${totalPower.defense}</span>
+            <span class="military-stat-label">Total Defense</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">❤️</span>
+            <span class="military-stat-value">${totalPower.health}</span>
+            <span class="military-stat-label">Total Health</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">${formation?.icon || '⚔️'}</span>
+            <span class="military-stat-value">${formation?.name || 'Standard'}</span>
+            <span class="military-stat-label">Formation</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">${activeHero?.icon || '❌'}</span>
+            <span class="military-stat-value">${activeHero?.name || 'None'}</span>
+            <span class="military-stat-label">Active Hero</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">🏰</span>
+            <span class="military-stat-value">+${defenseBonuses.defense}</span>
+            <span class="military-stat-label">Defense Bonus</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">⚓</span>
+            <span class="military-stat-value">${navalPower.attack}</span>
+            <span class="military-stat-label">Naval Power</span>
+          </div>
+          <div class="military-stat">
+            <span class="military-stat-icon">💣</span>
+            <span class="military-stat-value">${siegePower.siegeBonus}</span>
+            <span class="military-stat-label">Siege Bonus</span>
+          </div>
+        </div>
+        ${traditionBonuses.attackMultiplier > 1 || traditionBonuses.defenseMultiplier > 1 ? `
+          <div class="tradition-bonuses-summary">
+            <h4>Tradition Bonuses Active:</h4>
+            <span>
+              ${traditionBonuses.attackMultiplier > 1 ? `⚔️ ×${traditionBonuses.attackMultiplier.toFixed(2)}` : ''}
+              ${traditionBonuses.defenseMultiplier > 1 ? `🛡️ ×${traditionBonuses.defenseMultiplier.toFixed(2)}` : ''}
+              ${traditionBonuses.healthMultiplier > 1 ? `❤️ ×${traditionBonuses.healthMultiplier.toFixed(2)}` : ''}
+              ${traditionBonuses.casualtyReduction > 0 ? `🎖️ -${(traditionBonuses.casualtyReduction * 100).toFixed(0)}% casualties` : ''}
+            </span>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  private renderFormationsSection(): string {
+    const availableFormations = this.game.getAvailableFormations();
+    const currentFormation = this.game.state.military.selectedFormation;
+
+    let html = `
+      <div class="military-section">
+        <h3>⚔️ Combat Formations</h3>
+        <p>Choose a formation to modify your army's combat effectiveness.</p>
+        <div class="formation-grid">
+    `;
+
+    for (const formation of availableFormations) {
+      const isActive = formation.id === currentFormation;
+      
+      html += `
+        <div class="formation-card ${isActive ? 'active' : ''}" data-formation="${formation.id}">
+          <div class="formation-header">
+            <span class="formation-icon">${formation.icon}</span>
+            <span class="formation-name">${formation.name}</span>
+          </div>
+          <p class="formation-desc">${formation.description}</p>
+          <div class="formation-stats">
+            <span class="formation-stat ${formation.attackModifier >= 1 ? 'positive' : 'negative'}">
+              ⚔️ ${formation.attackModifier >= 1 ? '+' : ''}${((formation.attackModifier - 1) * 100).toFixed(0)}%
+            </span>
+            <span class="formation-stat ${formation.defenseModifier >= 1 ? 'positive' : 'negative'}">
+              🛡️ ${formation.defenseModifier >= 1 ? '+' : ''}${((formation.defenseModifier - 1) * 100).toFixed(0)}%
+            </span>
+            <span class="formation-stat ${formation.healthModifier >= 1 ? 'positive' : 'negative'}">
+              ❤️ ${formation.healthModifier >= 1 ? '+' : ''}${((formation.healthModifier - 1) * 100).toFixed(0)}%
+            </span>
+          </div>
+          ${formation.specialEffect ? `<span class="formation-special">✨ ${formation.specialEffect}</span>` : ''}
+          ${isActive ? '<span class="badge">✓ Active</span>' : ''}
+        </div>
+      `;
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  private renderUnitUpgradesSection(): string {
+    const availableUpgrades = this.game.getAvailableUnitUpgrades();
+    
+    let html = `
+      <div class="military-section">
+        <h3>⬆️ Unit Upgrades</h3>
+        <p>Upgrade your existing units to more powerful versions.</p>
+    `;
+
+    if (availableUpgrades.length === 0) {
+      html += '<p class="empty-message">No unit upgrades available. Train units and research technologies to unlock upgrades.</p>';
+    } else {
+      html += '<div class="upgrade-grid">';
+      for (const upgrade of availableUpgrades) {
+        html += `
+          <div class="upgrade-card available">
+            <h5>${upgrade.name}</h5>
+            <p class="upgrade-desc">${upgrade.description}</p>
+            <div class="upgrade-arrow">
+              <span class="upgrade-from">${this.getTroopName(upgrade.fromUnit)}</span>
+              <span>→</span>
+              <span class="upgrade-to">${this.getTroopName(upgrade.toUnit)}</span>
+            </div>
+            <div class="upgrade-cost">
+              <span>🍖 ${upgrade.cost.food}</span>
+              <span>💰 ${upgrade.cost.gold}</span>
+              <span>🔬 ${upgrade.cost.science}</span>
+            </div>
+            <button class="upgrade-btn" data-upgrade="${upgrade.id}">Upgrade</button>
+          </div>
+        `;
+      }
+      html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  private getTroopName(troopId: string): string {
+    const troop = getTroopTypeById(troopId);
+    return troop ? troop.name : troopId;
+  }
+
+  private renderHeroesSection(): string {
+    const availableHeroes = this.game.getAvailableHeroes();
+    const recruitedHeroes = this.game.getRecruitedHeroes();
+    const activeHeroId = this.game.state.military.activeHero;
+
+    let html = `
+      <div class="military-section">
+        <h3>👑 Heroes & Generals</h3>
+        <p>Recruit legendary commanders to lead your armies.</p>
+    `;
+
+    // Recruited Heroes
+    if (recruitedHeroes.length > 0) {
+      html += '<h4>Your Heroes</h4><div class="hero-grid">';
+      for (const hero of recruitedHeroes) {
+        const isActive = hero.id === activeHeroId;
+        html += `
+          <div class="hero-card recruited ${isActive ? 'active' : ''}">
+            <div class="hero-header">
+              <span class="hero-icon">${hero.icon}</span>
+              <div class="hero-info">
+                <h5>${hero.name}</h5>
+                <span class="hero-title">${hero.title}</span>
+              </div>
+            </div>
+            <p class="hero-desc">${hero.description}</p>
+            <div class="hero-bonuses">
+              <span class="hero-bonus">⚔️ +${hero.bonuses.attackBonus}</span>
+              <span class="hero-bonus">🛡️ +${hero.bonuses.defenseBonus}</span>
+              <span class="hero-bonus">❤️ +${hero.bonuses.healthBonus}</span>
+            </div>
+            <span class="hero-ability">✨ ${hero.bonuses.specialAbility}</span>
+            <button class="hero-btn set-active" data-hero="${hero.id}" ${isActive ? 'disabled' : ''}>
+              ${isActive ? '✓ Active' : 'Set Active'}
+            </button>
+          </div>
+        `;
+      }
+      html += '</div>';
+    }
+
+    // Available Heroes to Recruit
+    if (availableHeroes.length > 0) {
+      html += '<h4>Available Heroes</h4><div class="hero-grid">';
+      for (const hero of availableHeroes) {
+        const canAfford = this.game.state.resources.gold >= hero.cost.gold && 
+                          this.game.state.resources.science >= hero.cost.science;
+        html += `
+          <div class="hero-card ${canAfford ? 'available' : ''}">
+            <div class="hero-header">
+              <span class="hero-icon">${hero.icon}</span>
+              <div class="hero-info">
+                <h5>${hero.name}</h5>
+                <span class="hero-title">${hero.title}</span>
+              </div>
+            </div>
+            <p class="hero-desc">${hero.description}</p>
+            <div class="hero-bonuses">
+              <span class="hero-bonus">⚔️ +${hero.bonuses.attackBonus}</span>
+              <span class="hero-bonus">🛡️ +${hero.bonuses.defenseBonus}</span>
+              <span class="hero-bonus">❤️ +${hero.bonuses.healthBonus}</span>
+            </div>
+            <span class="hero-ability">✨ ${hero.bonuses.specialAbility}</span>
+            <div class="hero-cost">
+              <span>💰 ${hero.cost.gold}</span>
+              <span>🔬 ${hero.cost.science}</span>
+            </div>
+            <button class="hero-btn recruit" data-hero="${hero.id}" ${!canAfford ? 'disabled' : ''}>
+              Recruit
+            </button>
+          </div>
+        `;
+      }
+      html += '</div>';
+    }
+
+    if (availableHeroes.length === 0 && recruitedHeroes.length === 0) {
+      html += '<p class="empty-message">No heroes available. Research technologies to unlock heroes.</p>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  private renderDefenseSection(): string {
+    const availableStructures = this.game.getAvailableDefenseStructures();
+    const defenseBuildings = this.game.state.military.defenseBuildings;
+    const constructionQueue = this.game.state.military.defenseConstructionQueue;
+
+    let html = `
+      <div class="military-section">
+        <h3>🏰 Defense Structures</h3>
+        <p>Build fortifications to protect your civilization.</p>
+    `;
+
+    // Construction queue
+    if (constructionQueue.length > 0) {
+      html += '<h4>Under Construction</h4><div class="military-queue">';
+      const now = Date.now();
+      for (const construction of constructionQueue) {
+        const structure = getDefenseStructureById(construction.typeId);
+        if (structure) {
+          const remaining = Math.max(0, (construction.endTime - now) / 1000);
+          html += `
+            <div class="military-queue-item">
+              <span>${structure.icon} ${structure.name}</span>
+              <span>${remaining.toFixed(1)}s</span>
+            </div>
+          `;
+        }
+      }
+      html += '</div>';
+    }
+
+    // Available structures
+    if (availableStructures.length > 0) {
+      html += '<div class="defense-grid">';
+      for (const structure of availableStructures) {
+        const currentCount = defenseBuildings.find(b => b.typeId === structure.id)?.count || 0;
+        const atMax = currentCount >= structure.maxCount;
+        const canBuild = !atMax && 
+          this.game.state.resources.food >= structure.cost.food &&
+          this.game.state.resources.wood >= structure.cost.wood &&
+          this.game.state.resources.stone >= structure.cost.stone &&
+          this.game.state.resources.gold >= structure.cost.gold;
+
+        html += `
+          <div class="defense-card ${canBuild ? 'available' : ''} ${atMax ? 'maxed' : ''}">
+            <div class="defense-header">
+              <h5>${structure.icon} ${structure.name}</h5>
+              <span class="defense-count">${currentCount}/${structure.maxCount}</span>
+            </div>
+            <p class="defense-desc">${structure.description}</p>
+            <div class="defense-bonuses">
+              <span>🛡️ +${structure.defenseBonus}</span>
+              <span>❤️ +${structure.healthBonus}</span>
+            </div>
+            <div class="defense-cost">
+              ${structure.cost.food > 0 ? `<span>🍖 ${structure.cost.food}</span>` : ''}
+              ${structure.cost.wood > 0 ? `<span>🪵 ${structure.cost.wood}</span>` : ''}
+              ${structure.cost.stone > 0 ? `<span>🪨 ${structure.cost.stone}</span>` : ''}
+              ${structure.cost.gold > 0 ? `<span>💰 ${structure.cost.gold}</span>` : ''}
+            </div>
+            <p class="build-time">⏱️ ${structure.buildTime}s</p>
+            <button class="build-defense-btn" data-defense="${structure.id}" ${!canBuild || atMax ? 'disabled' : ''}>
+              ${atMax ? 'Max Built' : 'Build'}
+            </button>
+          </div>
+        `;
+      }
+      html += '</div>';
+    } else {
+      html += '<p class="empty-message">No defense structures available. Research technologies to unlock.</p>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  private renderNavalSection(): string {
+    const availableNaval = this.game.getAvailableNavalUnits();
+    const navy = this.game.state.military.navy;
+    const trainingQueue = this.game.state.military.navalTrainingQueue;
+
+    let html = `
+      <div class="military-section">
+        <h3>⚓ Naval Forces</h3>
+        <p>Build a fleet to dominate the seas.</p>
+    `;
+
+    // Naval Power Summary
+    const navalPower = this.game.getNavalPower();
+    if (navy.length > 0) {
+      html += `
+        <div class="naval-summary">
+          <span>Fleet Power: ⚔️ ${navalPower.attack} | 🛡️ ${navalPower.defense} | ❤️ ${navalPower.health}</span>
+        </div>
+      `;
+    }
+
+    // Training queue
+    if (trainingQueue.length > 0) {
+      html += '<h4>Shipyard Queue</h4><div class="military-queue">';
+      const now = Date.now();
+      for (const training of trainingQueue) {
+        const unit = getNavalUnitById(training.typeId);
+        if (unit) {
+          const remaining = Math.max(0, (training.endTime - now) / 1000);
+          html += `
+            <div class="military-queue-item">
+              <span>${unit.icon} ${unit.name}</span>
+              <span>${remaining.toFixed(1)}s</span>
+            </div>
+          `;
+        }
+      }
+      html += '</div>';
+    }
+
+    // Current Navy
+    if (navy.length > 0) {
+      html += '<h4>Your Fleet</h4><div class="naval-grid">';
+      for (const ship of navy) {
+        const unit = getNavalUnitById(ship.typeId);
+        if (unit) {
+          html += `
+            <div class="naval-card">
+              <div class="naval-header">
+                <span class="naval-icon">${unit.icon}</span>
+                <h5>${unit.name} (×${ship.count})</h5>
+              </div>
+              <div class="naval-stats">
+                <span>⚔️ ${unit.stats.attack * ship.count}</span>
+                <span>🛡️ ${unit.stats.defense * ship.count}</span>
+                <span>❤️ ${unit.stats.health * ship.count}</span>
+              </div>
+            </div>
+          `;
+        }
+      }
+      html += '</div>';
+    }
+
+    // Available Ships to Build
+    if (availableNaval.length > 0) {
+      html += '<h4>Build Ships</h4><div class="naval-grid">';
+      for (const unit of availableNaval) {
+        const canTrain = this.game.state.resources.food >= unit.cost.food &&
+                         this.game.state.resources.wood >= unit.cost.wood &&
+                         this.game.state.resources.gold >= unit.cost.gold;
+
+        html += `
+          <div class="naval-card ${canTrain ? 'available' : ''}">
+            <div class="naval-header">
+              <span class="naval-icon">${unit.icon}</span>
+              <h5>${unit.name}</h5>
+            </div>
+            <p class="naval-desc">${unit.description}</p>
+            <div class="naval-stats">
+              <span>⚔️ ${unit.stats.attack}</span>
+              <span>🛡️ ${unit.stats.defense}</span>
+              <span>❤️ ${unit.stats.health}</span>
+            </div>
+            <div class="naval-cost">
+              <span>🍖 ${unit.cost.food}</span>
+              <span>🪵 ${unit.cost.wood}</span>
+              <span>💰 ${unit.cost.gold}</span>
+            </div>
+            <p class="train-time">⏱️ ${unit.trainTime}s</p>
+            <button class="train-naval-btn" data-naval="${unit.id}" ${!canTrain ? 'disabled' : ''}>
+              Build
+            </button>
+          </div>
+        `;
+      }
+      html += '</div>';
+    } else {
+      html += '<p class="empty-message">No naval units available. Research technologies to unlock.</p>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  private renderSiegeSection(): string {
+    const availableSiege = this.game.getAvailableSiegeWeapons();
+    const siegeWeapons = this.game.state.military.siegeWeapons;
+    const trainingQueue = this.game.state.military.siegeTrainingQueue;
+
+    let html = `
+      <div class="military-section">
+        <h3>💣 Siege Weapons</h3>
+        <p>Build siege equipment to breach enemy fortifications.</p>
+    `;
+
+    // Siege Power Summary
+    const siegePower = this.game.getSiegePower();
+    if (siegeWeapons.length > 0) {
+      html += `
+        <div class="siege-summary">
+          <span>Siege Power: ⚔️ ${siegePower.attack} | 💥 +${siegePower.siegeBonus} siege bonus</span>
+        </div>
+      `;
+    }
+
+    // Training queue
+    if (trainingQueue.length > 0) {
+      html += '<h4>Workshop Queue</h4><div class="military-queue">';
+      const now = Date.now();
+      for (const training of trainingQueue) {
+        const weapon = getSiegeWeaponById(training.typeId);
+        if (weapon) {
+          const remaining = Math.max(0, (training.endTime - now) / 1000);
+          html += `
+            <div class="military-queue-item">
+              <span>${weapon.icon} ${weapon.name}</span>
+              <span>${remaining.toFixed(1)}s</span>
+            </div>
+          `;
+        }
+      }
+      html += '</div>';
+    }
+
+    // Current Siege Weapons
+    if (siegeWeapons.length > 0) {
+      html += '<h4>Your Arsenal</h4><div class="siege-grid">';
+      for (const weapon of siegeWeapons) {
+        const unit = getSiegeWeaponById(weapon.typeId);
+        if (unit) {
+          html += `
+            <div class="siege-card">
+              <div class="siege-header">
+                <span class="siege-icon">${unit.icon}</span>
+                <h5>${unit.name} (×${weapon.count})</h5>
+              </div>
+              <div class="siege-stats">
+                <span>⚔️ ${unit.stats.attack * weapon.count}</span>
+                <span>💥 +${unit.stats.siegeBonus * weapon.count}</span>
+              </div>
+            </div>
+          `;
+        }
+      }
+      html += '</div>';
+    }
+
+    // Available Siege Weapons to Build
+    if (availableSiege.length > 0) {
+      html += '<h4>Build Siege Weapons</h4><div class="siege-grid">';
+      for (const weapon of availableSiege) {
+        const canTrain = this.game.state.resources.food >= weapon.cost.food &&
+                         this.game.state.resources.wood >= weapon.cost.wood &&
+                         this.game.state.resources.stone >= weapon.cost.stone &&
+                         this.game.state.resources.gold >= weapon.cost.gold;
+
+        html += `
+          <div class="siege-card ${canTrain ? 'available' : ''}">
+            <div class="siege-header">
+              <span class="siege-icon">${weapon.icon}</span>
+              <h5>${weapon.name}</h5>
+            </div>
+            <p class="siege-desc">${weapon.description}</p>
+            <div class="siege-stats">
+              <span>⚔️ ${weapon.stats.attack}</span>
+              <span>💥 +${weapon.stats.siegeBonus}</span>
+            </div>
+            <div class="siege-cost">
+              ${weapon.cost.food > 0 ? `<span>🍖 ${weapon.cost.food}</span>` : ''}
+              ${weapon.cost.wood > 0 ? `<span>🪵 ${weapon.cost.wood}</span>` : ''}
+              ${weapon.cost.stone > 0 ? `<span>🪨 ${weapon.cost.stone}</span>` : ''}
+              ${weapon.cost.gold > 0 ? `<span>💰 ${weapon.cost.gold}</span>` : ''}
+            </div>
+            <p class="train-time">⏱️ ${weapon.trainTime}s</p>
+            <button class="train-siege-btn" data-siege="${weapon.id}" ${!canTrain ? 'disabled' : ''}>
+              Build
+            </button>
+          </div>
+        `;
+      }
+      html += '</div>';
+    } else {
+      html += '<p class="empty-message">No siege weapons available. Research technologies to unlock.</p>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  private renderTraditionsSection(): string {
+    const unlockedTraditions = this.game.getUnlockedTraditions();
+    const stats = {
+      battlesWon: this.game.state.statistics.battlesWon,
+      territoriesConquered: this.game.state.statistics.territoriesConquered || 0,
+      heroesRecruited: this.game.state.statistics.heroesRecruited || 0,
+      veteranUnits: 0, // Would need to track this
+    };
+
+    let html = `
+      <div class="military-section">
+        <h3>🎖️ Military Traditions</h3>
+        <p>Earn permanent combat bonuses through military achievements.</p>
+        <div class="traditions-grid">
+    `;
+
+    for (const tradition of MILITARY_TRADITIONS) {
+      const isUnlocked = unlockedTraditions.some(t => t.id === tradition.id);
+      const canUnlock = checkTraditionUnlock(tradition, stats);
+      
+      // Build requirement text
+      let reqText = '';
+      if (tradition.requirement.battlesWon) reqText = `Win ${tradition.requirement.battlesWon} battles (${stats.battlesWon}/${tradition.requirement.battlesWon})`;
+      if (tradition.requirement.territoriesConquered) reqText = `Conquer ${tradition.requirement.territoriesConquered} territories (${stats.territoriesConquered}/${tradition.requirement.territoriesConquered})`;
+      if (tradition.requirement.heroesRecruited) reqText = `Recruit ${tradition.requirement.heroesRecruited} heroes (${stats.heroesRecruited}/${tradition.requirement.heroesRecruited})`;
+      if (tradition.requirement.veteranUnits) reqText = `Have ${tradition.requirement.veteranUnits} veteran units`;
+
+      html += `
+        <div class="tradition-card ${isUnlocked ? 'unlocked' : ''}">
+          <div class="tradition-header">
+            <span class="tradition-icon">${tradition.icon}</span>
+            <h5>${tradition.name}</h5>
+          </div>
+          <p class="tradition-desc">${tradition.description}</p>
+          <span class="tradition-bonus">${tradition.bonuses.special}</span>
+          <span class="tradition-requirement ${canUnlock ? 'met' : ''}">${reqText}</span>
+          ${isUnlocked ? '<span class="badge">✓ Unlocked</span>' : ''}
+        </div>
+      `;
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  private renderEspionageSection(): string {
+    const spies = this.game.state.military.spies;
+    const maxSpies = this.game.state.military.maxSpies;
+    const availableMissions = this.game.getAvailableSpyMissions();
+    const spyCost = 500 * (spies.length + 1);
+    const canRecruit = spies.length < maxSpies && this.game.state.resources.gold >= spyCost;
+
+    let html = `
+      <div class="military-section">
+        <h3>🕵️ Espionage</h3>
+        <p>Recruit spies for sabotage, theft, and intelligence gathering.</p>
+        
+        <div class="spy-overview">
+          <span>Spies: ${spies.length}/${maxSpies}</span>
+          <button class="recruit-spy-btn" id="recruit-spy-btn" ${!canRecruit ? 'disabled' : ''}>
+            Recruit Spy (💰 ${spyCost})
+          </button>
+        </div>
+    `;
+
+    // Current Spies
+    if (spies.length > 0) {
+      html += '<h4>Your Agents</h4><div class="spy-grid">';
+      for (const spy of spies) {
+        const isBusy = spy.currentMission !== null;
+        html += `
+          <div class="spy-card ${isBusy ? 'busy' : ''}">
+            <div class="spy-header">
+              <span class="spy-name">🕵️ ${spy.name}</span>
+              <span class="spy-level">Lvl ${spy.level}</span>
+            </div>
+            <span class="spy-status ${isBusy ? 'on-mission' : ''}">
+              ${isBusy ? '🔄 On Mission' : '✓ Available'}
+            </span>
+          </div>
+        `;
+      }
+      html += '</div>';
+    }
+
+    // Available Missions
+    if (availableMissions.length > 0 && spies.some(s => !s.currentMission)) {
+      html += '<h4>Available Missions</h4><div class="spy-mission-grid">';
+      const availableSpy = spies.find(s => !s.currentMission);
+      
+      for (const mission of availableMissions) {
+        const canAfford = this.game.state.resources.gold >= mission.cost.gold;
+        html += `
+          <div class="spy-mission-card ${canAfford ? 'available' : ''}">
+            <div class="mission-header">
+              <span class="mission-icon">${mission.icon}</span>
+              <h5>${mission.name}</h5>
+            </div>
+            <p class="mission-desc">${mission.description}</p>
+            <div class="mission-stats">
+              <span>⏱️ ${mission.duration}s</span>
+              <span>🎯 ${Math.floor(mission.successChance * 100)}%</span>
+              <span>💰 ${mission.cost.gold}</span>
+            </div>
+            <button class="spy-mission-btn" 
+                    data-spy="${availableSpy?.id || ''}" 
+                    data-mission="${mission.id}"
+                    ${!canAfford || !availableSpy ? 'disabled' : ''}>
+              Start Mission
+            </button>
+          </div>
+        `;
+      }
+      html += '</div>';
+    } else if (spies.length === 0) {
+      html += '<p class="empty-message">Recruit spies to start espionage missions.</p>';
+    } else if (!spies.some(s => !s.currentMission)) {
+      html += '<p class="empty-message">All spies are currently on missions.</p>';
+    } else if (availableMissions.length === 0) {
+      html += '<p class="empty-message">No spy missions available. Research technologies to unlock.</p>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  private updateMilitaryTab(): void {
+    const container = document.getElementById('military-content');
+    if (!container) {
+      this.renderMilitaryTab();
+      return;
+    }
+
+    // Check if military state changed significantly
+    const { military } = this.game.state;
+    const heroCount = military.recruitedHeroes.size;
+    const defenseCount = military.defenseBuildings.reduce((sum, b) => sum + b.count, 0);
+    const navalCount = military.navy.reduce((sum, n) => sum + n.count, 0);
+    const siegeCount = military.siegeWeapons.reduce((sum, s) => sum + s.count, 0);
+    const traditionCount = military.unlockedTraditions.size;
+    const spyCount = military.spies.length;
+    const queueLength = military.defenseConstructionQueue.length + military.navalTrainingQueue.length + military.siegeTrainingQueue.length;
+
+    const versionKey = `${military.selectedFormation}-${heroCount}-${defenseCount}-${navalCount}-${siegeCount}-${traditionCount}-${spyCount}-${queueLength}`;
+    const lastVersion = this.tabContentVersions.get('military');
+
+    if (lastVersion === undefined || lastVersion !== versionKey) {
+      this.tabContentVersions.set('military', versionKey);
+      this.renderMilitaryTab();
+      return;
+    }
+
+    // Minor updates (e.g., button states) would go here
   }
 }

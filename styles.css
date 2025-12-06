@@ -2271,3 +2271,695 @@ body {
     min-width: auto;
   }
 }
+
+/* ===== Military Tab Styles ===== */
+.military-content {
+  padding: 10px 0;
+}
+
+.military-section {
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.military-section h3 {
+  color: var(--accent-gold);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.military-section h4 {
+  color: var(--accent-secondary);
+  margin: 15px 0 10px 0;
+}
+
+/* Military Overview Panel */
+.military-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.military-stat {
+  background: var(--bg-secondary);
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.military-stat-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.military-stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--accent-gold);
+}
+
+.military-stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Formation Grid */
+.formation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.formation-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.formation-card:hover {
+  border-color: var(--accent-secondary);
+}
+
+.formation-card.active {
+  border-color: var(--accent-gold);
+  background: rgba(255, 217, 61, 0.1);
+}
+
+.formation-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.formation-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.formation-icon {
+  font-size: 1.5rem;
+}
+
+.formation-name {
+  font-weight: bold;
+}
+
+.formation-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.formation-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+.formation-stat {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+}
+
+.formation-stat.positive {
+  color: var(--success);
+}
+
+.formation-stat.negative {
+  color: var(--danger);
+}
+
+.formation-special {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+}
+
+/* Hero Grid */
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.hero-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.hero-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.hero-card.recruited {
+  border-color: var(--success);
+  background: rgba(107, 203, 119, 0.1);
+}
+
+.hero-card.active {
+  border-color: var(--accent-gold);
+  background: rgba(255, 217, 61, 0.15);
+}
+
+.hero-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.hero-icon {
+  font-size: 2rem;
+}
+
+.hero-info h5 {
+  margin: 0;
+  color: var(--accent-gold);
+}
+
+.hero-title {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.hero-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.hero-bonuses {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.hero-bonus {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--success);
+}
+
+.hero-ability {
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+  margin-bottom: 10px;
+}
+
+.hero-cost {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.hero-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-btn:hover:not(:disabled) {
+  background: var(--success);
+}
+
+.hero-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hero-btn.set-active {
+  background: var(--accent-gold);
+}
+
+/* Defense Grid */
+.defense-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.defense-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.defense-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.defense-card.maxed {
+  border-color: var(--success);
+  opacity: 0.7;
+}
+
+.defense-card.locked {
+  opacity: 0.5;
+}
+
+.defense-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.defense-header h5 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.defense-count {
+  font-size: 0.9rem;
+  color: var(--accent-gold);
+}
+
+.defense-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.defense-bonuses {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.defense-cost {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.build-defense-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.build-defense-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.build-defense-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Naval and Siege Grid */
+.naval-grid, .siege-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.naval-card, .siege-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.naval-card.available, .siege-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.naval-header, .siege-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.naval-icon, .siege-icon {
+  font-size: 1.5rem;
+}
+
+.naval-desc, .siege-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.naval-stats, .siege-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.naval-cost, .siege-cost {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.train-naval-btn, .train-siege-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.train-naval-btn:hover:not(:disabled), .train-siege-btn:hover:not(:disabled) {
+  background: var(--success);
+}
+
+.train-naval-btn:disabled, .train-siege-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Unit Upgrade Grid */
+.upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.upgrade-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.upgrade-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.upgrade-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.upgrade-from, .upgrade-to {
+  padding: 8px 15px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.upgrade-cost {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.upgrade-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent-gold);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upgrade-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.upgrade-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Traditions Grid */
+.traditions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.tradition-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.tradition-card.unlocked {
+  border-color: var(--accent-gold);
+  background: rgba(255, 217, 61, 0.1);
+}
+
+.tradition-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tradition-icon {
+  font-size: 1.5rem;
+}
+
+.tradition-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.tradition-bonus {
+  font-size: 0.85rem;
+  color: var(--success);
+  margin-bottom: 10px;
+}
+
+.tradition-requirement {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.tradition-requirement.met {
+  color: var(--success);
+}
+
+/* Espionage Styles */
+.spy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.spy-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.spy-card.busy {
+  border-color: var(--warning);
+}
+
+.spy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.spy-name {
+  font-weight: bold;
+}
+
+.spy-level {
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+}
+
+.spy-status {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.spy-status.on-mission {
+  color: var(--warning);
+}
+
+.spy-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.spy-mission-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.spy-mission-card.available {
+  border-color: var(--accent-secondary);
+}
+
+.mission-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mission-icon {
+  font-size: 1.5rem;
+}
+
+.mission-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.mission-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.spy-mission-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.spy-mission-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.spy-mission-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recruit-spy-btn {
+  padding: 12px 24px;
+  background: var(--accent-secondary);
+  border: none;
+  border-radius: 6px;
+  color: var(--bg-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.recruit-spy-btn:hover:not(:disabled) {
+  background: var(--success);
+}
+
+.recruit-spy-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Training Queue Styles for Military */
+.military-queue {
+  background: var(--bg-secondary);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.military-queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.military-queue-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Military Tab Responsive */
+@media (max-width: 768px) {
+  .military-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .formation-grid,
+  .hero-grid,
+  .defense-grid,
+  .naval-grid,
+  .siege-grid,
+  .upgrade-grid,
+  .traditions-grid,
+  .spy-grid,
+  .spy-mission-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .formation-stats,
+  .hero-bonuses,
+  .defense-bonuses {
+    justify-content: center;
+  }
+}
