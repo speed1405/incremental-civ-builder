@@ -7,6 +7,7 @@
   <style>
 /* Incremental Civ Builder - Styles */
 
+/* Dark Theme (Default) */
 :root {
   --bg-primary: #1a1a2e;
   --bg-secondary: #16213e;
@@ -19,6 +20,25 @@
   --success: #6bcb77;
   --warning: #ff8c00;
   --danger: #ff4444;
+  --tooltip-bg: rgba(0, 0, 0, 0.9);
+  --tooltip-border: var(--accent-secondary);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #e8e8e8;
+  --bg-tertiary: #d0d0d0;
+  --text-primary: #1a1a2e;
+  --text-secondary: #555;
+  --accent-primary: #e94560;
+  --accent-secondary: #2a9d8f;
+  --accent-gold: #e9c46a;
+  --success: #2d6a4f;
+  --warning: #e76f51;
+  --danger: #d62828;
+  --tooltip-bg: rgba(30, 30, 50, 0.95);
+  --tooltip-border: var(--accent-secondary);
 }
 
 * {
@@ -3375,6 +3395,355 @@ body {
   .battlefield-health {
     height: 20px;
     width: 35%;
+  }
+}
+
+/* ===== Theme Toggle Styles ===== */
+
+.theme-toggle-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.theme-toggle-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-secondary);
+  background: var(--bg-secondary);
+  color: var(--accent-gold);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Theme transition */
+body {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.game-header,
+.resources-bar,
+.tab-container,
+.game-footer,
+.resource,
+.tab-btn,
+.tech-card,
+.building-card,
+.troop-card,
+.mission-card,
+.achievement-card,
+.skill-card {
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* ===== Enhanced Tooltips ===== */
+
+.tooltip-container {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tooltip-bg);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  z-index: 2000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  border: 1px solid var(--tooltip-border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  max-width: 300px;
+  white-space: normal;
+  text-align: center;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: var(--tooltip-bg);
+}
+
+.tooltip-container:hover .tooltip,
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Alternative tooltip using data attribute */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tooltip-bg);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  z-index: 2000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  border: 1px solid var(--tooltip-border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  max-width: 280px;
+  white-space: normal;
+  text-align: center;
+}
+
+[data-tooltip]::after {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: var(--tooltip-bg);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 2001;
+}
+
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Tooltip for resources with detailed info */
+.resource[data-tooltip]::before {
+  max-width: 200px;
+}
+
+/* ===== Resource Gain Animation Effects ===== */
+
+@keyframes resourceGainPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px 5px rgba(78, 205, 196, 0.3);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(78, 205, 196, 0);
+  }
+}
+
+@keyframes resourceGainFloat {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes resourceGainGlow {
+  0% {
+    text-shadow: 0 0 0 var(--accent-gold);
+  }
+  50% {
+    text-shadow: 0 0 10px var(--accent-gold), 0 0 20px var(--accent-gold);
+  }
+  100% {
+    text-shadow: 0 0 0 var(--accent-gold);
+  }
+}
+
+.resource.gain-animation {
+  animation: resourceGainPulse 0.5s ease-out;
+}
+
+.resource-amount.gain-animation {
+  animation: resourceGainGlow 0.5s ease-out;
+}
+
+/* Floating resource gain indicator */
+.resource-gain-popup {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--success);
+  pointer-events: none;
+  animation: resourceGainFloat 1s ease-out forwards;
+  z-index: 100;
+}
+
+/* Research progress animation */
+@keyframes progressPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(233, 69, 96, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 10px 3px rgba(233, 69, 96, 0.3);
+  }
+}
+
+.current-research .progress-bar {
+  animation: progressPulse 2s infinite;
+}
+
+/* Button click feedback */
+@keyframes buttonClick {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.gather-btn:active,
+.build-btn:active,
+.train-btn:active,
+.research-btn:active {
+  animation: buttonClick 0.15s ease;
+}
+
+/* Success animation for completing actions */
+@keyframes successFlash {
+  0% {
+    background: inherit;
+  }
+  50% {
+    background: rgba(107, 203, 119, 0.3);
+  }
+  100% {
+    background: inherit;
+  }
+}
+
+.action-success {
+  animation: successFlash 0.5s ease;
+}
+
+/* Era advancement celebration effect */
+@keyframes eraAdvance {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(1.02);
+    filter: brightness(1.2);
+  }
+  50% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  75% {
+    transform: scale(1.02);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+.era-advance-animation {
+  animation: eraAdvance 1s ease;
+}
+
+/* Training/Construction queue progress animation */
+@keyframes queueProgress {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.training-item .progress-fill,
+.construction-item .progress-fill {
+  background: linear-gradient(
+    90deg, 
+    var(--accent-primary) 0%, 
+    var(--accent-secondary) 50%, 
+    var(--accent-primary) 100%
+  );
+  background-size: 200% 100%;
+  animation: queueProgress 2s linear infinite;
+}
+
+/* Tab switch animation */
+.tab-content {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tab-content.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive adjustments for theme toggle */
+@media (max-width: 768px) {
+  .theme-toggle-container {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+  
+  [data-tooltip]::before {
+    max-width: 200px;
+    font-size: 0.8rem;
   }
 }
 
@@ -11201,10 +11570,13 @@ body {
       this.tabContentVersions = /* @__PURE__ */ new Map();
       this.battleResultRendered = false;
       this.conquestResultRendered = false;
+      this.previousResources = null;
       this.game = game;
       this.game.setOnStateChange(() => this.scheduleRender());
       this.game.setOnAchievementUnlocked((achievement) => this.queueAchievementNotification(achievement));
       this.setupEventListeners();
+      this.initThemeToggle();
+      this.addTooltips();
     }
     // Debounced render to prevent rapid re-renders from interfering with clicks
     scheduleRender() {
@@ -11445,6 +11817,79 @@ body {
         }
       });
     }
+    // Initialize the theme toggle button
+    initThemeToggle() {
+      const savedTheme = localStorage.getItem("civGameTheme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = savedTheme || (prefersDark ? "dark" : "light");
+      if (theme === "light") {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+      const toggleContainer = document.createElement("div");
+      toggleContainer.className = "theme-toggle-container";
+      toggleContainer.innerHTML = `
+      <button class="theme-toggle-btn" id="theme-toggle" data-tooltip="Toggle Light/Dark Theme">
+        ${theme === "dark" ? "\u2600\uFE0F" : "\u{1F319}"}
+      </button>
+    `;
+      document.body.appendChild(toggleContainer);
+      document.getElementById("theme-toggle")?.addEventListener("click", () => {
+        this.toggleTheme();
+      });
+    }
+    // Toggle between light and dark themes
+    toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+      if (newTheme === "light") {
+        document.documentElement.setAttribute("data-theme", "light");
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
+      const toggleBtn = document.getElementById("theme-toggle");
+      if (toggleBtn) {
+        toggleBtn.textContent = newTheme === "dark" ? "\u2600\uFE0F" : "\u{1F319}";
+      }
+      localStorage.setItem("civGameTheme", newTheme);
+      this.showNotification(`${newTheme === "light" ? "\u2600\uFE0F Light" : "\u{1F319} Dark"} theme activated`);
+    }
+    // Add tooltips to various UI elements
+    addTooltips() {
+      const resourceTooltips = {
+        "food": "Food is used to train troops and sustain your population. Gather food or build farms.",
+        "wood": "Wood is essential for construction. Gather wood or build lumber mills.",
+        "stone": "Stone is used for advanced buildings and defenses. Mine stone from quarries.",
+        "gold": "Gold is the universal currency. Earn gold through trade and mining.",
+        "science": "Science points are used to research new technologies. Build libraries and universities."
+      };
+      document.querySelectorAll(".resource").forEach((resource) => {
+        const name = resource.querySelector(".resource-name")?.textContent?.toLowerCase().trim();
+        if (name && resourceTooltips[name]) {
+          resource.setAttribute("data-tooltip", resourceTooltips[name]);
+        }
+      });
+      const tabTooltips = {
+        "resources": "Manually gather resources to boost your civilization",
+        "buildings": "Construct buildings that passively generate resources",
+        "research": "Research technologies to unlock new abilities and advance eras",
+        "barracks": "Train troops to build your army",
+        "army": "View your current military strength",
+        "combat": "Engage in battles and conquer territories",
+        "world": "Choose civilization, leaders, and cultural policies",
+        "skills": "Upgrade permanent skills using legacy points",
+        "military": "Manage formations, heroes, naval forces, and espionage",
+        "achievements": "View your accomplishments and statistics"
+      };
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        const tab = btn.dataset.tab;
+        if (tab && tabTooltips[tab]) {
+          btn.setAttribute("data-tooltip", tabTooltips[tab]);
+        }
+      });
+      document.getElementById("save-game")?.setAttribute("data-tooltip", "Save your game progress to local storage");
+      document.getElementById("load-game")?.setAttribute("data-tooltip", "Load a previously saved game");
+      document.getElementById("reset-game")?.setAttribute("data-tooltip", "Reset all progress and start fresh (cannot be undone!)");
+    }
     switchTab(tab) {
       this.currentTab = tab;
       if (tab !== "combat" && this.battleAnimationInterval) {
@@ -11553,6 +11998,14 @@ body {
     }
     renderResources() {
       const { resources } = this.game.state;
+      if (this.previousResources) {
+        this.animateResourceGain("food", this.previousResources.food, resources.food);
+        this.animateResourceGain("wood", this.previousResources.wood, resources.wood);
+        this.animateResourceGain("stone", this.previousResources.stone, resources.stone);
+        this.animateResourceGain("gold", this.previousResources.gold, resources.gold);
+        this.animateResourceGain("science", this.previousResources.science, resources.science);
+      }
+      this.previousResources = { ...resources };
       document.getElementById("food-amount").textContent = Math.floor(resources.food).toString();
       document.getElementById("wood-amount").textContent = Math.floor(resources.wood).toString();
       document.getElementById("stone-amount").textContent = Math.floor(resources.stone).toString();
@@ -11567,6 +12020,36 @@ body {
         document.getElementById("gold-rate").textContent = `+${(era.resources.gold.baseRate * resourceMultipliers.gold).toFixed(1)}/s`;
         document.getElementById("science-rate").textContent = `+${(era.resources.science.baseRate * resourceMultipliers.science).toFixed(1)}/s`;
       }
+    }
+    // Animate resource gain with visual feedback
+    animateResourceGain(resourceType, oldValue, newValue) {
+      const gain = Math.floor(newValue) - Math.floor(oldValue);
+      if (gain >= 1) {
+        const resourceEl = document.querySelector(`.resource:has(#${resourceType}-amount)`);
+        const amountEl = document.getElementById(`${resourceType}-amount`);
+        if (resourceEl && amountEl) {
+          resourceEl.classList.add("gain-animation");
+          amountEl.classList.add("gain-animation");
+          setTimeout(() => {
+            resourceEl.classList.remove("gain-animation");
+            amountEl.classList.remove("gain-animation");
+          }, 500);
+          if (gain >= 1) {
+            this.showResourceGainPopup(resourceEl, gain);
+          }
+        }
+      }
+    }
+    // Show floating resource gain popup
+    showResourceGainPopup(resourceEl, gain) {
+      const popup = document.createElement("span");
+      popup.className = "resource-gain-popup";
+      popup.textContent = `+${gain}`;
+      resourceEl.style.position = "relative";
+      resourceEl.appendChild(popup);
+      setTimeout(() => {
+        popup.remove();
+      }, 1e3);
     }
     renderResourcesTab() {
       const { resourceMultipliers } = this.game.state;

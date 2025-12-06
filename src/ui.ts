@@ -29,12 +29,16 @@ export class GameUI {
   // Track if a completed battle has already been rendered to avoid animation restarts
   private battleResultRendered: boolean = false;
   private conquestResultRendered: boolean = false;
+  // Track previous resource values for animation
+  private previousResources: { food: number; wood: number; stone: number; gold: number; science: number } | null = null;
 
   constructor(game: Game) {
     this.game = game;
     this.game.setOnStateChange(() => this.scheduleRender());
     this.game.setOnAchievementUnlocked((achievement) => this.queueAchievementNotification(achievement));
     this.setupEventListeners();
+    this.initThemeToggle();
+    this.addTooltips();
   }
 
   // Debounced render to prevent rapid re-renders from interfering with clicks
@@ -345,6 +349,102 @@ export class GameUI {
     });
   }
 
+  // Initialize the theme toggle button
+  private initThemeToggle(): void {
+    // Check for saved theme preference or system preference
+    const savedTheme = localStorage.getItem('civGameTheme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    
+    // Create theme toggle button
+    const toggleContainer = document.createElement('div');
+    toggleContainer.className = 'theme-toggle-container';
+    toggleContainer.innerHTML = `
+      <button class="theme-toggle-btn" id="theme-toggle" data-tooltip="Toggle Light/Dark Theme">
+        ${theme === 'dark' ? '☀️' : '🌙'}
+      </button>
+    `;
+    document.body.appendChild(toggleContainer);
+    
+    // Add event listener
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      this.toggleTheme();
+    });
+  }
+
+  // Toggle between light and dark themes
+  private toggleTheme(): void {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    if (newTheme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    
+    // Update button icon
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) {
+      toggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    }
+    
+    // Save preference
+    localStorage.setItem('civGameTheme', newTheme);
+    
+    this.showNotification(`${newTheme === 'light' ? '☀️ Light' : '🌙 Dark'} theme activated`);
+  }
+
+  // Add tooltips to various UI elements
+  private addTooltips(): void {
+    // Resource tooltips
+    const resourceTooltips: Record<string, string> = {
+      'food': 'Food is used to train troops and sustain your population. Gather food or build farms.',
+      'wood': 'Wood is essential for construction. Gather wood or build lumber mills.',
+      'stone': 'Stone is used for advanced buildings and defenses. Mine stone from quarries.',
+      'gold': 'Gold is the universal currency. Earn gold through trade and mining.',
+      'science': 'Science points are used to research new technologies. Build libraries and universities.'
+    };
+
+    // Apply tooltips to resource elements
+    document.querySelectorAll('.resource').forEach(resource => {
+      const name = resource.querySelector('.resource-name')?.textContent?.toLowerCase().trim();
+      if (name && resourceTooltips[name]) {
+        resource.setAttribute('data-tooltip', resourceTooltips[name]);
+      }
+    });
+
+    // Tab button tooltips
+    const tabTooltips: Record<string, string> = {
+      'resources': 'Manually gather resources to boost your civilization',
+      'buildings': 'Construct buildings that passively generate resources',
+      'research': 'Research technologies to unlock new abilities and advance eras',
+      'barracks': 'Train troops to build your army',
+      'army': 'View your current military strength',
+      'combat': 'Engage in battles and conquer territories',
+      'world': 'Choose civilization, leaders, and cultural policies',
+      'skills': 'Upgrade permanent skills using legacy points',
+      'military': 'Manage formations, heroes, naval forces, and espionage',
+      'achievements': 'View your accomplishments and statistics'
+    };
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const tab = (btn as HTMLElement).dataset.tab;
+      if (tab && tabTooltips[tab]) {
+        btn.setAttribute('data-tooltip', tabTooltips[tab]);
+      }
+    });
+
+    // Footer button tooltips
+    document.getElementById('save-game')?.setAttribute('data-tooltip', 'Save your game progress to local storage');
+    document.getElementById('load-game')?.setAttribute('data-tooltip', 'Load a previously saved game');
+    document.getElementById('reset-game')?.setAttribute('data-tooltip', 'Reset all progress and start fresh (cannot be undone!)');
+  }
+
   private switchTab(tab: string): void {
     this.currentTab = tab;
     
@@ -477,6 +577,18 @@ export class GameUI {
   private renderResources(): void {
     const { resources } = this.game.state;
     
+    // Check for resource gains and trigger animations
+    if (this.previousResources) {
+      this.animateResourceGain('food', this.previousResources.food, resources.food);
+      this.animateResourceGain('wood', this.previousResources.wood, resources.wood);
+      this.animateResourceGain('stone', this.previousResources.stone, resources.stone);
+      this.animateResourceGain('gold', this.previousResources.gold, resources.gold);
+      this.animateResourceGain('science', this.previousResources.science, resources.science);
+    }
+    
+    // Store current resources for next comparison
+    this.previousResources = { ...resources };
+    
     document.getElementById('food-amount')!.textContent = Math.floor(resources.food).toString();
     document.getElementById('wood-amount')!.textContent = Math.floor(resources.wood).toString();
     document.getElementById('stone-amount')!.textContent = Math.floor(resources.stone).toString();
@@ -498,6 +610,49 @@ export class GameUI {
       document.getElementById('science-rate')!.textContent = 
         `+${(era.resources.science.baseRate * resourceMultipliers.science).toFixed(1)}/s`;
     }
+  }
+
+  // Animate resource gain with visual feedback
+  private animateResourceGain(resourceType: string, oldValue: number, newValue: number): void {
+    const gain = Math.floor(newValue) - Math.floor(oldValue);
+    
+    // Only animate for significant gains (manual gather clicks)
+    if (gain >= 1) {
+      const resourceEl = document.querySelector(`.resource:has(#${resourceType}-amount)`) as HTMLElement;
+      const amountEl = document.getElementById(`${resourceType}-amount`);
+      
+      if (resourceEl && amountEl) {
+        // Add pulse animation to the resource card
+        resourceEl.classList.add('gain-animation');
+        amountEl.classList.add('gain-animation');
+        
+        // Remove animation class after it completes
+        setTimeout(() => {
+          resourceEl.classList.remove('gain-animation');
+          amountEl.classList.remove('gain-animation');
+        }, 500);
+        
+        // Create floating gain indicator for larger gains
+        if (gain >= 1) {
+          this.showResourceGainPopup(resourceEl, gain);
+        }
+      }
+    }
+  }
+
+  // Show floating resource gain popup
+  private showResourceGainPopup(resourceEl: HTMLElement, gain: number): void {
+    const popup = document.createElement('span');
+    popup.className = 'resource-gain-popup';
+    popup.textContent = `+${gain}`;
+    
+    resourceEl.style.position = 'relative';
+    resourceEl.appendChild(popup);
+    
+    // Remove popup after animation
+    setTimeout(() => {
+      popup.remove();
+    }, 1000);
   }
 
   private renderResourcesTab(): void {
