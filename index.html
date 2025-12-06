@@ -3757,7 +3757,33 @@ body {
       unlockTech: "hunting",
       cost: { food: 30, gold: 0 },
       trainTime: 5,
-      stats: { attack: 3, defense: 1, health: 20 }
+      stats: { attack: 3, defense: 1, health: 20 },
+      icon: "\u{1F3F9}",
+      troopClass: "ranged"
+    },
+    {
+      id: "gatherer",
+      name: "Gatherer Warrior",
+      description: "Versatile fighter who can forage and fight.",
+      era: "stone_age",
+      unlockTech: "hunting",
+      cost: { food: 25, gold: 0 },
+      trainTime: 4,
+      stats: { attack: 2, defense: 2, health: 25 },
+      icon: "\u{1FA93}",
+      troopClass: "infantry"
+    },
+    {
+      id: "clubman",
+      name: "Clubman",
+      description: "Basic melee unit with a wooden club.",
+      era: "stone_age",
+      unlockTech: "stone_tools",
+      cost: { food: 20, gold: 0, wood: 10 },
+      trainTime: 3,
+      stats: { attack: 4, defense: 1, health: 15 },
+      icon: "\u{1F3CF}",
+      troopClass: "infantry"
     },
     // Bronze Age
     {
@@ -3768,7 +3794,9 @@ body {
       unlockTech: "bronze_working",
       cost: { food: 50, gold: 10 },
       trainTime: 8,
-      stats: { attack: 6, defense: 4, health: 40 }
+      stats: { attack: 6, defense: 4, health: 40 },
+      icon: "\u2694\uFE0F",
+      troopClass: "infantry"
     },
     {
       id: "chariot",
@@ -3778,7 +3806,33 @@ body {
       unlockTech: "wheel",
       cost: { food: 40, gold: 30, wood: 50 },
       trainTime: 12,
-      stats: { attack: 8, defense: 2, health: 30 }
+      stats: { attack: 8, defense: 2, health: 30 },
+      icon: "\u{1F3CE}\uFE0F",
+      troopClass: "cavalry"
+    },
+    {
+      id: "spearman",
+      name: "Spearman",
+      description: "Defensive unit effective against cavalry.",
+      era: "bronze_age",
+      unlockTech: "bronze_working",
+      cost: { food: 45, gold: 15 },
+      trainTime: 7,
+      stats: { attack: 5, defense: 6, health: 35 },
+      icon: "\u{1F531}",
+      troopClass: "infantry"
+    },
+    {
+      id: "slinger",
+      name: "Slinger",
+      description: "Cheap ranged unit with a sling.",
+      era: "bronze_age",
+      unlockTech: "writing",
+      cost: { food: 35, gold: 5 },
+      trainTime: 5,
+      stats: { attack: 7, defense: 2, health: 25 },
+      icon: "\u{1F3AF}",
+      troopClass: "ranged"
     },
     // Iron Age
     {
@@ -3789,7 +3843,33 @@ body {
       unlockTech: "iron_working",
       cost: { food: 60, gold: 25 },
       trainTime: 10,
-      stats: { attack: 10, defense: 6, health: 50 }
+      stats: { attack: 10, defense: 6, health: 50 },
+      icon: "\u{1F5E1}\uFE0F",
+      troopClass: "infantry"
+    },
+    {
+      id: "archer",
+      name: "Archer",
+      description: "Trained bowman with improved range.",
+      era: "iron_age",
+      unlockTech: "iron_working",
+      cost: { food: 55, gold: 20 },
+      trainTime: 8,
+      stats: { attack: 12, defense: 3, health: 35 },
+      icon: "\u{1F3F9}",
+      troopClass: "ranged"
+    },
+    {
+      id: "phalanx",
+      name: "Phalanx",
+      description: "Heavy defensive infantry with long spears.",
+      era: "iron_age",
+      unlockTech: "construction",
+      cost: { food: 70, gold: 30 },
+      trainTime: 12,
+      stats: { attack: 8, defense: 12, health: 55 },
+      icon: "\u{1F6E1}\uFE0F",
+      troopClass: "infantry"
     },
     // Classical Age
     {
@@ -3800,7 +3880,9 @@ body {
       unlockTech: "horseback_riding",
       cost: { food: 80, gold: 40 },
       trainTime: 15,
-      stats: { attack: 12, defense: 4, health: 45 }
+      stats: { attack: 12, defense: 4, health: 45 },
+      icon: "\u{1F40E}",
+      troopClass: "cavalry"
     },
     {
       id: "legionary",
@@ -3810,7 +3892,33 @@ body {
       unlockTech: "iron_casting",
       cost: { food: 70, gold: 35 },
       trainTime: 12,
-      stats: { attack: 11, defense: 10, health: 60 }
+      stats: { attack: 11, defense: 10, health: 60 },
+      icon: "\u{1F3DB}\uFE0F",
+      troopClass: "infantry"
+    },
+    {
+      id: "catapult",
+      name: "Catapult",
+      description: "Siege weapon that hurls stones at enemies.",
+      era: "classical_age",
+      unlockTech: "engineering",
+      cost: { food: 60, gold: 60, stone: 80 },
+      trainTime: 18,
+      stats: { attack: 20, defense: 2, health: 30 },
+      icon: "\u{1FAA8}",
+      troopClass: "siege"
+    },
+    {
+      id: "war_elephant",
+      name: "War Elephant",
+      description: "Massive beast that tramples enemies.",
+      era: "classical_age",
+      unlockTech: "horseback_riding",
+      cost: { food: 120, gold: 80 },
+      trainTime: 25,
+      stats: { attack: 16, defense: 8, health: 90 },
+      icon: "\u{1F418}",
+      troopClass: "cavalry"
     },
     // Medieval Age
     {
@@ -3821,7 +3929,9 @@ body {
       unlockTech: "feudalism",
       cost: { food: 100, gold: 80 },
       trainTime: 20,
-      stats: { attack: 18, defense: 14, health: 80 }
+      stats: { attack: 18, defense: 14, health: 80 },
+      icon: "\u{1F3C7}",
+      troopClass: "cavalry"
     },
     {
       id: "musketeer",
@@ -3831,7 +3941,45 @@ body {
       unlockTech: "gunpowder",
       cost: { food: 90, gold: 60 },
       trainTime: 15,
-      stats: { attack: 22, defense: 8, health: 55 }
+      stats: { attack: 22, defense: 8, health: 55 },
+      icon: "\u{1F52B}",
+      troopClass: "ranged"
+    },
+    {
+      id: "crossbowman",
+      name: "Crossbowman",
+      description: "Powerful ranged unit with a crossbow.",
+      era: "medieval_age",
+      unlockTech: "machinery",
+      cost: { food: 85, gold: 50 },
+      trainTime: 14,
+      stats: { attack: 19, defense: 6, health: 50 },
+      icon: "\u{1F3AF}",
+      troopClass: "ranged"
+    },
+    {
+      id: "trebuchet",
+      name: "Trebuchet",
+      description: "Advanced siege weapon for destroying fortifications.",
+      era: "medieval_age",
+      unlockTech: "machinery",
+      cost: { food: 80, gold: 100, wood: 120 },
+      trainTime: 22,
+      stats: { attack: 35, defense: 3, health: 40 },
+      icon: "\u2699\uFE0F",
+      troopClass: "siege"
+    },
+    {
+      id: "pikeman",
+      name: "Pikeman",
+      description: "Long pike infantry effective against cavalry.",
+      era: "medieval_age",
+      unlockTech: "metal_casting",
+      cost: { food: 75, gold: 45 },
+      trainTime: 12,
+      stats: { attack: 14, defense: 16, health: 65 },
+      icon: "\u{1F531}",
+      troopClass: "infantry"
     },
     // Renaissance
     {
@@ -3842,7 +3990,45 @@ body {
       unlockTech: "military_science",
       cost: { food: 100, gold: 70 },
       trainTime: 12,
-      stats: { attack: 28, defense: 10, health: 60 }
+      stats: { attack: 28, defense: 10, health: 60 },
+      icon: "\u{1F396}\uFE0F",
+      troopClass: "ranged"
+    },
+    {
+      id: "cavalry",
+      name: "Light Cavalry",
+      description: "Fast scout and raider unit.",
+      era: "renaissance",
+      unlockTech: "military_science",
+      cost: { food: 90, gold: 65 },
+      trainTime: 14,
+      stats: { attack: 24, defense: 8, health: 55 },
+      icon: "\u{1F434}",
+      troopClass: "cavalry"
+    },
+    {
+      id: "cannon",
+      name: "Cannon",
+      description: "Early artillery piece with devastating power.",
+      era: "renaissance",
+      unlockTech: "banking",
+      cost: { food: 70, gold: 120, stone: 80 },
+      trainTime: 20,
+      stats: { attack: 38, defense: 4, health: 45 },
+      icon: "\u{1F4A5}",
+      troopClass: "siege"
+    },
+    {
+      id: "lancer",
+      name: "Lancer",
+      description: "Elite cavalry with lance charge.",
+      era: "renaissance",
+      unlockTech: "astronomy",
+      cost: { food: 110, gold: 90 },
+      trainTime: 18,
+      stats: { attack: 30, defense: 12, health: 70 },
+      icon: "\u{1F3C7}",
+      troopClass: "cavalry"
     },
     // Industrial Age
     {
@@ -3853,7 +4039,45 @@ body {
       unlockTech: "dynamite",
       cost: { food: 80, gold: 150, stone: 100 },
       trainTime: 25,
-      stats: { attack: 45, defense: 5, health: 50 }
+      stats: { attack: 45, defense: 5, health: 50 },
+      icon: "\u{1F4A3}",
+      troopClass: "siege"
+    },
+    {
+      id: "infantry",
+      name: "Line Infantry",
+      description: "Standard modern infantry with rifles.",
+      era: "industrial_age",
+      unlockTech: "industrialization",
+      cost: { food: 90, gold: 60 },
+      trainTime: 10,
+      stats: { attack: 32, defense: 14, health: 65 },
+      icon: "\u{1FA96}",
+      troopClass: "infantry"
+    },
+    {
+      id: "gatling_gun",
+      name: "Gatling Gun",
+      description: "Early machine gun with rapid fire.",
+      era: "industrial_age",
+      unlockTech: "industrialization",
+      cost: { food: 100, gold: 180 },
+      trainTime: 22,
+      stats: { attack: 50, defense: 8, health: 55 },
+      icon: "\u{1F52B}",
+      troopClass: "ranged"
+    },
+    {
+      id: "ironclad",
+      name: "Armored Train",
+      description: "Mobile armored platform on rails.",
+      era: "industrial_age",
+      unlockTech: "railroad",
+      cost: { food: 120, gold: 200, stone: 150 },
+      trainTime: 30,
+      stats: { attack: 40, defense: 25, health: 100 },
+      icon: "\u{1F682}",
+      troopClass: "special"
     },
     // Modern Age
     {
@@ -3864,7 +4088,9 @@ body {
       unlockTech: "combustion",
       cost: { food: 100, gold: 250 },
       trainTime: 30,
-      stats: { attack: 55, defense: 35, health: 120 }
+      stats: { attack: 55, defense: 35, health: 120 },
+      icon: "\u{1F6E1}\uFE0F",
+      troopClass: "cavalry"
     },
     {
       id: "fighter",
@@ -3874,7 +4100,45 @@ body {
       unlockTech: "flight",
       cost: { food: 80, gold: 300 },
       trainTime: 25,
-      stats: { attack: 65, defense: 20, health: 80 }
+      stats: { attack: 65, defense: 20, health: 80 },
+      icon: "\u2708\uFE0F",
+      troopClass: "air"
+    },
+    {
+      id: "marine",
+      name: "Marine",
+      description: "Elite amphibious assault infantry.",
+      era: "modern_age",
+      unlockTech: "radio",
+      cost: { food: 110, gold: 140 },
+      trainTime: 16,
+      stats: { attack: 42, defense: 22, health: 75 },
+      icon: "\u{1F396}\uFE0F",
+      troopClass: "infantry"
+    },
+    {
+      id: "bomber",
+      name: "Bomber",
+      description: "Heavy aircraft for strategic bombing.",
+      era: "modern_age",
+      unlockTech: "flight",
+      cost: { food: 100, gold: 350 },
+      trainTime: 28,
+      stats: { attack: 80, defense: 15, health: 90 },
+      icon: "\u{1F6E9}\uFE0F",
+      troopClass: "air"
+    },
+    {
+      id: "anti_tank",
+      name: "Anti-Tank Gun",
+      description: "Specialized unit for destroying armor.",
+      era: "modern_age",
+      unlockTech: "combustion",
+      cost: { food: 90, gold: 200 },
+      trainTime: 20,
+      stats: { attack: 60, defense: 10, health: 60 },
+      icon: "\u{1F3AF}",
+      troopClass: "ranged"
     },
     // Atomic Age
     {
@@ -3885,7 +4149,45 @@ body {
       unlockTech: "rocketry",
       cost: { food: 100, gold: 400 },
       trainTime: 30,
-      stats: { attack: 80, defense: 10, health: 70 }
+      stats: { attack: 80, defense: 10, health: 70 },
+      icon: "\u{1F680}",
+      troopClass: "siege"
+    },
+    {
+      id: "paratrooper",
+      name: "Paratrooper",
+      description: "Elite airborne infantry.",
+      era: "atomic_age",
+      unlockTech: "rocketry",
+      cost: { food: 120, gold: 280 },
+      trainTime: 18,
+      stats: { attack: 55, defense: 25, health: 85 },
+      icon: "\u{1FA82}",
+      troopClass: "infantry"
+    },
+    {
+      id: "jet_fighter",
+      name: "Jet Fighter",
+      description: "Advanced supersonic aircraft.",
+      era: "atomic_age",
+      unlockTech: "satellites",
+      cost: { food: 100, gold: 450 },
+      trainTime: 26,
+      stats: { attack: 90, defense: 30, health: 95 },
+      icon: "\u{1F6EB}",
+      troopClass: "air"
+    },
+    {
+      id: "nuclear_sub",
+      name: "Nuclear Submarine",
+      description: "Stealthy underwater nuclear platform.",
+      era: "atomic_age",
+      unlockTech: "nuclear_power",
+      cost: { food: 150, gold: 600 },
+      trainTime: 35,
+      stats: { attack: 100, defense: 40, health: 110 },
+      icon: "\u{1F6A2}",
+      troopClass: "special"
     },
     // Information Age
     {
@@ -3896,7 +4198,57 @@ body {
       unlockTech: "robotics",
       cost: { food: 120, gold: 500 },
       trainTime: 20,
-      stats: { attack: 70, defense: 50, health: 150 }
+      stats: { attack: 70, defense: 50, health: 150 },
+      icon: "\u{1F916}",
+      troopClass: "infantry"
+    },
+    {
+      id: "drone_swarm",
+      name: "Drone Swarm",
+      description: "Autonomous attack drones.",
+      era: "information_age",
+      unlockTech: "robotics",
+      cost: { food: 80, gold: 550 },
+      trainTime: 18,
+      stats: { attack: 85, defense: 15, health: 60 },
+      icon: "\u{1F6F8}",
+      troopClass: "air"
+    },
+    {
+      id: "cyber_warrior",
+      name: "Cyber Warrior",
+      description: "Electronic warfare specialist.",
+      era: "information_age",
+      unlockTech: "internet",
+      cost: { food: 100, gold: 480 },
+      trainTime: 16,
+      stats: { attack: 60, defense: 40, health: 100 },
+      icon: "\u{1F4BB}",
+      troopClass: "special"
+    },
+    {
+      id: "stealth_bomber",
+      name: "Stealth Bomber",
+      description: "Undetectable strategic bomber.",
+      era: "information_age",
+      unlockTech: "nanotechnology",
+      cost: { food: 120, gold: 700 },
+      trainTime: 30,
+      stats: { attack: 110, defense: 35, health: 100 },
+      icon: "\u{1F985}",
+      troopClass: "air"
+    },
+    {
+      id: "battle_mech",
+      name: "Battle Mech",
+      description: "Piloted combat robot.",
+      era: "information_age",
+      unlockTech: "nanotechnology",
+      cost: { food: 150, gold: 650 },
+      trainTime: 28,
+      stats: { attack: 95, defense: 60, health: 180 },
+      icon: "\u{1F9BE}",
+      troopClass: "special"
     },
     // Future Age
     {
@@ -3907,7 +4259,57 @@ body {
       unlockTech: "space_colonization",
       cost: { food: 150, gold: 800 },
       trainTime: 25,
-      stats: { attack: 100, defense: 80, health: 200 }
+      stats: { attack: 100, defense: 80, health: 200 },
+      icon: "\u{1F468}\u200D\u{1F680}",
+      troopClass: "infantry"
+    },
+    {
+      id: "plasma_tank",
+      name: "Plasma Tank",
+      description: "Hover tank with plasma weapons.",
+      era: "future_age",
+      unlockTech: "fusion_power",
+      cost: { food: 180, gold: 900 },
+      trainTime: 32,
+      stats: { attack: 120, defense: 70, health: 220 },
+      icon: "\u{1F52E}",
+      troopClass: "cavalry"
+    },
+    {
+      id: "nanite_swarm",
+      name: "Nanite Swarm",
+      description: "Self-replicating microscopic robots.",
+      era: "future_age",
+      unlockTech: "quantum_computing",
+      cost: { food: 100, gold: 1e3 },
+      trainTime: 22,
+      stats: { attack: 90, defense: 30, health: 150 },
+      icon: "\u2728",
+      troopClass: "special"
+    },
+    {
+      id: "antimatter_bomber",
+      name: "Antimatter Bomber",
+      description: "Aircraft with antimatter warheads.",
+      era: "future_age",
+      unlockTech: "fusion_power",
+      cost: { food: 200, gold: 1200 },
+      trainTime: 35,
+      stats: { attack: 150, defense: 40, health: 130 },
+      icon: "\u{1F4AB}",
+      troopClass: "air"
+    },
+    {
+      id: "titan",
+      name: "Titan",
+      description: "Massive war machine of destruction.",
+      era: "future_age",
+      unlockTech: "singularity",
+      cost: { food: 300, gold: 1500 },
+      trainTime: 45,
+      stats: { attack: 200, defense: 150, health: 500 },
+      icon: "\u{1F5FF}",
+      troopClass: "special"
     }
   ];
   function getTroopTypeById(id) {
@@ -11488,65 +11890,60 @@ body {
       const enemyHealth = currentLog ? currentLog.enemyHealth : battle.enemyStartHealth;
       const playerHealthPercent = playerHealth / battle.playerStartHealth * 100;
       const enemyHealthPercent = enemyHealth / battle.enemyStartHealth * 100;
+      const playerTroops = this.game.state.army;
+      const playerTroopDisplay = this.generateBattlefieldTroops(playerTroops, "player", playerHealthPercent);
+      const enemyTroopDisplay = this.generateEnemyTroops(territory.enemyArmy.size, enemyHealthPercent);
       let html = `
       <div class="battle-arena conquest-battle">
         <h3 class="battle-title">\u{1F3F0} Conquest: ${territory.name}</h3>
         <p class="battle-vs">Your Army vs ${territory.enemyArmy.name}</p>
         
-        <div class="battle-field">
-          <!-- Player Side -->
-          <div class="battle-side player-side">
-            <div class="army-icon ${battle.isComplete && battle.result?.victory ? "victorious" : ""} ${battle.isComplete && !battle.result?.victory ? "defeated" : ""}">
-              \u{1F3F0}
-            </div>
-            <h4>Your Army</h4>
-            <div class="health-bar-container">
-              <div class="health-bar">
-                <div class="health-fill player-health" style="width: ${playerHealthPercent}%"></div>
-              </div>
-              <span class="health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
-            </div>
+        <!-- Animated Battlefield -->
+        <div class="battlefield-container" id="battlefield">
+          <div class="battlefield-center-line"></div>
+          
+          <!-- Labels -->
+          <div class="battlefield-label player-label">Your Army</div>
+          <div class="battlefield-label enemy-label">${territory.enemyArmy.name}</div>
+          
+          <!-- Round indicator -->
+          <div class="battlefield-round">
+            Round ${battle.currentRound} / ${battle.logs.length}
           </div>
           
-          <!-- Battle Animation -->
-          <div class="battle-center">
-            <div class="battle-clash ${!battle.isComplete ? "animating" : ""}">
-              \u2694\uFE0F
-            </div>
-            <div class="round-counter">
-              Round ${battle.currentRound} / ${battle.logs.length}
-            </div>
+          <!-- Troops -->
+          <div class="battlefield-troops" id="battlefield-troops">
+            ${playerTroopDisplay}
+            ${enemyTroopDisplay}
           </div>
           
-          <!-- Enemy Side -->
-          <div class="battle-side enemy-side">
-            <div class="army-icon ${battle.isComplete && !battle.result?.victory ? "victorious" : ""} ${battle.isComplete && battle.result?.victory ? "defeated" : ""}">
-              \u{1F6E1}\uFE0F
-            </div>
-            <h4>${territory.enemyArmy.name}</h4>
-            <div class="health-bar-container">
-              <div class="health-bar">
-                <div class="health-fill enemy-health" style="width: ${enemyHealthPercent}%"></div>
-              </div>
-              <span class="health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
-            </div>
+          <!-- Health bars on battlefield -->
+          <div class="battlefield-health player-health-bar">
+            <div class="battlefield-health-fill player" style="width: ${playerHealthPercent}%"></div>
+            <span class="battlefield-health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
           </div>
+          <div class="battlefield-health enemy-health-bar">
+            <div class="battlefield-health-fill enemy" style="width: ${enemyHealthPercent}%"></div>
+            <span class="battlefield-health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
+          </div>
+          
+          ${battle.isComplete && battle.result ? `
+            <div class="battlefield-result-overlay ${battle.result.victory ? "victory" : "defeat"}">
+              <div class="battlefield-result-text">${battle.result.victory ? "\u{1F3F0} CONQUERED!" : "\u{1F480} DEFEAT!"}</div>
+            </div>
+          ` : ""}
         </div>
         
-        <!-- Battle Log -->
+        <!-- Compact Battle Log -->
         <div class="battle-log-container">
-          <h4>Battle Log</h4>
-          <div class="battle-log" id="conquest-battle-log">
+          <h4>\u{1F4DC} Battle Log</h4>
+          <div class="battle-log-compact" id="conquest-battle-log">
     `;
       for (let i = 0; i < battle.currentRound; i++) {
         const log = battle.logs[i];
         html += `
-        <div class="log-entry ${i === battle.currentRound - 1 ? "latest" : ""}">
-          <span class="log-round">Round ${log.round}:</span>
-          <span class="log-damage player-damage">You deal ${log.playerDamage} dmg</span>
-          <span class="log-separator">|</span>
-          <span class="log-damage enemy-damage">Enemy deals ${log.enemyDamage} dmg</span>
-        </div>
+        <span class="log-chip player-attack">R${log.round}: \u2694\uFE0F ${log.playerDamage}</span>
+        <span class="log-chip enemy-attack">R${log.round}: \u{1F4A5} ${log.enemyDamage}</span>
       `;
       }
       html += `
@@ -11598,6 +11995,9 @@ body {
       const battleLog = document.getElementById("conquest-battle-log");
       if (battleLog) {
         battleLog.scrollTop = battleLog.scrollHeight;
+      }
+      if (!battle.isComplete && currentLog) {
+        this.triggerBattleAnimations(currentLog.playerDamage, currentLog.enemyDamage);
       }
       if (battle.isComplete) {
         this.conquestResultRendered = true;
@@ -11731,65 +12131,60 @@ body {
       const enemyHealth = currentLog ? currentLog.enemyHealth : battle.enemyStartHealth;
       const playerHealthPercent = playerHealth / battle.playerStartHealth * 100;
       const enemyHealthPercent = enemyHealth / battle.enemyStartHealth * 100;
+      const playerTroops = this.game.state.army;
+      const playerTroopDisplay = this.generateBattlefieldTroops(playerTroops, "player", playerHealthPercent);
+      const enemyTroopDisplay = this.generateEnemyTroops(mission.enemyArmy.size, enemyHealthPercent);
       let html = `
       <div class="battle-arena">
         <h3 class="battle-title">\u2694\uFE0F Battle: ${mission.name}</h3>
         <p class="battle-vs">Your Army vs ${mission.enemyArmy.name}</p>
         
-        <div class="battle-field">
-          <!-- Player Side -->
-          <div class="battle-side player-side">
-            <div class="army-icon ${battle.isComplete && battle.result?.victory ? "victorious" : ""} ${battle.isComplete && !battle.result?.victory ? "defeated" : ""}">
-              \u{1F3F0}
-            </div>
-            <h4>Your Army</h4>
-            <div class="health-bar-container">
-              <div class="health-bar">
-                <div class="health-fill player-health" style="width: ${playerHealthPercent}%"></div>
-              </div>
-              <span class="health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
-            </div>
+        <!-- Animated Battlefield -->
+        <div class="battlefield-container" id="battlefield">
+          <div class="battlefield-center-line"></div>
+          
+          <!-- Labels -->
+          <div class="battlefield-label player-label">Your Army</div>
+          <div class="battlefield-label enemy-label">${mission.enemyArmy.name}</div>
+          
+          <!-- Round indicator -->
+          <div class="battlefield-round">
+            Round ${battle.currentRound} / ${battle.logs.length}
           </div>
           
-          <!-- Battle Animation -->
-          <div class="battle-center">
-            <div class="battle-clash ${!battle.isComplete ? "animating" : ""}">
-              \u2694\uFE0F
-            </div>
-            <div class="round-counter">
-              Round ${battle.currentRound} / ${battle.logs.length}
-            </div>
+          <!-- Troops -->
+          <div class="battlefield-troops" id="battlefield-troops">
+            ${playerTroopDisplay}
+            ${enemyTroopDisplay}
           </div>
           
-          <!-- Enemy Side -->
-          <div class="battle-side enemy-side">
-            <div class="army-icon ${battle.isComplete && !battle.result?.victory ? "victorious" : ""} ${battle.isComplete && battle.result?.victory ? "defeated" : ""}">
-              \u{1F479}
-            </div>
-            <h4>${mission.enemyArmy.name}</h4>
-            <div class="health-bar-container">
-              <div class="health-bar">
-                <div class="health-fill enemy-health" style="width: ${enemyHealthPercent}%"></div>
-              </div>
-              <span class="health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
-            </div>
+          <!-- Health bars on battlefield -->
+          <div class="battlefield-health player-health-bar">
+            <div class="battlefield-health-fill player" style="width: ${playerHealthPercent}%"></div>
+            <span class="battlefield-health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
           </div>
+          <div class="battlefield-health enemy-health-bar">
+            <div class="battlefield-health-fill enemy" style="width: ${enemyHealthPercent}%"></div>
+            <span class="battlefield-health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
+          </div>
+          
+          ${battle.isComplete && battle.result ? `
+            <div class="battlefield-result-overlay ${battle.result.victory ? "victory" : "defeat"}">
+              <div class="battlefield-result-text">${battle.result.victory ? "\u{1F389} VICTORY!" : "\u{1F480} DEFEAT!"}</div>
+            </div>
+          ` : ""}
         </div>
         
-        <!-- Battle Log -->
+        <!-- Compact Battle Log -->
         <div class="battle-log-container">
-          <h4>Battle Log</h4>
-          <div class="battle-log" id="battle-log">
+          <h4>\u{1F4DC} Battle Log</h4>
+          <div class="battle-log-compact" id="battle-log">
     `;
       for (let i = 0; i < battle.currentRound; i++) {
         const log = battle.logs[i];
         html += `
-        <div class="log-entry ${i === battle.currentRound - 1 ? "latest" : ""}">
-          <span class="log-round">Round ${log.round}:</span>
-          <span class="log-damage player-damage">You deal ${log.playerDamage} dmg</span>
-          <span class="log-separator">|</span>
-          <span class="log-damage enemy-damage">Enemy deals ${log.enemyDamage} dmg</span>
-        </div>
+        <span class="log-chip player-attack">R${log.round}: \u2694\uFE0F ${log.playerDamage}</span>
+        <span class="log-chip enemy-attack">R${log.round}: \u{1F4A5} ${log.enemyDamage}</span>
       `;
       }
       html += `
@@ -11832,8 +12227,155 @@ body {
       if (battleLog) {
         battleLog.scrollTop = battleLog.scrollHeight;
       }
+      if (!battle.isComplete && currentLog) {
+        this.triggerBattleAnimations(currentLog.playerDamage, currentLog.enemyDamage);
+      }
       if (battle.isComplete) {
         this.battleResultRendered = true;
+      }
+    }
+    // Generate troop icons for battlefield visualization
+    generateBattlefieldTroops(troops, side, healthPercent) {
+      let html = "";
+      const maxTroopsToShow = 8;
+      let troopIndex = 0;
+      const troopDisplay = [];
+      for (const troop of troops) {
+        const troopType = getTroopTypeById(troop.typeId);
+        if (troopType && troop.count > 0) {
+          troopDisplay.push({
+            icon: troopType.icon || "\u2694\uFE0F",
+            count: troop.count,
+            troopClass: troopType.troopClass || "infantry"
+          });
+        }
+      }
+      const troopsToShow = troopDisplay.slice(0, maxTroopsToShow);
+      const rows = 3;
+      const cols = Math.ceil(troopsToShow.length / rows);
+      troopsToShow.forEach((troop, idx) => {
+        const row = Math.floor(idx / cols);
+        const col = idx % cols;
+        const baseX = side === "player" ? 5 : 55;
+        const xOffset = col * 12;
+        const yPos = 20 + row * 25;
+        const xPos = side === "player" ? baseX + xOffset : baseX + (cols - col - 1) * 12;
+        const opacity = healthPercent > 30 ? 1 : healthPercent / 30;
+        html += `
+        <div class="troop-unit ${side}-troop ${troop.troopClass}" 
+             style="left: ${xPos}%; top: ${yPos}%; opacity: ${opacity}"
+             data-troop-index="${idx}"
+             data-side="${side}">
+          <span class="troop-icon">${troop.icon}</span>
+          <span class="troop-count">\xD7${troop.count}</span>
+        </div>
+      `;
+      });
+      if (troopsToShow.length === 0 && side === "player") {
+        html += `
+        <div class="troop-unit ${side}-troop infantry" style="left: 15%; top: 40%;">
+          <span class="troop-icon">\u{1F3F0}</span>
+          <span class="troop-count">\xD70</span>
+        </div>
+      `;
+      }
+      return html;
+    }
+    // Generate enemy troop icons based on army size
+    generateEnemyTroops(size, healthPercent) {
+      const enemyConfigs = {
+        "small": [
+          { icon: "\u{1F479}", count: 5, troopClass: "infantry" },
+          { icon: "\u{1F3F9}", count: 3, troopClass: "ranged" }
+        ],
+        "medium": [
+          { icon: "\u{1F479}", count: 10, troopClass: "infantry" },
+          { icon: "\u{1F3F9}", count: 5, troopClass: "ranged" },
+          { icon: "\u{1F40E}", count: 3, troopClass: "cavalry" }
+        ],
+        "large": [
+          { icon: "\u{1F479}", count: 20, troopClass: "infantry" },
+          { icon: "\u{1F3F9}", count: 10, troopClass: "ranged" },
+          { icon: "\u{1F40E}", count: 8, troopClass: "cavalry" },
+          { icon: "\u{1F4A3}", count: 5, troopClass: "siege" }
+        ],
+        "boss": [
+          { icon: "\u{1F451}", count: 1, troopClass: "special" },
+          { icon: "\u{1F480}", count: 15, troopClass: "infantry" },
+          { icon: "\u{1F3F9}", count: 10, troopClass: "ranged" },
+          { icon: "\u{1F409}", count: 3, troopClass: "cavalry" },
+          { icon: "\u26A1", count: 5, troopClass: "siege" }
+        ]
+      };
+      const config = enemyConfigs[size || "medium"] || enemyConfigs["medium"];
+      let html = "";
+      const rows = 3;
+      const cols = Math.ceil(config.length / rows);
+      config.forEach((troop, idx) => {
+        const row = Math.floor(idx / cols);
+        const col = idx % cols;
+        const baseX = 55;
+        const xOffset = (cols - col - 1) * 12;
+        const yPos = 20 + row * 25;
+        const xPos = baseX + xOffset;
+        const opacity = healthPercent > 30 ? 1 : healthPercent / 30;
+        html += `
+        <div class="troop-unit enemy-troop ${troop.troopClass}" 
+             style="left: ${xPos}%; top: ${yPos}%; opacity: ${opacity}"
+             data-troop-index="${idx}"
+             data-side="enemy">
+          <span class="troop-icon">${troop.icon}</span>
+          <span class="troop-count">\xD7${troop.count}</span>
+        </div>
+      `;
+      });
+      return html;
+    }
+    // Trigger attack animations and damage popups
+    triggerBattleAnimations(playerDamage, enemyDamage) {
+      const battlefield = document.getElementById("battlefield-troops");
+      if (!battlefield)
+        return;
+      const playerTroops = battlefield.querySelectorAll(".player-troop");
+      const enemyTroops = battlefield.querySelectorAll(".enemy-troop");
+      if (playerTroops.length > 0) {
+        const randomPlayer = playerTroops[Math.floor(Math.random() * playerTroops.length)];
+        randomPlayer.classList.add("attacking");
+        setTimeout(() => randomPlayer.classList.remove("attacking"), 400);
+        if (enemyTroops.length > 0) {
+          const targetEnemy = enemyTroops[Math.floor(Math.random() * enemyTroops.length)];
+          targetEnemy.classList.add("hit");
+          setTimeout(() => targetEnemy.classList.remove("hit"), 300);
+          this.showDamagePopup(targetEnemy, playerDamage, "player-damage");
+        }
+      }
+      setTimeout(() => {
+        if (enemyTroops.length > 0) {
+          const randomEnemy = enemyTroops[Math.floor(Math.random() * enemyTroops.length)];
+          randomEnemy.classList.add("attacking");
+          setTimeout(() => randomEnemy.classList.remove("attacking"), 400);
+          if (playerTroops.length > 0) {
+            const targetPlayer = playerTroops[Math.floor(Math.random() * playerTroops.length)];
+            targetPlayer.classList.add("hit");
+            setTimeout(() => targetPlayer.classList.remove("hit"), 300);
+            this.showDamagePopup(targetPlayer, enemyDamage, "enemy-damage");
+          }
+        }
+      }, 200);
+    }
+    // Show floating damage popup
+    showDamagePopup(element, damage, className) {
+      const popup = document.createElement("div");
+      popup.className = `damage-popup ${className}`;
+      popup.textContent = `-${damage}`;
+      const rect = element.getBoundingClientRect();
+      const battlefield = document.getElementById("battlefield");
+      if (battlefield) {
+        const battlefieldRect = battlefield.getBoundingClientRect();
+        popup.style.left = `${rect.left - battlefieldRect.left + rect.width / 2}px`;
+        popup.style.top = `${rect.top - battlefieldRect.top}px`;
+        battlefield.appendChild(popup);
+        setTimeout(() => popup.remove(), 1e3);
       }
     }
     saveGame() {
