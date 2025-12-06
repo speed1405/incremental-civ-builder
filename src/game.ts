@@ -1774,7 +1774,7 @@ export class Game {
 
     // Create new spy
     const spy: Spy = {
-      id: `spy_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `spy_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       name: this.generateSpyName(),
       level: 1,
       experience: 0,
