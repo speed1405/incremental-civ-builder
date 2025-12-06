@@ -1881,7 +1881,7 @@ export class GameUI {
     
     // Animate random player troop attacking
     if (playerTroops.length > 0) {
-      const randomPlayer = playerTroops[Math.floor(Math.random() * playerTroops.length)];
+      const randomPlayer = playerTroops[Math.floor(Math.random() * playerTroops.length)] as HTMLElement;
       randomPlayer.classList.add('attacking');
       setTimeout(() => randomPlayer.classList.remove('attacking'), 400);
       
@@ -1897,7 +1897,7 @@ export class GameUI {
     // Animate random enemy troop attacking (with delay)
     setTimeout(() => {
       if (enemyTroops.length > 0) {
-        const randomEnemy = enemyTroops[Math.floor(Math.random() * enemyTroops.length)];
+        const randomEnemy = enemyTroops[Math.floor(Math.random() * enemyTroops.length)] as HTMLElement;
         randomEnemy.classList.add('attacking');
         setTimeout(() => randomEnemy.classList.remove('attacking'), 400);
         
