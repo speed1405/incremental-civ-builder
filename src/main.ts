@@ -19,6 +19,9 @@ function initGame(): void {
   // Initial render
   ui.render();
   
+  // Check if new player should see tutorial
+  ui.checkNewPlayerTutorial();
+  
   // Auto-save every 30 seconds
   setInterval(() => {
     const saveData = game.saveGame();

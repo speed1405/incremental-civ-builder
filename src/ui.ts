@@ -9,6 +9,7 @@ import { getBuildingTypeById, calculateBuildingProduction } from './buildings.js
 import { SKILLS, LEGACY_MILESTONES, getSkillById, getSkillsByCategory, canUnlockSkill, getSkillLevel, getSkillCost, getSkillEffect, calculateSkillBonuses, Skill } from './skills.js';
 import { getCivilizationById, getLeaderById, getNaturalWonderById, getPolicyById, canAdoptPolicy } from './lore.js';
 import { getFormationById, getDefenseStructureById, getHeroById, getNavalUnitById, getSiegeWeaponById, getTraditionById, getSpyMissionById, checkTraditionUnlock, canUpgradeUnit, getUpgradeById } from './military.js';
+import { TUTORIAL_STEPS, HELP_TOPICS, TutorialState, createInitialTutorialState, getCurrentTutorialStep, advanceTutorialStep, skipTutorial, startTutorial } from './tutorial.js';
 
 // UI timing constants
 const RENDER_DEBOUNCE_MS = 100;
@@ -31,6 +32,8 @@ export class GameUI {
   private conquestResultRendered: boolean = false;
   // Track previous resource values for animation
   private previousResources: { food: number; wood: number; stone: number; gold: number; science: number } | null = null;
+  // Tutorial state
+  private tutorialState: TutorialState = createInitialTutorialState();
 
   constructor(game: Game) {
     this.game = game;
@@ -429,7 +432,8 @@ export class GameUI {
       'world': 'Choose civilization, leaders, and cultural policies',
       'skills': 'Upgrade permanent skills using legacy points',
       'military': 'Manage formations, heroes, naval forces, and espionage',
-      'achievements': 'View your accomplishments and statistics'
+      'achievements': 'View your accomplishments and statistics',
+      'help': 'Tutorial and help information for new and experienced players'
     };
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -444,6 +448,7 @@ export class GameUI {
     document.getElementById('load-game')?.setAttribute('data-tooltip', 'Load a previously saved game');
     document.getElementById('reset-game')?.setAttribute('data-tooltip', 'Reset all progress and start fresh (cannot be undone!)');
   }
+
 
   private switchTab(tab: string): void {
     this.currentTab = tab;
@@ -545,6 +550,12 @@ export class GameUI {
           this.updateMilitaryTab();
         }
         break;
+      case 'help':
+        // Help tab only needs initial render - content is static
+        if (tabChanged) {
+          this.renderHelpTab();
+        }
+        break;
     }
     
     // Check for offline progress popup
@@ -552,6 +563,9 @@ export class GameUI {
     
     // Process achievement notifications
     this.processAchievementNotifications();
+    
+    // Render tutorial if active
+    this.renderTutorial();
   }
 
   private renderHeader(): void {
@@ -3762,5 +3776,270 @@ export class GameUI {
     }
 
     // Minor updates (e.g., button states) would go here
+  }
+
+  // ===== Help & Tutorial Tab =====
+
+  private renderHelpTab(): void {
+    const container = document.getElementById('help-content');
+    if (!container) return;
+
+    let html = '';
+
+    // Tutorial section
+    html += `
+      <div class="help-header">
+        <div>
+          <h3>📚 Game Guide</h3>
+          <p>Everything you need to know about building your civilization!</p>
+        </div>
+        <button class="tutorial-start-btn" id="start-tutorial-btn">
+          🎓 Start Tutorial
+        </button>
+      </div>
+    `;
+
+    // Quick tips section
+    html += `
+      <div class="quick-tips-section">
+        <h3>⚡ Quick Tips</h3>
+        <div class="quick-tips-grid">
+          <div class="quick-tip">
+            <span class="quick-tip-icon">🍖</span>
+            <span>Click gather buttons to collect resources manually</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">🏗️</span>
+            <span>Buildings produce resources automatically over time</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">🔬</span>
+            <span>Research unlocks new buildings, troops, and eras</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">⚔️</span>
+            <span>Train troops in the Barracks to fight battles</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">🏰</span>
+            <span>Conquer territories for permanent bonuses</span>
+          </div>
+          <div class="quick-tip">
+            <span class="quick-tip-icon">💾</span>
+            <span>Game auto-saves every 30 seconds</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Help topics
+    html += '<h3 style="margin: 25px 0 15px 0; color: var(--accent-gold);">📖 Help Topics</h3>';
+    html += '<div class="help-topics-grid">';
+
+    for (const topic of HELP_TOPICS) {
+      html += `
+        <div class="help-topic-card" data-topic="${topic.id}">
+          <div class="help-topic-header">
+            <span class="help-topic-icon">${topic.icon}</span>
+            <h4 class="help-topic-title">${topic.title}</h4>
+          </div>
+          <div class="help-topic-content">${topic.content}</div>
+          ${topic.tips && topic.tips.length > 0 ? `
+            <div class="help-topic-tips">
+              <h5>💡 Tips</h5>
+              <ul class="help-tip-list">
+                ${topic.tips.map(tip => `<li class="help-tip-item">${tip}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    html += '</div>';
+
+    container.innerHTML = html;
+
+    // Add event listeners for help tab
+    this.setupHelpEventListeners();
+  }
+
+  private setupHelpEventListeners(): void {
+    // Start tutorial button
+    document.getElementById('start-tutorial-btn')?.addEventListener('click', () => {
+      this.startTutorialMode();
+    });
+  }
+
+  // ===== Tutorial System =====
+
+  private startTutorialMode(): void {
+    this.tutorialState = startTutorial(this.tutorialState);
+    this.saveTutorialState();
+    this.renderTutorial();
+  }
+
+  private advanceTutorial(): void {
+    this.tutorialState = advanceTutorialStep(this.tutorialState);
+    this.saveTutorialState();
+    
+    if (this.tutorialState.completed) {
+      this.showNotification('🎉 Tutorial completed! You\'re ready to build your civilization!');
+      this.removeTutorialHighlight();
+    }
+    
+    this.renderTutorial();
+  }
+
+  private skipTutorialMode(): void {
+    this.tutorialState = skipTutorial(this.tutorialState);
+    this.saveTutorialState();
+    this.removeTutorialOverlay();
+    this.removeTutorialHighlight();
+    this.showNotification('Tutorial skipped. Visit the Help tab anytime!');
+  }
+
+  private renderTutorial(): void {
+    // Remove existing tutorial elements
+    this.removeTutorialOverlay();
+    this.removeTutorialHighlight();
+
+    const currentStep = getCurrentTutorialStep(this.tutorialState);
+    if (!currentStep) return;
+
+    // Create tutorial overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'tutorial-overlay';
+    overlay.id = 'tutorial-overlay';
+
+    // Create tutorial modal
+    const modal = document.createElement('div');
+    modal.className = 'tutorial-modal';
+
+    // Step indicator
+    let stepIndicator = '<div class="tutorial-step-indicator">';
+    for (let i = 0; i < TUTORIAL_STEPS.length; i++) {
+      const stepClass = i < this.tutorialState.currentStep ? 'completed' : 
+                        i === this.tutorialState.currentStep ? 'active' : '';
+      stepIndicator += `<div class="tutorial-step-dot ${stepClass}"></div>`;
+    }
+    stepIndicator += '</div>';
+
+    modal.innerHTML = `
+      ${stepIndicator}
+      <h3 class="tutorial-title">${currentStep.title}</h3>
+      <p class="tutorial-description">${currentStep.description}</p>
+      <div class="tutorial-buttons">
+        ${this.tutorialState.currentStep > 0 ? '' : ''}
+        <button class="tutorial-btn primary" id="tutorial-next-btn">
+          ${this.tutorialState.currentStep === TUTORIAL_STEPS.length - 1 ? 'Finish' : 'Next'}
+        </button>
+        <button class="tutorial-btn danger" id="tutorial-skip-btn">Skip Tutorial</button>
+      </div>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Add event listeners
+    document.getElementById('tutorial-next-btn')?.addEventListener('click', () => {
+      this.advanceTutorial();
+    });
+
+    document.getElementById('tutorial-skip-btn')?.addEventListener('click', () => {
+      this.skipTutorialMode();
+    });
+
+    // Highlight target element if specified
+    if (currentStep.targetElement) {
+      const targetEl = document.querySelector(currentStep.targetElement);
+      if (targetEl) {
+        targetEl.classList.add('tutorial-highlight');
+      }
+    }
+  }
+
+  private removeTutorialOverlay(): void {
+    const overlay = document.getElementById('tutorial-overlay');
+    if (overlay) {
+      overlay.remove();
+    }
+  }
+
+  private removeTutorialHighlight(): void {
+    document.querySelectorAll('.tutorial-highlight').forEach(el => {
+      el.classList.remove('tutorial-highlight');
+    });
+  }
+
+  private saveTutorialState(): void {
+    localStorage.setItem('civGameTutorial', JSON.stringify(this.tutorialState));
+  }
+
+  private loadTutorialState(): void {
+    const saved = localStorage.getItem('civGameTutorial');
+    if (saved) {
+      try {
+        this.tutorialState = JSON.parse(saved);
+      } catch {
+        this.tutorialState = createInitialTutorialState();
+      }
+    }
+  }
+
+  // Check and show tutorial for new players
+  checkNewPlayerTutorial(): void {
+    this.loadTutorialState();
+    
+    // If tutorial hasn't been completed or skipped, and this might be a new player
+    if (!this.tutorialState.completed && !this.tutorialState.skipped) {
+      // Check if this is a new game (no resources gathered)
+      const stats = this.game.state.statistics;
+      const isNewPlayer = stats.totalFoodGathered === 0 && 
+                          stats.totalWoodGathered === 0 && 
+                          stats.totalStoneGathered === 0;
+      
+      if (isNewPlayer) {
+        // Show tutorial prompt after a short delay
+        setTimeout(() => {
+          this.showTutorialPrompt();
+        }, 1000);
+      }
+    }
+  }
+
+  private showTutorialPrompt(): void {
+    // Create a simple prompt overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'tutorial-overlay';
+    overlay.id = 'tutorial-prompt-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'tutorial-modal';
+    modal.innerHTML = `
+      <h3 class="tutorial-title">🎓 Welcome, New Player!</h3>
+      <p class="tutorial-description">
+        Would you like a quick tutorial to learn the basics of Incremental Civ Builder?
+      </p>
+      <div class="tutorial-buttons">
+        <button class="tutorial-btn primary" id="tutorial-prompt-yes">Yes, Start Tutorial</button>
+        <button class="tutorial-btn secondary" id="tutorial-prompt-no">No, I'll Explore</button>
+      </div>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    document.getElementById('tutorial-prompt-yes')?.addEventListener('click', () => {
+      overlay.remove();
+      this.startTutorialMode();
+    });
+
+    document.getElementById('tutorial-prompt-no')?.addEventListener('click', () => {
+      overlay.remove();
+      this.tutorialState.skipped = true;
+      this.saveTutorialState();
+      this.showNotification('Visit the Help tab anytime for guidance!');
+    });
   }
 }
