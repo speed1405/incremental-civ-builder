@@ -3468,7 +3468,6 @@ body {
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 0.85rem;
-  white-space: nowrap;
   z-index: 2000;
   pointer-events: none;
   opacity: 0;
@@ -3515,7 +3514,6 @@ body {
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
-  white-space: nowrap;
   z-index: 2000;
   pointer-events: none;
   opacity: 0;
@@ -12025,8 +12023,8 @@ body {
     animateResourceGain(resourceType, oldValue, newValue) {
       const gain = Math.floor(newValue) - Math.floor(oldValue);
       if (gain >= 1) {
-        const resourceEl = document.querySelector(`.resource:has(#${resourceType}-amount)`);
         const amountEl = document.getElementById(`${resourceType}-amount`);
+        const resourceEl = amountEl?.closest(".resource");
         if (resourceEl && amountEl) {
           resourceEl.classList.add("gain-animation");
           amountEl.classList.add("gain-animation");
@@ -12034,9 +12032,7 @@ body {
             resourceEl.classList.remove("gain-animation");
             amountEl.classList.remove("gain-animation");
           }, 500);
-          if (gain >= 1) {
-            this.showResourceGainPopup(resourceEl, gain);
-          }
+          this.showResourceGainPopup(resourceEl, gain);
         }
       }
     }

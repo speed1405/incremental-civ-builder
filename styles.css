@@ -3461,7 +3461,6 @@ body {
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 0.85rem;
-  white-space: nowrap;
   z-index: 2000;
   pointer-events: none;
   opacity: 0;
@@ -3508,7 +3507,6 @@ body {
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
-  white-space: nowrap;
   z-index: 2000;
   pointer-events: none;
   opacity: 0;

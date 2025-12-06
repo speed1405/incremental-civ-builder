@@ -618,8 +618,9 @@ export class GameUI {
     
     // Only animate for significant gains (manual gather clicks)
     if (gain >= 1) {
-      const resourceEl = document.querySelector(`.resource:has(#${resourceType}-amount)`) as HTMLElement;
+      // Use getElementById and traverse to parent for better browser compatibility
       const amountEl = document.getElementById(`${resourceType}-amount`);
+      const resourceEl = amountEl?.closest('.resource') as HTMLElement | null;
       
       if (resourceEl && amountEl) {
         // Add pulse animation to the resource card
@@ -632,10 +633,8 @@ export class GameUI {
           amountEl.classList.remove('gain-animation');
         }, 500);
         
-        // Create floating gain indicator for larger gains
-        if (gain >= 1) {
-          this.showResourceGainPopup(resourceEl, gain);
-        }
+        // Create floating gain indicator
+        this.showResourceGainPopup(resourceEl, gain);
       }
     }
   }
