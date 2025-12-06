@@ -1333,67 +1333,64 @@ export class GameUI {
     const playerHealthPercent = (playerHealth / battle.playerStartHealth) * 100;
     const enemyHealthPercent = (enemyHealth / battle.enemyStartHealth) * 100;
 
+    // Get player troops for visualization
+    const playerTroops = this.game.state.army;
+    const playerTroopDisplay = this.generateBattlefieldTroops(playerTroops, 'player', playerHealthPercent);
+    const enemyTroopDisplay = this.generateEnemyTroops(territory.enemyArmy.size, enemyHealthPercent);
+
     let html = `
       <div class="battle-arena conquest-battle">
         <h3 class="battle-title">🏰 Conquest: ${territory.name}</h3>
         <p class="battle-vs">Your Army vs ${territory.enemyArmy.name}</p>
         
-        <div class="battle-field">
-          <!-- Player Side -->
-          <div class="battle-side player-side">
-            <div class="army-icon ${battle.isComplete && battle.result?.victory ? 'victorious' : ''} ${battle.isComplete && !battle.result?.victory ? 'defeated' : ''}">
-              🏰
-            </div>
-            <h4>Your Army</h4>
-            <div class="health-bar-container">
-              <div class="health-bar">
-                <div class="health-fill player-health" style="width: ${playerHealthPercent}%"></div>
-              </div>
-              <span class="health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
-            </div>
+        <!-- Animated Battlefield -->
+        <div class="battlefield-container" id="battlefield">
+          <div class="battlefield-center-line"></div>
+          
+          <!-- Labels -->
+          <div class="battlefield-label player-label">Your Army</div>
+          <div class="battlefield-label enemy-label">${territory.enemyArmy.name}</div>
+          
+          <!-- Round indicator -->
+          <div class="battlefield-round">
+            Round ${battle.currentRound} / ${battle.logs.length}
           </div>
           
-          <!-- Battle Animation -->
-          <div class="battle-center">
-            <div class="battle-clash ${!battle.isComplete ? 'animating' : ''}">
-              ⚔️
-            </div>
-            <div class="round-counter">
-              Round ${battle.currentRound} / ${battle.logs.length}
-            </div>
+          <!-- Troops -->
+          <div class="battlefield-troops" id="battlefield-troops">
+            ${playerTroopDisplay}
+            ${enemyTroopDisplay}
           </div>
           
-          <!-- Enemy Side -->
-          <div class="battle-side enemy-side">
-            <div class="army-icon ${battle.isComplete && !battle.result?.victory ? 'victorious' : ''} ${battle.isComplete && battle.result?.victory ? 'defeated' : ''}">
-              🛡️
-            </div>
-            <h4>${territory.enemyArmy.name}</h4>
-            <div class="health-bar-container">
-              <div class="health-bar">
-                <div class="health-fill enemy-health" style="width: ${enemyHealthPercent}%"></div>
-              </div>
-              <span class="health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
-            </div>
+          <!-- Health bars on battlefield -->
+          <div class="battlefield-health player-health-bar">
+            <div class="battlefield-health-fill player" style="width: ${playerHealthPercent}%"></div>
+            <span class="battlefield-health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
           </div>
+          <div class="battlefield-health enemy-health-bar">
+            <div class="battlefield-health-fill enemy" style="width: ${enemyHealthPercent}%"></div>
+            <span class="battlefield-health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
+          </div>
+          
+          ${battle.isComplete && battle.result ? `
+            <div class="battlefield-result-overlay ${battle.result.victory ? 'victory' : 'defeat'}">
+              <div class="battlefield-result-text">${battle.result.victory ? '🏰 CONQUERED!' : '💀 DEFEAT!'}</div>
+            </div>
+          ` : ''}
         </div>
         
-        <!-- Battle Log -->
+        <!-- Compact Battle Log -->
         <div class="battle-log-container">
-          <h4>Battle Log</h4>
-          <div class="battle-log" id="conquest-battle-log">
+          <h4>📜 Battle Log</h4>
+          <div class="battle-log-compact" id="conquest-battle-log">
     `;
     
-    // Show logs up to current round
+    // Show logs up to current round in compact format
     for (let i = 0; i < battle.currentRound; i++) {
       const log = battle.logs[i];
       html += `
-        <div class="log-entry ${i === battle.currentRound - 1 ? 'latest' : ''}">
-          <span class="log-round">Round ${log.round}:</span>
-          <span class="log-damage player-damage">You deal ${log.playerDamage} dmg</span>
-          <span class="log-separator">|</span>
-          <span class="log-damage enemy-damage">Enemy deals ${log.enemyDamage} dmg</span>
-        </div>
+        <span class="log-chip player-attack">R${log.round}: ⚔️ ${log.playerDamage}</span>
+        <span class="log-chip enemy-attack">R${log.round}: 💥 ${log.enemyDamage}</span>
       `;
     }
     
@@ -1457,6 +1454,11 @@ export class GameUI {
     const battleLog = document.getElementById('conquest-battle-log');
     if (battleLog) {
       battleLog.scrollTop = battleLog.scrollHeight;
+    }
+    
+    // Trigger attack animations on current round
+    if (!battle.isComplete && currentLog) {
+      this.triggerBattleAnimations(currentLog.playerDamage, currentLog.enemyDamage);
     }
     
     // Mark conquest result as rendered to prevent re-render flashing
@@ -1625,67 +1627,64 @@ export class GameUI {
     const playerHealthPercent = (playerHealth / battle.playerStartHealth) * 100;
     const enemyHealthPercent = (enemyHealth / battle.enemyStartHealth) * 100;
 
+    // Get player troops for visualization
+    const playerTroops = this.game.state.army;
+    const playerTroopDisplay = this.generateBattlefieldTroops(playerTroops, 'player', playerHealthPercent);
+    const enemyTroopDisplay = this.generateEnemyTroops(mission.enemyArmy.size, enemyHealthPercent);
+
     let html = `
       <div class="battle-arena">
         <h3 class="battle-title">⚔️ Battle: ${mission.name}</h3>
         <p class="battle-vs">Your Army vs ${mission.enemyArmy.name}</p>
         
-        <div class="battle-field">
-          <!-- Player Side -->
-          <div class="battle-side player-side">
-            <div class="army-icon ${battle.isComplete && battle.result?.victory ? 'victorious' : ''} ${battle.isComplete && !battle.result?.victory ? 'defeated' : ''}">
-              🏰
-            </div>
-            <h4>Your Army</h4>
-            <div class="health-bar-container">
-              <div class="health-bar">
-                <div class="health-fill player-health" style="width: ${playerHealthPercent}%"></div>
-              </div>
-              <span class="health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
-            </div>
+        <!-- Animated Battlefield -->
+        <div class="battlefield-container" id="battlefield">
+          <div class="battlefield-center-line"></div>
+          
+          <!-- Labels -->
+          <div class="battlefield-label player-label">Your Army</div>
+          <div class="battlefield-label enemy-label">${mission.enemyArmy.name}</div>
+          
+          <!-- Round indicator -->
+          <div class="battlefield-round">
+            Round ${battle.currentRound} / ${battle.logs.length}
           </div>
           
-          <!-- Battle Animation -->
-          <div class="battle-center">
-            <div class="battle-clash ${!battle.isComplete ? 'animating' : ''}">
-              ⚔️
-            </div>
-            <div class="round-counter">
-              Round ${battle.currentRound} / ${battle.logs.length}
-            </div>
+          <!-- Troops -->
+          <div class="battlefield-troops" id="battlefield-troops">
+            ${playerTroopDisplay}
+            ${enemyTroopDisplay}
           </div>
           
-          <!-- Enemy Side -->
-          <div class="battle-side enemy-side">
-            <div class="army-icon ${battle.isComplete && !battle.result?.victory ? 'victorious' : ''} ${battle.isComplete && battle.result?.victory ? 'defeated' : ''}">
-              👹
-            </div>
-            <h4>${mission.enemyArmy.name}</h4>
-            <div class="health-bar-container">
-              <div class="health-bar">
-                <div class="health-fill enemy-health" style="width: ${enemyHealthPercent}%"></div>
-              </div>
-              <span class="health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
-            </div>
+          <!-- Health bars on battlefield -->
+          <div class="battlefield-health player-health-bar">
+            <div class="battlefield-health-fill player" style="width: ${playerHealthPercent}%"></div>
+            <span class="battlefield-health-text">${Math.max(0, Math.floor(playerHealth))} / ${battle.playerStartHealth}</span>
           </div>
+          <div class="battlefield-health enemy-health-bar">
+            <div class="battlefield-health-fill enemy" style="width: ${enemyHealthPercent}%"></div>
+            <span class="battlefield-health-text">${Math.max(0, Math.floor(enemyHealth))} / ${battle.enemyStartHealth}</span>
+          </div>
+          
+          ${battle.isComplete && battle.result ? `
+            <div class="battlefield-result-overlay ${battle.result.victory ? 'victory' : 'defeat'}">
+              <div class="battlefield-result-text">${battle.result.victory ? '🎉 VICTORY!' : '💀 DEFEAT!'}</div>
+            </div>
+          ` : ''}
         </div>
         
-        <!-- Battle Log -->
+        <!-- Compact Battle Log -->
         <div class="battle-log-container">
-          <h4>Battle Log</h4>
-          <div class="battle-log" id="battle-log">
+          <h4>📜 Battle Log</h4>
+          <div class="battle-log-compact" id="battle-log">
     `;
     
-    // Show logs up to current round
+    // Show logs up to current round in compact format
     for (let i = 0; i < battle.currentRound; i++) {
       const log = battle.logs[i];
       html += `
-        <div class="log-entry ${i === battle.currentRound - 1 ? 'latest' : ''}">
-          <span class="log-round">Round ${log.round}:</span>
-          <span class="log-damage player-damage">You deal ${log.playerDamage} dmg</span>
-          <span class="log-separator">|</span>
-          <span class="log-damage enemy-damage">Enemy deals ${log.enemyDamage} dmg</span>
-        </div>
+        <span class="log-chip player-attack">R${log.round}: ⚔️ ${log.playerDamage}</span>
+        <span class="log-chip enemy-attack">R${log.round}: 💥 ${log.enemyDamage}</span>
       `;
     }
     
@@ -1738,11 +1737,199 @@ export class GameUI {
       battleLog.scrollTop = battleLog.scrollHeight;
     }
     
+    // Trigger attack animations on current round
+    if (!battle.isComplete && currentLog) {
+      this.triggerBattleAnimations(currentLog.playerDamage, currentLog.enemyDamage);
+    }
+    
     // Mark battle result as rendered to prevent re-render flashing
     if (battle.isComplete) {
       this.battleResultRendered = true;
     }
     // Event listeners are handled by event delegation in setupEventListeners()
+  }
+
+  // Generate troop icons for battlefield visualization
+  private generateBattlefieldTroops(troops: { typeId: string; count: number }[], side: 'player' | 'enemy', healthPercent: number): string {
+    let html = '';
+    const maxTroopsToShow = 8;
+    let troopIndex = 0;
+    
+    // Get unique troop types with counts
+    const troopDisplay: { icon: string; count: number; troopClass: string }[] = [];
+    
+    for (const troop of troops) {
+      const troopType = getTroopTypeById(troop.typeId);
+      if (troopType && troop.count > 0) {
+        troopDisplay.push({
+          icon: troopType.icon || '⚔️',
+          count: troop.count,
+          troopClass: troopType.troopClass || 'infantry'
+        });
+      }
+    }
+    
+    // Distribute troops across battlefield
+    const troopsToShow = troopDisplay.slice(0, maxTroopsToShow);
+    const rows = 3;
+    const cols = Math.ceil(troopsToShow.length / rows);
+    
+    troopsToShow.forEach((troop, idx) => {
+      const row = Math.floor(idx / cols);
+      const col = idx % cols;
+      
+      // Position troops: player on left, enemy on right
+      const baseX = side === 'player' ? 5 : 55;
+      const xOffset = col * 12;
+      const yPos = 20 + (row * 25);
+      const xPos = side === 'player' ? baseX + xOffset : baseX + (cols - col - 1) * 12;
+      
+      // Reduce opacity based on health
+      const opacity = healthPercent > 30 ? 1 : healthPercent / 30;
+      
+      html += `
+        <div class="troop-unit ${side}-troop ${troop.troopClass}" 
+             style="left: ${xPos}%; top: ${yPos}%; opacity: ${opacity}"
+             data-troop-index="${idx}"
+             data-side="${side}">
+          <span class="troop-icon">${troop.icon}</span>
+          <span class="troop-count">×${troop.count}</span>
+        </div>
+      `;
+    });
+    
+    // If no troops, show a placeholder
+    if (troopsToShow.length === 0 && side === 'player') {
+      html += `
+        <div class="troop-unit ${side}-troop infantry" style="left: 15%; top: 40%;">
+          <span class="troop-icon">🏰</span>
+          <span class="troop-count">×0</span>
+        </div>
+      `;
+    }
+    
+    return html;
+  }
+
+  // Generate enemy troop icons based on army size
+  private generateEnemyTroops(size: string | undefined, healthPercent: number): string {
+    // Enemy troop configurations based on army size
+    const enemyConfigs: Record<string, { icon: string; count: number; troopClass: string }[]> = {
+      'small': [
+        { icon: '👹', count: 5, troopClass: 'infantry' },
+        { icon: '🏹', count: 3, troopClass: 'ranged' },
+      ],
+      'medium': [
+        { icon: '👹', count: 10, troopClass: 'infantry' },
+        { icon: '🏹', count: 5, troopClass: 'ranged' },
+        { icon: '🐎', count: 3, troopClass: 'cavalry' },
+      ],
+      'large': [
+        { icon: '👹', count: 20, troopClass: 'infantry' },
+        { icon: '🏹', count: 10, troopClass: 'ranged' },
+        { icon: '🐎', count: 8, troopClass: 'cavalry' },
+        { icon: '💣', count: 5, troopClass: 'siege' },
+      ],
+      'boss': [
+        { icon: '👑', count: 1, troopClass: 'special' },
+        { icon: '💀', count: 15, troopClass: 'infantry' },
+        { icon: '🏹', count: 10, troopClass: 'ranged' },
+        { icon: '🐉', count: 3, troopClass: 'cavalry' },
+        { icon: '⚡', count: 5, troopClass: 'siege' },
+      ],
+    };
+
+    const config = enemyConfigs[size || 'medium'] || enemyConfigs['medium'];
+    
+    let html = '';
+    const rows = 3;
+    const cols = Math.ceil(config.length / rows);
+    
+    config.forEach((troop, idx) => {
+      const row = Math.floor(idx / cols);
+      const col = idx % cols;
+      
+      const baseX = 55;
+      const xOffset = (cols - col - 1) * 12;
+      const yPos = 20 + (row * 25);
+      const xPos = baseX + xOffset;
+      
+      const opacity = healthPercent > 30 ? 1 : healthPercent / 30;
+      
+      html += `
+        <div class="troop-unit enemy-troop ${troop.troopClass}" 
+             style="left: ${xPos}%; top: ${yPos}%; opacity: ${opacity}"
+             data-troop-index="${idx}"
+             data-side="enemy">
+          <span class="troop-icon">${troop.icon}</span>
+          <span class="troop-count">×${troop.count}</span>
+        </div>
+      `;
+    });
+    
+    return html;
+  }
+
+  // Trigger attack animations and damage popups
+  private triggerBattleAnimations(playerDamage: number, enemyDamage: number): void {
+    const battlefield = document.getElementById('battlefield-troops');
+    if (!battlefield) return;
+    
+    // Get all player and enemy troops
+    const playerTroops = battlefield.querySelectorAll('.player-troop');
+    const enemyTroops = battlefield.querySelectorAll('.enemy-troop');
+    
+    // Animate random player troop attacking
+    if (playerTroops.length > 0) {
+      const randomPlayer = playerTroops[Math.floor(Math.random() * playerTroops.length)] as HTMLElement;
+      randomPlayer.classList.add('attacking');
+      setTimeout(() => randomPlayer.classList.remove('attacking'), 400);
+      
+      // Show damage popup near enemy
+      if (enemyTroops.length > 0) {
+        const targetEnemy = enemyTroops[Math.floor(Math.random() * enemyTroops.length)] as HTMLElement;
+        targetEnemy.classList.add('hit');
+        setTimeout(() => targetEnemy.classList.remove('hit'), 300);
+        this.showDamagePopup(targetEnemy, playerDamage, 'player-damage');
+      }
+    }
+    
+    // Animate random enemy troop attacking (with delay)
+    setTimeout(() => {
+      if (enemyTroops.length > 0) {
+        const randomEnemy = enemyTroops[Math.floor(Math.random() * enemyTroops.length)] as HTMLElement;
+        randomEnemy.classList.add('attacking');
+        setTimeout(() => randomEnemy.classList.remove('attacking'), 400);
+        
+        // Show damage popup near player
+        if (playerTroops.length > 0) {
+          const targetPlayer = playerTroops[Math.floor(Math.random() * playerTroops.length)] as HTMLElement;
+          targetPlayer.classList.add('hit');
+          setTimeout(() => targetPlayer.classList.remove('hit'), 300);
+          this.showDamagePopup(targetPlayer, enemyDamage, 'enemy-damage');
+        }
+      }
+    }, 200);
+  }
+
+  // Show floating damage popup
+  private showDamagePopup(element: HTMLElement, damage: number, className: string): void {
+    const popup = document.createElement('div');
+    popup.className = `damage-popup ${className}`;
+    popup.textContent = `-${damage}`;
+    
+    // Position near the element
+    const rect = element.getBoundingClientRect();
+    const battlefield = document.getElementById('battlefield');
+    if (battlefield) {
+      const battlefieldRect = battlefield.getBoundingClientRect();
+      popup.style.left = `${rect.left - battlefieldRect.left + rect.width / 2}px`;
+      popup.style.top = `${rect.top - battlefieldRect.top}px`;
+      battlefield.appendChild(popup);
+      
+      // Remove after animation
+      setTimeout(() => popup.remove(), 1000);
+    }
   }
 
   private saveGame(): void {
