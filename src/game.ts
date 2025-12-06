@@ -1231,8 +1231,10 @@ export class Game {
     flatBonuses.stone += policyBonuses.flatBonuses.stone;
     flatBonuses.gold += policyBonuses.flatBonuses.gold;
     flatBonuses.science += policyBonuses.flatBonuses.science;
-    militaryBonuses.attack += policyBonuses.militaryBonuses.attack / 100; // Convert percentage to multiplier
-    militaryBonuses.defense += policyBonuses.militaryBonuses.defense / 100;
+    // Convert percentage values to decimal multipliers (e.g., 10% -> 0.1)
+    const PERCENTAGE_TO_DECIMAL = 100;
+    militaryBonuses.attack += policyBonuses.militaryBonuses.attack / PERCENTAGE_TO_DECIMAL;
+    militaryBonuses.defense += policyBonuses.militaryBonuses.defense / PERCENTAGE_TO_DECIMAL;
 
     return { flatBonuses, multipliers, militaryBonuses };
   }
